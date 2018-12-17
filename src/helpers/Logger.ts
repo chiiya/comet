@@ -1,6 +1,5 @@
 import { Signale } from 'signale';
-
-const ora = require('ora');
+import * as Ora from 'ora';
 
 // Signale options
 const options = {
@@ -30,7 +29,7 @@ export default class Logger {
    */
   constructor() {
     this.console = new Signale(options);
-    this.spinner = new ora({ spinner: 'star' });
+    this.spinner = new Ora({ spinner: 'star' });
   }
 
   /**

@@ -9,7 +9,7 @@ The make commands will help you create different outputs (e.g. tests or document
 `;
 
   /** Override usage to indicate that a sub-command must be used */
-  static usage = 'make:artifact';
+  static usage = 'make:{artifact}';
 
   /** Flags passed to the command */
   static flags = {
