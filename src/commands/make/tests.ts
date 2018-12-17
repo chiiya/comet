@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import Logger from '../../lib/Logger';
+import Logger from '../../helpers/Logger';
 
 export default class MakeTests extends Command {
   /** Description of the command, displayed when using help flag */

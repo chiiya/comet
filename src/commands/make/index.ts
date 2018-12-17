@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import displayHelp from '../../utils/display-help';
+import { displayHelp } from '../../helpers/Helpers';
 
 export default class Make extends Command {
 
