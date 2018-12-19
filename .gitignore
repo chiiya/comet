@@ -4,6 +4,7 @@
 /dist
 /lib
 /package-lock.json
+/yarn.lock
 /tmp
 .idea/
 node_modules
