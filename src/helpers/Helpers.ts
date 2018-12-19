@@ -1,11 +1,11 @@
 const { execSync } = require('child_process');
 const parse = require('@iarna/toml/parse-string');
 
-export const displayHelp = (command: string | undefined) => {
+export const displayHelp = (command: string | undefined): void => {
   execSync(`comet ${command} --help`, { stdio: [0, 1, 2] });
 };
 
-export const parseToml = (path: string, content: string) => {
+export const parseToml = (path: string, content: string): object | null => {
   try {
     return parse(content);
   } catch (error) {
