@@ -28,7 +28,7 @@ export default class ConfigRepository {
    * @return {ConfigValue}
    */
   get(key: string): ConfigValue {
-    return dotProp(this.config, key);
+    return dotProp.get(this.config, key);
   }
 
   /**

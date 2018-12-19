@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import { displayHelp } from '../../helpers/Helpers';
-import ConfigResolver from '../../config/ConfigResolver';
+import ConfigRepository from '../../config/ConfigRepository';
 
 export default class Make extends Command {
 
@@ -21,7 +21,8 @@ The make commands will help you create different outputs (e.g. tests or document
    * Run the make command, displaying help.
    */
   async run() {
-    console.log(ConfigResolver.execute());
+    const config = new ConfigRepository();
+    console.log(config.get('make.tests.parser'));
     displayHelp(this.id);
     this.exit();
   }
