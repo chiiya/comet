@@ -1,10 +1,10 @@
 import { parseToml } from '../helpers/Helpers';
-import Config from '../types/Config';
+import { CometConfig } from '../types/Config';
 const cosmiconfig = require('cosmiconfig');
 const assign = require('assign-deep');
 
 export default class ConfigResolver {
-  public static execute(): Config {
+  public static execute(): CometConfig {
     // Load user configuration
     const explorer = cosmiconfig('comet', {
       searchPlaces: [

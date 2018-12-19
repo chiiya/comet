@@ -1,4 +1,4 @@
-export default interface Config {
+export interface CometConfig {
   readonly [key: string]: Key | CommandConfig;
 }
 
