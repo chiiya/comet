@@ -8,9 +8,11 @@
   },
   "bugs": "https://github.com/chiiya/comet/issues",
   "dependencies": {
+    "@iarna/toml": "^2.2.1",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
+    "cosmiconfig": "^5.0.7",
     "fs-extra": "^7.0.1",
     "ora": "^3.0.0",
     "signale": "^1.3.0",
