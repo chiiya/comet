@@ -6,6 +6,8 @@ interface Key {
   readonly [key: string]: Key | CommandConfig;
 }
 
+export type ConfigValue = string | string[];
+
 interface CommandConfig {
   readonly parser: string;
   readonly decorators: string[];
