@@ -1,9 +1,10 @@
-import { Command, flags } from '@oclif/command';
+import { flags } from '@oclif/command';
 import Logger from '../../helpers/Logger';
 import File from '../../helpers/File';
 import OpenApiParser from '../../parsers/OpenApiParser';
+import BaseCommand from '../../application/BaseCommand';
 
-export default class MakeTests extends Command {
+export default class MakeTests extends BaseCommand {
   /** Description of the command, displayed when using help flag */
   static description = 'Parse an API specification, and automatically generate integration tests';
 

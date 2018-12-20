@@ -1,8 +1,8 @@
-import { Command, flags } from '@oclif/command';
+import { flags } from '@oclif/command';
 import { displayHelp } from '../../helpers/Helpers';
-import ConfigRepository from '../../config/ConfigRepository';
+import BaseCommand from '../../application/BaseCommand';
 
-export default class Make extends Command {
+export default class Make extends BaseCommand {
 
   /** Short and full description of the command */
   static description = `Operations for creating different artifacts
@@ -21,8 +21,7 @@ The make commands will help you create different outputs (e.g. tests or document
    * Run the make command, displaying help.
    */
   async run() {
-    const config = new ConfigRepository();
-    console.log(config.get('make.tests.parser'));
+    console.log(this.configRepository.get('make.tests.parser'));
     displayHelp(this.id);
     this.exit();
   }
