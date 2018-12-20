@@ -23,7 +23,7 @@ export default class ConfigRepository {
   }
 
   /**
-   * Get the value of a config entry.
+   * Get the value of a config entry using dot notation (`get(commands.tests.make.parser)`).
    * @param key {string}
    * @return {ConfigValue}
    */
@@ -32,7 +32,7 @@ export default class ConfigRepository {
   }
 
   /**
-   * Set the value of a config entry.
+   * Set the value of a config entry using dot notation.
    * @param key {string}
    * @param value {ConfigValue}
    */
@@ -41,7 +41,7 @@ export default class ConfigRepository {
   }
 
   /**
-   * Check whether a config entry has been set.
+   * Check whether a config entry is set (using dot notation).
    * @param key {string}
    * @return boolean
    */

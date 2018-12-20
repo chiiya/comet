@@ -21,7 +21,7 @@ The make commands will help you create different outputs (e.g. tests or document
    * Run the make command, displaying help.
    */
   async run() {
-    console.log(this.configRepository.get('make.tests.parser'));
+    console.log(this.configRepository.get('commands.make.tests.parser'));
     displayHelp(this.id);
     this.exit();
   }
