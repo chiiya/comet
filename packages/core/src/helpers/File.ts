@@ -1,4 +1,4 @@
-import { FileInformation } from '../types/FileInformation';
+import { FileInformation } from '@comet-cli/types';
 
 const os = require('os');
 const path = require('path');

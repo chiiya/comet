@@ -2,14 +2,14 @@ module.exports = {
   commands: {
     make: {
       tests: {
-        parser: 'comet-parser-open-api',
+        parser: '@comet-cli/parser-openapi',
         decorators: [
-          'comet-tests-decorator-default',
+          '@comet-cli/decorator-tests-default',
         ],
         factories: [
-          'comet-tests-factory-laravel',
+          '@comet-cli/factory-tests-laravel',
         ],
       },
     },
-  }
+  },
 };

@@ -1,3 +1,33 @@
+// Config types
+
+export interface CometConfig {
+  readonly [key: string]: Key | CommandConfig;
+}
+
+interface Key {
+  readonly [key: string]: Key | CommandConfig;
+}
+
+export type ConfigValue = string | string[];
+
+interface CommandConfig {
+  readonly parser: string;
+  readonly decorators: string[];
+  readonly factories: string[];
+}
+
+export interface FileInformation {
+  path: string;
+  absolutePath: string;
+  pathWithoutExt: string;
+  isDir: boolean;
+  isFile: boolean;
+  name: string;
+  ext: string;
+  file: string;
+  base: string;
+}
+
 /**
  * Type definitions for the OpenAPI specification
  * @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
@@ -34,7 +64,7 @@ declare global {
   };
 }
 
-export interface OpenAPISpec {
+export interface OpenApiSpec {
   openapi: string;
   info: OpenAPIInfo;
   servers?: OpenAPIServer[];
@@ -292,4 +322,8 @@ export interface OpenAPIContact {
 export interface OpenAPILicense {
   name: string;
   url?: string;
+}
+
+export interface Parser {
+  execute(path: string): any;
 }

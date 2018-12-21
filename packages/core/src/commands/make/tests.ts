@@ -1,7 +1,7 @@
 import { flags } from '@oclif/command';
 import Logger from '../../helpers/Logger';
 import File from '../../helpers/File';
-import OpenApiParser from '../../parsers/OpenApiParser';
+import OpenApiParser from '@comet-cli/parser-openapi';
 import BaseCommand from '../../application/BaseCommand';
 
 export default class MakeTests extends BaseCommand {
@@ -29,7 +29,17 @@ export default class MakeTests extends BaseCommand {
 
   async run() {
     const logger = new Logger();
-    const parser = new OpenApiParser();
+    const parserPackage = this.configRepository.get('commands.make.tests.parser');
+    let parserClass;
+    try {
+      parserClass = await import(String(parserPackage));
+      parserClass = parserClass.default;
+    } catch (error) {
+      logger.fail(
+        `Could not find package ${parserPackage}. Run npm install ${parserPackage} to install.`,
+      );
+    }
+    const parser = new parserClass();
 
     // Parse passed arguments
     const { args } = this.parse(MakeTests);
@@ -37,13 +47,14 @@ export default class MakeTests extends BaseCommand {
 
     // Parse input file
     logger.spin('Parsing input file');
+    let spec;
     try {
-      const spec = await parser.execute(file.path());
-      console.log(spec.info.version);
+      spec = await parser.execute(file.path());
     } catch (error) {
       logger.fail(error.message);
       process.exit(-1);
     }
     logger.succeed('Input file parsed');
+    console.log(spec.info.version);
   }
 }

@@ -1,67 +1,23 @@
 {
   "name": "comet",
-  "description": "Automated testing and documentation for RESTful APIs",
-  "version": "0.1.0",
+  "private": true,
   "author": "Elisha Witte @chiiya",
-  "bin": {
-    "comet": "./bin/run"
-  },
   "bugs": "https://github.com/chiiya/comet/issues",
-  "dependencies": {
-    "@iarna/toml": "^2.2.1",
-    "@oclif/command": "^1",
-    "@oclif/config": "^1",
-    "@oclif/plugin-help": "^2",
-    "assign-deep": "^1.0.0",
-    "cosmiconfig": "^5.0.7",
-    "dot-prop": "^4.2.0",
-    "fs-extra": "^7.0.1",
-    "ora": "^3.0.0",
-    "signale": "^1.3.0",
-    "swagger-parser": "^6.0.2",
-    "tslib": "^1"
+  "engines": {
+    "node": ">=8.0.0"
   },
+  "homepage": "https://github.com/chiiya/comet",
+  "license": "MIT",
+  "repository": "chiiya/comet",
   "devDependencies": {
-    "@oclif/dev-cli": "^1",
-    "@types/chai": "^4",
-    "@types/cosmiconfig": "^5.0.3",
-    "@types/mocha": "^5",
-    "@types/node": "^10",
-    "@types/ora": "^1.3.4",
-    "@types/signale": "^1.2.0",
-    "globby": "^8",
     "lerna": "^3.8.0",
+    "@types/node": "^10",
     "ts-node": "^7",
     "tslint": "^5",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.0"
   },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "files": [
-    "/bin",
-    "/lib",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
-  ],
-  "homepage": "https://github.com/chiiya/comet",
-  "license": "MIT",
-  "main": "lib/index.js",
-  "oclif": {
-    "commands": "./lib/commands",
-    "bin": "comet",
-    "plugins": [
-      "@oclif/plugin-help"
-    ]
-  },
-  "repository": "chiiya/comet",
-  "scripts": {
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tslint -p . -t stylish",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "echo NO TESTS",
-    "version": "oclif-dev readme && git add README.md"
-  },
-  "types": "lib/index.d.ts"
+  "workspaces": [
+    "packages/*"
+  ]
 }

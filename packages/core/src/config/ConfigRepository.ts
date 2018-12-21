@@ -1,4 +1,4 @@
-import { CometConfig, ConfigValue } from '../types/Config';
+import { CometConfig, ConfigValue } from '@comet-cli/types';
 import ConfigResolver from './ConfigResolver';
 const dotProp = require('dot-prop');
 

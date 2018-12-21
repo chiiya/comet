@@ -1,5 +1,5 @@
 import { parseToml } from '../helpers/Helpers';
-import { CometConfig } from '../types/Config';
+import { CometConfig } from '@comet-cli/types';
 const cosmiconfig = require('cosmiconfig');
 const assign = require('assign-deep');
 
