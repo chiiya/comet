@@ -1,7 +1,6 @@
 import { flags } from '@oclif/command';
 import Logger from '../../helpers/Logger';
 import File from '../../helpers/File';
-import OpenApiParser from '@comet-cli/parser-openapi';
 import BaseCommand from '../../application/BaseCommand';
 
 export default class MakeTests extends BaseCommand {
