@@ -1,11 +1,18 @@
-# `core`
+## `@comet-cli/core`
 
-> TODO: description
+This package contains the comet cli application
 
-## Usage
+### Usage
 
-```
-const core = require('core');
+```bash
+npm install @comet-cli/core
 
-// TODO: DEMONSTRATE API
+# Version
+comet --version
+
+# Help
+comet --help
+
+# Create tests:
+comet make:tests api.yaml
 ```

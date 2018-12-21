@@ -1,11 +1,18 @@
-# `types`
+## `@comet-cli/types`
 
-> TODO: description
+This package contains all common type definitions and interfaces used across other comet packages.
 
-## Usage
+If you wish to develop your own comet packages, make sure to require this package and implement
+the necessary interfaces.
 
-```
-const types = require('types');
+### Usage
 
-// TODO: DEMONSTRATE API
+```typescript
+import { Parser, OpenApiSpec } from '@comet-cli/types';
+
+export default class MyFancyParser implements Parser {
+  async execute(path: string): Promise<OpenApiSpec> {
+      // return something
+  }
+}
 ```

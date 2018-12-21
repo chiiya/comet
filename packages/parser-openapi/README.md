@@ -1,11 +1,14 @@
-# `parser-openapi`
+## `@comet-cli/parser-openapi`
 
-> TODO: description
+This package contains the implementation of an OpenAPI v3 parser.
 
-## Usage
+### Usage
 
-```
-const parserOpenapi = require('parser-openapi');
+```typescript
+import OpenApiParser from '@comet-cli/parser-openapi';
 
-// TODO: DEMONSTRATE API
+async function main() {
+  const parser = new OpenApiParser();
+  const spec = await parser.execute('api.yaml');
+}
 ```
