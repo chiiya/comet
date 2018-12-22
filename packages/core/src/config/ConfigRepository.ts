@@ -28,7 +28,14 @@ export default class ConfigRepository {
    * @return {ConfigValue}
    */
   get(key: string): ConfigValue | undefined {
-    return dotProp.get(this.config, key);
+    let result = dotProp.get(this.config, key);
+    // If not found (undefined), try to fetch a default value
+    if (result == null) {
+      const selectors = key.split('.');
+      result = dotProp.get(this.config, `default.${selectors[selectors.length - 1]}`);
+    }
+
+    return result;
   }
 
   /**

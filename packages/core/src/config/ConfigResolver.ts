@@ -2,6 +2,7 @@ import { parseToml } from '../helpers/Helpers';
 import { CometConfig } from '@comet-cli/types';
 const cosmiconfig = require('cosmiconfig');
 const assign = require('assign-deep');
+const defaultConfig = require('./default');
 
 export default class ConfigResolver {
   public static execute(): CometConfig {
@@ -18,8 +19,6 @@ export default class ConfigResolver {
       },
     });
     const config = explorer.searchSync();
-    // Load default configuration
-    const defaultConfig = require('./default');
 
     // Merge both
     if (config && config.config) {
