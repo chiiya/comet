@@ -34,7 +34,7 @@ export default abstract class BaseCommand extends Command {
    * Resolve parser, decorator and factory instances for a command.
    */
   protected async resolve() {
-    if (this.signature === undefined) {
+    if (this.signature == null) {
       return;
     }
     const resolver = new Resolver(this.configRepository, this.signature);
