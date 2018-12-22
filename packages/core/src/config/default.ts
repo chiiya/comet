@@ -1,8 +1,10 @@
 module.exports = {
+  default: {
+    parser: '@comet-cli/parser-openapi',
+  },
   commands: {
     make: {
       tests: {
-        parser: '@comet-cli/parser-openapi',
         decorators: [
           '@comet-cli/decorator-tests-default',
         ],
