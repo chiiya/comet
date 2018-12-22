@@ -24,7 +24,7 @@ export default class Resolver {
   public async resolveParser(): Promise<Parser> {
     // Fetch configured parser from config
     const configuredParser = this.config.get(`commands.${this.signature}.parser`);
-    if (configuredParser === undefined) {
+    if (configuredParser == null) {
       throw new Error(`
       No parser configuration could be found for ${this.signature}.
       Please check your configuration file, and make sure that a value has been
