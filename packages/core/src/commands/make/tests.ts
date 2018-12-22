@@ -31,7 +31,13 @@ export default class MakeTests extends BaseCommand {
   async run() {
     // Parse passed arguments
     const { args } = this.parse(MakeTests);
-    const file = new File(args.input);
+    let file;
+    try {
+      file = new File(args.input);
+    } catch (error) {
+      error.message = `${args.input} is not a valid file.\n${error.message}`;
+      throw error;
+    }
 
     const specification = await this.parseSpec(file);
 

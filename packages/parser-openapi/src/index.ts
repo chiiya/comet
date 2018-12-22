@@ -4,6 +4,11 @@ const parser = require('swagger-parser');
 
 export default class OpenApiParser implements Parser {
   async execute(path: string): Promise<OpenApiSpec> {
-    return await parser.bundle(path);
+    try {
+      return await parser.bundle(path);
+    } catch (error) {
+      error.message = `${path} is not a valid OpenAPI Schema. \n${error.message}`;
+      throw error;
+    }
   }
 }
