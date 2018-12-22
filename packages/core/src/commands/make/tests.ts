@@ -1,5 +1,4 @@
 import { flags } from '@oclif/command';
-import Logger from '../../helpers/Logger';
 import File from '../../helpers/File';
 import BaseCommand from '../../application/BaseCommand';
 
@@ -30,24 +29,12 @@ export default class MakeTests extends BaseCommand {
   protected signature = 'make:tests';
 
   async run() {
-    const logger = new Logger();
     // Parse passed arguments
     const { args } = this.parse(MakeTests);
     const file = new File(args.input);
 
-    // Parse input file
-    logger.spin('Parsing input file');
-    let spec;
+    const specification = await this.parseSpec(file);
 
-    try {
-      await this.resolve();
-      spec = await this.parser.execute(file.path());
-    } catch (error) {
-      logger.fail(error.message);
-      process.exit(-1);
-    }
-
-    logger.succeed('Input file parsed');
-    console.log(spec.info.version);
+    console.log(specification.info.version);
   }
 }
