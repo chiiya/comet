@@ -26,20 +26,11 @@ export default class MakeTests extends BaseCommand {
     help: flags.help({ char: 'h' }),
   };
 
+  /** Command signature */
+  protected signature = 'make:tests';
+
   async run() {
     const logger = new Logger();
-    const parserPackage = this.configRepository.get('commands.make.tests.parser');
-    let parserClass;
-    try {
-      parserClass = await import(String(parserPackage));
-      parserClass = parserClass.default;
-    } catch (error) {
-      logger.fail(
-        `Could not find package ${parserPackage}. Run npm install ${parserPackage} to install.`,
-      );
-    }
-    const parser = new parserClass();
-
     // Parse passed arguments
     const { args } = this.parse(MakeTests);
     const file = new File(args.input);
@@ -47,12 +38,15 @@ export default class MakeTests extends BaseCommand {
     // Parse input file
     logger.spin('Parsing input file');
     let spec;
+
     try {
-      spec = await parser.execute(file.path());
+      await this.resolve();
+      spec = await this.parser.execute(file.path());
     } catch (error) {
       logger.fail(error.message);
       process.exit(-1);
     }
+
     logger.succeed('Input file parsed');
     console.log(spec.info.version);
   }
