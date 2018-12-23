@@ -1,0 +1,39 @@
+{
+    "properties": {
+        "country": {
+            "type": "string"
+        },
+        "data": {
+            "type": "array",
+            "items": {
+                "description": "A content language entry.",
+                "properties": {
+                    "lang": {
+                        "type": "string"
+                    },
+                    "contentVersion": {
+                        "type": "string"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "description": "A content key-value pair.",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-04/schema#"
+}

@@ -2,13 +2,13 @@ import { flags } from '@oclif/command';
 import File from '../../helpers/File';
 import BaseCommand from '../../application/BaseCommand';
 
-export default class MakeTests extends BaseCommand {
+export default class MakeSchemas extends BaseCommand {
   /** Description of the command, displayed when using help flag */
-  static description = 'Parse an API specification, and automatically generate integration tests';
+  static description = 'Parse an API specification, and automatically generate JSON schemas';
 
   /** Example usages, displayed when using help flag */
   static examples = [
-    '$ comet make:tests api.json',
+    '$ comet make:schemas api.json',
   ];
 
   /** Positional arguments passed to the command */
@@ -26,11 +26,11 @@ export default class MakeTests extends BaseCommand {
   };
 
   /** Command signature */
-  protected signature = 'make:tests';
+  protected signature = 'make:schemas';
 
   async run() {
     // Parse passed arguments
-    const { args } = this.parse(MakeTests);
+    const { args } = this.parse(MakeSchemas);
     let file;
     try {
       file = new File(args.input);
@@ -41,6 +41,8 @@ export default class MakeTests extends BaseCommand {
 
     const specification = await this.parseSpec(file);
 
-    console.log(specification.paths);
+    for (let i = 0; i < this.factories.length; i = i + 1) {
+      await this.factories[i].execute(specification);
+    }
   }
 }

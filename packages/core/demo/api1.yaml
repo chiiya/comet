@@ -237,6 +237,7 @@ components:
       properties:
         code:
           type: string
+          nullable: true
           example: en
         contentVersion:
           type: string

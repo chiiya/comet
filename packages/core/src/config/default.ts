@@ -12,6 +12,14 @@ module.exports = {
           '@comet-cli/factory-tests-laravel',
         ],
       },
+      schemas: {
+        decorators: [
+          '@comet-cli/decorator-tests-default',
+        ],
+        factories: [
+          '@comet-cli/factory-json-schema',
+        ],
+      },
     },
   },
 };

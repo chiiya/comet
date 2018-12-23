@@ -2,7 +2,7 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import {OpenApiSpec, Parser} from '@comet-cli/types';
+import { Factory, OpenApiSpec, Parser } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 
@@ -12,6 +12,9 @@ export default abstract class BaseCommand extends Command {
 
   /** Resolved parser instance */
   protected parser: Parser;
+
+  /** Resolved factory instances */
+  protected factories: Factory[];
 
   /** Logger instance */
   protected logger: Logger;
@@ -39,6 +42,7 @@ export default abstract class BaseCommand extends Command {
     }
     const resolver = new Resolver(this.configRepository, this.signature);
     this.parser = await resolver.resolveParser();
+    this.factories = await resolver.resolveFactories();
   }
 
   /**

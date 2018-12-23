@@ -73,8 +73,6 @@ export interface OpenAPIRef {
   $ref: string;
 }
 
-export type Referenced<T> = OpenAPIRef | T;
-
 export interface OpenAPIPath {
   summary?: string;
   description?: string;
@@ -87,7 +85,7 @@ export interface OpenAPIPath {
   patch?: OpenAPIOperation;
   trace?: OpenAPIOperation;
   servers?: OpenAPIServer[];
-  parameters?: Referenced<OpenAPIParameter>[];
+  parameters?: OpenAPIParameter[];
 }
 
 export interface OpenAPIOperation {
@@ -96,10 +94,10 @@ export interface OpenAPIOperation {
   description?: string;
   externalDocs?: OpenAPIExternalDocumentation;
   operationId?: string;
-  parameters?: Referenced<OpenAPIParameter>[];
-  requestBody?: Referenced<OpenAPIRequestBody>;
+  parameters?: OpenAPIParameter[];
+  requestBody?: OpenAPIRequestBody;
   responses: OpenAPIResponses;
-  callbacks?: { [name: string]: Referenced<OpenAPICallback> };
+  callbacks?: { [name: string]: OpenAPICallback };
   deprecated?: boolean;
   security?: OpenAPISecurityRequirement[];
   servers?: OpenAPIServer[];
@@ -115,9 +113,9 @@ export interface OpenAPIParameter {
   style?: OpenAPIParameterStyle;
   explode?: boolean;
   allowReserved?: boolean;
-  schema?: Referenced<OpenAPISchema>;
+  schema?: OpenAPISchema;
   example?: any;
-  examples?: { [media: string]: Referenced<OpenAPIExample> };
+  examples?: { [media: string]: OpenAPIExample };
   content?: { [media: string]: OpenAPIMediaType };
 }
 
@@ -173,15 +171,15 @@ export interface OpenAPIDiscriminator {
 }
 
 export interface OpenAPIMediaType {
-  schema?: Referenced<OpenAPISchema>;
+  schema?: OpenAPISchema;
   example?: any;
-  examples?: { [name: string]: Referenced<OpenAPIExample> };
+  examples?: { [name: string]: OpenAPIExample };
   encoding?: { [field: string]: OpenAPIEncoding };
 }
 
 export interface OpenAPIEncoding {
   contentType: string;
-  headers?: { [name: string]: Referenced<OpenAPIHeader> };
+  headers?: { [name: string]: OpenAPIHeader };
   style: OpenAPIParameterStyle;
   explode: boolean;
   allowReserved: boolean;
@@ -200,7 +198,11 @@ export type OpenAPIParameterStyle =
 export interface OpenAPIRequestBody {
   description?: string;
   required?: boolean;
-  content: { [mime: string]: OpenAPIMediaType };
+  content: OpenAPIMediaTypes;
+}
+
+export interface OpenAPIMediaTypes {
+  [mime: string]: OpenAPIMediaType;
 }
 
 export interface OpenAPIResponses {
@@ -209,9 +211,9 @@ export interface OpenAPIResponses {
 
 export interface OpenAPIResponse {
   description?: string;
-  headers?: { [name: string]: Referenced<OpenAPIHeader> };
-  content?: { [mime: string]: OpenAPIMediaType };
-  links?: { [name: string]: Referenced<OpenAPILink> };
+  headers?: { [name: string]: OpenAPIHeader };
+  content?: OpenAPIMediaTypes;
+  links?: { [name: string]: OpenAPILink };
 }
 
 export interface OpenAPILink {
@@ -225,15 +227,15 @@ export interface OpenAPICallback {
 }
 
 export interface OpenAPIComponents {
-  schemas?: { [name: string]: Referenced<OpenAPISchema> };
-  responses?: { [name: string]: Referenced<OpenAPIResponse> };
-  parameters?: { [name: string]: Referenced<OpenAPIParameter> };
-  examples?: { [name: string]: Referenced<OpenAPIExample> };
-  requestBodies?: { [name: string]: Referenced<OpenAPIRequestBody> };
-  headers?: { [name: string]: Referenced<OpenAPIHeader> };
-  securitySchemes?: { [name: string]: Referenced<OpenAPISecurityScheme> };
-  links?: { [name: string]: Referenced<OpenAPILink> };
-  callbacks?: { [name: string]: Referenced<OpenAPICallback> };
+  schemas?: { [name: string]: OpenAPISchema };
+  responses?: { [name: string]: OpenAPIResponse };
+  parameters?: { [name: string]: OpenAPIParameter };
+  examples?: { [name: string]: OpenAPIExample };
+  requestBodies?: { [name: string]: OpenAPIRequestBody };
+  headers?: { [name: string]: OpenAPIHeader };
+  securitySchemes?: { [name: string]: OpenAPISecurityScheme };
+  links?: { [name: string]: OpenAPILink };
+  callbacks?: { [name: string]: OpenAPICallback };
 }
 
 export interface OpenAPISecurityRequirement {

@@ -1,5 +1,5 @@
 import ConfigRepository from '../config/ConfigRepository';
-import { Parser } from '@comet-cli/types';
+import {Factory, Parser} from '@comet-cli/types';
 
 export default class Resolver {
   /** Comet config repository */
@@ -7,6 +7,9 @@ export default class Resolver {
 
   /** Command signature with dot notation (make.tests) */
   protected signature: string;
+
+  /** Command signature */
+  protected command: string;
 
   /**
    * Resolver constructor.
@@ -16,6 +19,7 @@ export default class Resolver {
   constructor(config: ConfigRepository, signature: string) {
     this.config = config;
     this.signature = signature.replace(':', '.');
+    this.command = signature;
   }
 
   /**
@@ -25,10 +29,10 @@ export default class Resolver {
     // Fetch configured parser from config
     const configuredParser = this.config.get(`commands.${this.signature}.parser`);
     if (configuredParser == null) {
-      throw new Error(`
-      No parser configuration could be found for ${this.signature}.
+      throw new Error(`ConfigError:
+      No parser configuration could be found for \`${this.command}\`.
       Please check your configuration file, and make sure that a value has been
-      defined for ${this.signature}.parser
+      defined for \`${this.signature}.parser\`
       `);
     }
 
@@ -39,10 +43,51 @@ export default class Resolver {
       parserClass = parserClass.default;
     } catch (error) {
       error.message =
-        `Could not find module ${configuredParser}. Run npm install ${configuredParser} to install.`;
+        `Could not find module \`${configuredParser}\`. Run \`npm install ${configuredParser}\` to install`;
       throw error;
     }
 
     return new parserClass();
+  }
+
+  /**
+   * Resolve the configured factories for a command and return an instance of each.
+   */
+  public async resolveFactories(): Promise<Factory[]> {
+    // Fetch configured factories from config
+    const configuredFactories = this.config.get(`commands.${this.signature}.factories`);
+    if (configuredFactories == null) {
+      throw new Error(`ConfigError:
+      No resolvable factory configuration could be found for \`${this.command}\`.
+      Please check your configuration file, and make sure that a value has been
+      defined for \`${this.signature}.factories\`
+      `);
+    }
+
+    if (Array.isArray(configuredFactories) === false) {
+      throw new Error(`ConfigError:
+      The factory configuration for \`${this.command}\` is not a valid array. Please make
+      sure your configuration is correct
+      `);
+    }
+
+    // Try to import the configured factories
+    const factoryClasses: Factory[] = [];
+    if (typeof configuredFactories !== 'string') {
+      for (let i = 0; i < configuredFactories.length; i = i + 1) {
+        const factory = configuredFactories[i];
+        try {
+          let factoryClass = await import(factory);
+          factoryClass = factoryClass.default;
+          factoryClasses.push(new factoryClass());
+        } catch (error) {
+          error.message =
+            `Could not find module \`${factory}\`. Run \`npm install ${factory}\` to install`;
+          throw error;
+        }
+      }
+    }
+
+    return factoryClasses;
   }
 }

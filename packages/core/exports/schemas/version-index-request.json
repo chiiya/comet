@@ -1,0 +1,30 @@
+{
+    "properties": {
+        "version": {
+            "type": "string"
+        },
+        "languages": {
+            "type": "array",
+            "items": {
+                "description": "A version entry.",
+                "properties": {
+                    "code": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "contentVersion": {
+                        "type": "string"
+                    },
+                    "assetVersion": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-04/schema#"
+}
