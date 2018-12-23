@@ -9,3 +9,4 @@ export * from './models/open-api';
 
 // Core interfaces
 export { Parser } from './core/parser';
+export { Factory } from './core/factory';

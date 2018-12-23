@@ -1,5 +1,5 @@
 import { OpenApiSpec } from '..';
 
 export interface Parser {
-  execute(path: string): OpenApiSpec;
+  execute(path: string): Promise<OpenApiSpec>;
 }
