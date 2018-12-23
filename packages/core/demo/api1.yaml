@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: Comet Cards
+  contact:
+    name: Author Name
+    url: 'https://www.example.org'
+    email: auther@name.com
+  version: '1.0'
+paths:
+  /version:
+    get:
+      tags:
+        - version
+      description: 'Returns information on current versions, optional filtering by country'
+      parameters:
+        - name: country
+          in: query
+          description: >-
+            Country code in ISO 639x format (SE, US). If not provided, no
+            content or asset versions will be returned
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved information.
+          content:
+            application/json:
+              schema:
+                properties:
+                  version:
+                    type: string
+                    example: 1.0.0
+                  languages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Version'
+                type: object
+        '401':
+          description: Unauthorized; Missing or invalid X-Authorization header.
+        '404':
+          description: Language not found or no version for this language
+        '405':
+          description: Method not allowed; Wrong HTTP verb used to access this resource.
+        '500':
+          description: Internal server error.
+      security:
+        - api_key: []
+  '/assets/{country}':
+    get:
+      tags:
+        - assets
+      description: 'Returns download URL for current asset versions, by country'
+      parameters:
+        - name: country
+          in: path
+          description: 'Country code in ISO 639x format (SE, US).'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved information.
+          content:
+            application/json:
+              schema:
+                properties:
+                  assetVersion:
+                    type: string
+                    example: 2.3.1
+                  base_url:
+                    type: string
+                    example: 'http://example.org'
+                  android_path:
+                    type: string
+                    example: /AssetBundles_Android/ar_content_sw-en
+                  android_size:
+                    type: string
+                    example: '2.489'
+                  ios_path:
+                    type: string
+                    example: /AssetBundles_iOS/ar_content_sw-en
+                  ios_size:
+                    type: string
+                    example: '2.489'
+                  videos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asset'
+                type: object
+        '401':
+          description: Unauthorized; Missing or invalid X-Authorization header.
+        '404':
+          description: Country (or asset) not found.
+        '405':
+          description: Method not allowed; Wrong HTTP verb used to access this resource.
+        '500':
+          description: Internal server error.
+      security:
+        - api_key: []
+  /countries:
+    get:
+      tags:
+        - countries
+      description: Returns array of available countries and languages
+      responses:
+        '200':
+          description: Successfully retrieved information.
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Country'
+                type: object
+        '401':
+          description: Unauthorized; Missing or invalid X-Authorization header.
+        '405':
+          description: Method not allowed; Wrong HTTP verb used to access this resource.
+        '500':
+          description: Internal server error.
+      security:
+        - api_key: []
+  '/contents/{country}':
+    get:
+      tags:
+        - contents
+      description: Returns text content for specified country
+      parameters:
+        - name: country
+          in: path
+          description: 'Country code in ISO 639x format (SE, US).'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved information.
+          content:
+            application/json:
+              schema:
+                properties:
+                  country:
+                    type: string
+                    example: SE
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContentLanguage'
+                type: object
+        '401':
+          description: Unauthorized; Missing or invalid X-Authorization header.
+        '404':
+          description: Country (or content) not found.
+        '405':
+          description: Method not allowed; Wrong HTTP verb used to access this resource.
+        '500':
+          description: Internal server error.
+      security:
+        - api_key: []
+servers:
+  - url: 'http://cards.example.org/api/v1'
+  - url: 'https://cards.example.org/api/v1'
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Authorization
+      in: header
+  schemas:
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Asset:
+      description: Additional asset with key-value pair
+      properties:
+        key:
+          type: string
+          example: videoHeartChambers
+        file_name:
+          type: string
+          example: atrialfibrillation.mp4
+        size:
+          type: string
+          example: '8.713'
+      type: object
+    Country:
+      description: Country specified by name and country-code
+      properties:
+        name:
+          type: string
+          example: Sweden
+        code:
+          type: string
+          example: SE
+        languages:
+          description: Languages that belong to this country
+          type: array
+          items:
+            $ref: '#/components/schemas/Language'
+      type: object
+    ContentField:
+      description: A content key-value pair.
+      properties:
+        key:
+          type: string
+          example: message_01
+        value:
+          type: string
+          example: New content is available. Please press Download to continue
+      type: object
+    ContentLanguage:
+      description: A content language entry.
+      properties:
+        lang:
+          type: string
+          example: en
+        contentVersion:
+          type: string
+          example: 3.4.1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContentField'
+      type: object
+    Version:
+      description: A version entry.
+      properties:
+        code:
+          type: string
+          example: en
+        contentVersion:
+          type: string
+          example: 3.4.1
+        assetVersion:
+          type: string
+          example: 2.3.1
+      type: object
+    Language:
+      description: Language specified by name and language-code
+      properties:
+        name:
+          type: string
+          example: English
+        code:
+          type: string
+          example: en
+      type: object

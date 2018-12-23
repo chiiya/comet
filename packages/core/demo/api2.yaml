@@ -47,9 +47,6 @@ info:
     name: API Support
     email: apiteam@swagger.io
     url: https://github.com/Rebilly/ReDoc
-  x-logo:
-    url: 'https://rebilly.github.io/ReDoc/petstore-logo.png'
-    altText: Petstore logo
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -63,14 +60,6 @@ tags:
     description: Access to Petstore orders
   - name: user
     description: Operations about user
-x-tagGroups:
-  - name: General
-    tags:
-      - pet
-      - store
-  - name: User Management
-    tags:
-      - user
 paths:
   /pet:
     parameters:
@@ -94,35 +83,6 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-      x-code-samples:
-        - lang: 'C#'
-          source: |
-            PetStore.v1.Pet pet = new PetStore.v1.Pet();
-            pet.setApiKey("your api key");
-            pet.petType = PetStore.v1.Pet.TYPE_DOG;
-            pet.name = "Rex";
-            // set other fields
-            PetStoreResponse response = pet.create();
-            if (response.statusCode == HttpStatusCode.Created)
-            {
-              // Successfully created
-            }
-            else
-            {
-              // Something wrong -- check response for errors
-              Console.WriteLine(response.getRawResponse());
-            }
-        - lang: PHP
-          source: |
-            $form = new \PetStore\Entities\Pet();
-            $form->setPetType("Dog");
-            $form->setName("Rex");
-            // set other fields
-            try {
-                $pet = $client->pets()->create($form);
-            } catch (UnprocessableEntityException $e) {
-                var_dump($e->getErrors());
-            }
       requestBody:
         $ref: '#/components/requestBodies/Pet'
     put:
@@ -142,19 +102,6 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-      x-code-samples:
-        - lang: PHP
-          source: |
-            $form = new \PetStore\Entities\Pet();
-            $form->setPetId(1);
-            $form->setPetType("Dog");
-            $form->setName("Rex");
-            // set other fields
-            try {
-                $pet = $client->pets()->update($form);
-            } catch (UnprocessableEntityException $e) {
-                var_dump($e->getErrors());
-            }
       requestBody:
         $ref: '#/components/requestBodies/Pet'
   '/pet/{petId}':
