@@ -64,4 +64,22 @@ export default abstract class BaseCommand extends Command {
     this.logger.succeed('Input file parsed');
     return spec;
   }
+
+  /**
+   * Run all configured factories for this command.
+   * @param specification
+   */
+  protected async runFactories(specification: OpenApiSpec) {
+    this.logger.spin('Creating JSON Schemas...');
+    try {
+      for (let i = 0; i < this.factories.length; i = i + 1) {
+        await this.factories[i].execute(specification);
+      }
+    } catch (error) {
+      this.logger.fail(error.message);
+      process.exit(-1);
+    }
+
+    this.logger.succeed('JSON Schemas created');
+  }
 }

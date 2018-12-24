@@ -38,6 +38,7 @@ export default class Transformer {
         transformed.properties[key] = this.transformSchema(transformed.properties[key]);
       });
     }
+    // Step 4: Remove unsupported properties
     const notSupported = [
       'nullable', 'discriminator', 'readOnly', 'writeOnly', 'xml',
       'externalDocs', 'example', 'deprecated',
@@ -49,6 +50,10 @@ export default class Transformer {
     return transformed;
   }
 
+  /**
+   * Transform type definition.
+   * @param schema
+   */
   protected static transformType(schema: Schema) {
     if (schema.type !== undefined && typeof schema.type === 'string' && schema.nullable === true) {
       schema.type = [schema.type, 'null'];

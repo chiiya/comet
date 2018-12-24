@@ -29,6 +29,7 @@ export default class MakeSchemas extends BaseCommand {
   protected signature = 'make:schemas';
 
   async run() {
+    this.logger.comet('Generating JSON schema files...');
     // Parse passed arguments
     const { args } = this.parse(MakeSchemas);
     let file;
@@ -40,9 +41,7 @@ export default class MakeSchemas extends BaseCommand {
     }
 
     const specification = await this.parseSpec(file);
-
-    for (let i = 0; i < this.factories.length; i = i + 1) {
-      await this.factories[i].execute(specification);
-    }
+    await this.runFactories(specification);
+    this.logger.comet('All generated files can be found under exports/schemas/');
   }
 }
