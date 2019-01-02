@@ -23,6 +23,9 @@ export default class MakeSchemas extends BaseCommand {
   /** Optional flags passed to the command */
   static flags = {
     help: flags.help({ char: 'h' }),
+    output: flags.string({
+      char: 'o',
+    }),
   };
 
   /** Command signature */
@@ -34,13 +37,17 @@ export default class MakeSchemas extends BaseCommand {
   async run() {
     this.logger.comet('Generating JSON schema files...');
     // Parse passed arguments
-    const { args } = this.parse(MakeSchemas);
+    const { args, flags } = this.parse(MakeSchemas);
     let file;
     try {
       file = new File(args.input);
     } catch (error) {
       error.message = `${args.input} is not a valid file.\n${error.message}`;
       throw error;
+    }
+
+    if (flags.output) {
+      this.configRepository.set(`commands.${this.configKey}.output`, flags.output);
     }
 
     const specification = await this.parseSpec(file);
