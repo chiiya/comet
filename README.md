@@ -36,7 +36,7 @@ The default configuration (in `.cometrc.toml`) looks like the following:
 parser = "@comet-cli/parser-open-api"
 
 [commands.make.schemas]
-decorators = "@comet-cli/decorator-json-schemas"
-factories = "@comet-cli/factory-json-schemas"
+decorators = ["@comet-cli/decorator-json-schemas"]
+factories = ["@comet-cli/factory-json-schemas"]
 output = "exports/schemas"
 ```
