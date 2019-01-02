@@ -20,3 +20,23 @@ $ git clone https://github.com/chiiya/comet
 $ cd comet
 $ make bootstrap
 ```
+
+### Configuration
+Comet can be configured in many ways:
+- `comet` key in your `package.json`
+- `.cometrc` in JSON or YAML format
+- `.cometrc.json`
+- `.cometrc.yml`
+- `.cometrc.toml`
+
+The default configuration (in `.cometrc.toml`) looks like the following:
+
+```toml
+[default]
+parser = "@comet-cli/parser-open-api"
+
+[commands.make.schemas]
+decorators = "@comet-cli/decorator-json-schemas"
+factories = "@comet-cli/factory-json-schemas"
+output = "exports/schemas"
+```
