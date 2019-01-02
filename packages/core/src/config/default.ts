@@ -19,6 +19,7 @@ module.exports = {
         factories: [
           '@comet-cli/factory-json-schemas',
         ],
+        output: 'exports/schemas',
       },
     },
   },

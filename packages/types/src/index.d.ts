@@ -1,5 +1,5 @@
 // Config types
-export { CometConfig, ConfigValue } from './config/config';
+export { CometConfig, ConfigValue, CommandConfig } from './config/config';
 
 // Helper types
 export { FileInformation } from './helpers/file';

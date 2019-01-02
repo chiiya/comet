@@ -28,6 +28,9 @@ export default class MakeSchemas extends BaseCommand {
   /** Command signature */
   protected signature = 'make:schemas';
 
+  /** Command config key */
+  protected configKey = 'make.schemas';
+
   async run() {
     this.logger.comet('Generating JSON schema files...');
     // Parse passed arguments
@@ -45,6 +48,5 @@ export default class MakeSchemas extends BaseCommand {
     await this.runDecorators(specification);
     await this.runFactories(specification);
     this.logger.succeed('JSON Schemas created');
-    this.logger.comet('All generated files can be found under exports/schemas/');
   }
 }

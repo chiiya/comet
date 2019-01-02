@@ -2,7 +2,7 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import { Decorator, Factory, OpenApiSpec, Parser } from '@comet-cli/types';
+import {CommandConfig, Decorator, Factory, OpenApiSpec, Parser} from '@comet-cli/types'
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 
@@ -24,6 +24,9 @@ export default abstract class BaseCommand extends Command {
 
   /** Command signature, e.g. `make:tests` */
   protected signature: string | undefined;
+
+  /** Command config key, e.g. `make.schemas` */
+  protected configKey: string | undefined;
 
   /**
    * BaseCommand constructor.
@@ -76,7 +79,10 @@ export default abstract class BaseCommand extends Command {
   protected async runFactories(specification: OpenApiSpec) {
     try {
       for (let i = 0; i < this.factories.length; i = i + 1) {
-        await this.factories[i].execute(specification);
+        await this.factories[i].execute(
+          specification,
+          this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
+        );
       }
     } catch (error) {
       this.logger.fail(error.message);

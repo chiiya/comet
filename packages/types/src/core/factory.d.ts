@@ -1,5 +1,5 @@
-import { OpenApiSpec } from '..';
+import { CommandConfig, OpenApiSpec } from '..';
 
 export interface Factory {
-  execute(model: OpenApiSpec): any;
+  execute(model: OpenApiSpec, config: CommandConfig): any;
 }

@@ -2,10 +2,11 @@ interface Key {
   readonly [key: string]: Key | CommandConfig;
 }
 
-interface CommandConfig {
+export interface CommandConfig {
   readonly parser: string;
   readonly decorators: string[];
   readonly factories: string[];
+  readonly [key: string]: any;
 }
 
 export interface CometConfig {
