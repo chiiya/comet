@@ -1,11 +1,11 @@
-## `@comet-cli/parser-openapi`
+## `@comet-cli/parser-open-api`
 
 This package contains the implementation of an OpenAPI v3 parser.
 
 ### Usage
 
 ```typescript
-import OpenApiParser from '@comet-cli/parser-openapi';
+import OpenApiParser from '@comet-cli/parser-open-api';
 
 async function main() {
   const parser = new OpenApiParser();

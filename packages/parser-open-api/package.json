@@ -1,5 +1,5 @@
 {
-  "name": "@comet-cli/parser-openapi",
+  "name": "@comet-cli/parser-open-api",
   "version": "0.0.0",
   "description": "OpenAPI v3 parser for comet",
   "keywords": [
@@ -10,7 +10,7 @@
     "swagger"
   ],
   "author": "Elisha Witte <elishawitte@gmail.com>",
-  "homepage": "https://github.com/chiiya/comet/tree/master/packages/parser-openapi#readme",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/parser-open-api#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

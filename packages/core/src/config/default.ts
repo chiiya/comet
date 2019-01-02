@@ -1,6 +1,6 @@
 module.exports = {
   default: {
-    parser: '@comet-cli/parser-openapi',
+    parser: '@comet-cli/parser-open-api',
   },
   commands: {
     make: {
