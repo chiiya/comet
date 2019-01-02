@@ -1,5 +1,5 @@
 import ConfigRepository from '../config/ConfigRepository';
-import {Factory, Parser} from '@comet-cli/types';
+import { Decorator, Factory, Parser } from '@comet-cli/types';
 
 export default class Resolver {
   /** Comet config repository */
@@ -48,6 +48,47 @@ export default class Resolver {
     }
 
     return new parserClass();
+  }
+
+  /**
+   * Resolve the configured decorators for a command and return an instance of each.
+   */
+  public async resolveDecorators(): Promise<Decorator[]> {
+    // Fetch configured decorators from config
+    const configuredDecorators = this.config.get(`commands.${this.signature}.decorators`);
+    if (configuredDecorators == null) {
+      throw new Error(`ConfigError:
+      No resolvable decorator configuration could be found for \`${this.command}\`.
+      Please check your configuration file, and make sure that a value has been
+      defined for \`${this.signature}.decorators\`
+      `);
+    }
+
+    if (Array.isArray(configuredDecorators) === false) {
+      throw new Error(`ConfigError:
+      The decorator configuration for \`${this.command}\` is not a valid array. Please make
+      sure your configuration is correct
+      `);
+    }
+
+    // Try to import the configured decorators
+    const decoratorClasses: Decorator[] = [];
+    if (typeof configuredDecorators !== 'string') {
+      for (let i = 0; i < configuredDecorators.length; i = i + 1) {
+        const decorator = configuredDecorators[i];
+        try {
+          let decoratorClass = await import(decorator);
+          decoratorClass = decoratorClass.default;
+          decoratorClasses.push(new decoratorClass());
+        } catch (error) {
+          error.message =
+            `Could not find module \`${decorator}\`. Run \`npm install ${decorator}\` to install`;
+          throw error;
+        }
+      }
+    }
+
+    return decoratorClasses;
   }
 
   /**

@@ -41,7 +41,10 @@ export default class MakeSchemas extends BaseCommand {
     }
 
     const specification = await this.parseSpec(file);
+    this.logger.spin('Creating JSON Schemas...');
+    await this.runDecorators(specification);
     await this.runFactories(specification);
+    this.logger.succeed('JSON Schemas created');
     this.logger.comet('All generated files can be found under exports/schemas/');
   }
 }

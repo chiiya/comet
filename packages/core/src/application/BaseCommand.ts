@@ -2,7 +2,7 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import { Factory, OpenApiSpec, Parser } from '@comet-cli/types';
+import { Decorator, Factory, OpenApiSpec, Parser } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 
@@ -12,6 +12,9 @@ export default abstract class BaseCommand extends Command {
 
   /** Resolved parser instance */
   protected parser: Parser;
+
+  /** Resolved decorator instances */
+  protected decorators: Decorator[];
 
   /** Resolved factory instances */
   protected factories: Factory[];
@@ -42,6 +45,7 @@ export default abstract class BaseCommand extends Command {
     }
     const resolver = new Resolver(this.configRepository, this.signature);
     this.parser = await resolver.resolveParser();
+    this.decorators = await resolver.resolveDecorators();
     this.factories = await resolver.resolveFactories();
   }
 
@@ -70,7 +74,6 @@ export default abstract class BaseCommand extends Command {
    * @param specification
    */
   protected async runFactories(specification: OpenApiSpec) {
-    this.logger.spin('Creating JSON Schemas...');
     try {
       for (let i = 0; i < this.factories.length; i = i + 1) {
         await this.factories[i].execute(specification);
@@ -79,7 +82,20 @@ export default abstract class BaseCommand extends Command {
       this.logger.fail(error.message);
       process.exit(-1);
     }
+  }
 
-    this.logger.succeed('JSON Schemas created');
+  /**
+   * Run all configured decorators for this command.
+   * @param specification
+   */
+  protected async runDecorators(specification: OpenApiSpec) {
+    try {
+      for (let i = 0; i < this.decorators.length; i = i + 1) {
+        await this.decorators[i].execute(specification);
+      }
+    } catch (error) {
+      this.logger.fail(error.message);
+      process.exit(-1);
+    }
   }
 }

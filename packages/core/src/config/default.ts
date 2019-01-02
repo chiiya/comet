@@ -14,10 +14,10 @@ module.exports = {
       },
       schemas: {
         decorators: [
-          '@comet-cli/decorator-tests-default',
+          '@comet-cli/decorator-json-schemas',
         ],
         factories: [
-          '@comet-cli/factory-json-schema',
+          '@comet-cli/factory-json-schemas',
         ],
       },
     },
