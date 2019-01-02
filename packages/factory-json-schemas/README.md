@@ -6,7 +6,7 @@ comet API meta-model.
 ### Usage
 
 ```typescript
-import JsonSchemaFactory from '@comet-cli/factory-json-schema';
+import JsonSchemaFactory from factory-json-schemas;
 
 async function main() {
   const factory = new JsonSchemaFactory();

@@ -1,11 +1,12 @@
-import { Schema } from '../types/schema';
+import { OpenAPISchema } from '@comet-cli/types';
+const assign = require('assign-deep');
 
 export default class Transformer {
   /**
    * Execute the transformer.
    * @param schema
    */
-  static execute(schema: Schema): Schema {
+  static execute(schema: OpenAPISchema): OpenAPISchema {
     const transformed = this.transformSchema(schema);
     transformed['$schema'] = 'http://json-schema.org/draft-04/schema#';
 
@@ -17,8 +18,8 @@ export default class Transformer {
    * @see https://github.com/OAI/OpenAPI-Specification/blob/OpenAPI.next/versions/3.0.0.md#schemaObject
    * @param schema
    */
-  static transformSchema(schema: Schema): Schema {
-    let transformed = schema;
+  static transformSchema(schema: OpenAPISchema): OpenAPISchema {
+    let transformed = assign({}, schema);
     // Step 1: Transform type
     transformed = this.transformType(transformed);
     // Step 2: Transform nested schema definitions
@@ -54,8 +55,9 @@ export default class Transformer {
    * Transform type definition.
    * @param schema
    */
-  protected static transformType(schema: Schema) {
+  protected static transformType(schema: OpenAPISchema) {
     if (schema.type !== undefined && typeof schema.type === 'string' && schema.nullable === true) {
+      // @ts-ignore
       schema.type = [schema.type, 'null'];
 
       if (Array.isArray(schema.enum)) {

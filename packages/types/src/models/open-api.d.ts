@@ -43,6 +43,7 @@ export interface OpenApiSpec {
   security?: OpenAPISecurityRequirement[];
   tags?: OpenAPITag[];
   externalDocs?: OpenAPIExternalDocumentation;
+  decorated: object;
 }
 
 export interface OpenAPIInfo {
