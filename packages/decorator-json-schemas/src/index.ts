@@ -1,19 +1,19 @@
 import {
-  OpenAPISchema,
   OpenAPIMediaTypes,
   OpenAPIOperation,
   OpenApiSpec,
   Decorator,
 } from '@comet-cli/types';
 import Transformer from './transformer';
+import { JsonSchema, OpenApiSpecJsonDecorated } from '../types/OpenApiSpec';
 
 export default class JsonSchemaDecorator implements Decorator {
   /**
    * Execute the json schema decorator.
    * @param model
    */
-  public execute(model: OpenApiSpec): void {
-    let schemas = [];
+  public execute(model: OpenApiSpec): OpenApiSpecJsonDecorated {
+    let schemas: JsonSchema[] = [];
     Object.keys(model.paths).forEach((path) => {
       const methods = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
       methods.forEach((method) => {
@@ -23,7 +23,8 @@ export default class JsonSchemaDecorator implements Decorator {
       });
     });
 
-    model.decorated['jsonSchemas'] = schemas;
+    model.decorated.jsonSchemas = schemas;
+    return model;
   }
 
   /**
@@ -32,8 +33,12 @@ export default class JsonSchemaDecorator implements Decorator {
    * @param method
    * @param operation
    */
-  protected generateSchemas(path: string, method: string, operation: OpenAPIOperation): OpenAPISchema[] {
-    let schemas: OpenAPISchema[] = [];
+  protected generateSchemas(
+    path: string,
+    method: string,
+    operation: OpenAPIOperation,
+  ): JsonSchema[] {
+    let schemas: JsonSchema[] = [];
     // Check whether a request body has been defined
     if (operation.requestBody) {
       const request = operation.requestBody;
@@ -63,18 +68,18 @@ export default class JsonSchemaDecorator implements Decorator {
    */
   protected createFromMediaTypes(
     types: OpenAPIMediaTypes,
-    schemas: OpenAPISchema[],
+    schemas: JsonSchema[],
     path: string,
     method: string,
     operation: 'request' | 'response',
-  ) {
+  ): JsonSchema[] {
     Object.keys(types).forEach((type: string) => {
       if (type.includes('json')) {
         if (types[type].schema) {
           const schema = Transformer.execute(types[type].schema);
-          schema['_path'] = path;
-          schema['_method'] = method;
-          schema['_operation'] = operation;
+          schema.$path = path;
+          schema.$method = method;
+          schema.$operation = operation;
           schemas.push(schema);
         }
       }

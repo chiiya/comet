@@ -1,8 +1,11 @@
 import {
   CommandConfig,
-  Factory, OpenAPISchema,
-  OpenApiSpec,
+  Factory,
 } from '@comet-cli/types';
+import {
+  JsonSchema,
+  OpenApiSpecJsonDecorated,
+} from '@comet-cli/decorator-json-schemas/types/OpenApiSpec';
 import { ensureDirSync, emptyDirSync, writeJSONSync } from 'fs-extra';
 const path = require('path');
 
@@ -12,13 +15,13 @@ export default class JsonSchemaFactory implements Factory {
    * @param model
    * @param config
    */
-  async execute(model: OpenApiSpec, config: CommandConfig) {
+  async execute(model: OpenApiSpecJsonDecorated , config: CommandConfig) {
     const outputDir = config.output;
     ensureDirSync(path.join(outputDir, 'requests'));
     emptyDirSync(path.join(outputDir, 'requests'));
     ensureDirSync(path.join(outputDir, 'responses'));
     emptyDirSync(path.join(outputDir, 'responses'));
-    const schemas: OpenAPISchema[] = model.decorated['jsonSchemas'];
+    const schemas: JsonSchema[] = model.decorated.jsonSchemas;
     this.exportSchemas(schemas, outputDir);
   }
 
@@ -27,12 +30,13 @@ export default class JsonSchemaFactory implements Factory {
    * @param schemas
    * @param outputDir
    */
-  protected exportSchemas(schemas: OpenAPISchema[], outputDir: string) {
+  protected exportSchemas(schemas: JsonSchema[], outputDir: string) {
     schemas.map((schema) => {
-      const filename = JsonSchemaFactory.getFilePath(schema['_path'], schema['_method'], schema['_operation']);
-      delete schema['_path'];
-      delete schema['_method'];
-      delete schema['_operation'];
+      const filename = JsonSchemaFactory.getFilePath(schema.$path, schema.$method, schema.$operation);
+      // Remove invalid keys.
+      delete schema.$path;
+      delete schema.$method;
+      delete schema.$operation;
       writeJSONSync(path.join(outputDir, filename), schema, { spaces: 4 });
     });
   }
