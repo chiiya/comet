@@ -5,7 +5,7 @@ import {
   Decorator,
 } from '@comet-cli/types';
 import Transformer from './transformer';
-import { JsonSchema, OpenApiSpecJsonDecorated } from '../types/OpenApiSpec';
+import { Action, OpenApiSpecJsonDecorated } from '../types/json-schema';
 
 export default class JsonSchemaDecorator implements Decorator {
   /**
@@ -13,17 +13,17 @@ export default class JsonSchemaDecorator implements Decorator {
    * @param model
    */
   public execute(model: OpenApiSpec): OpenApiSpecJsonDecorated {
-    let schemas: JsonSchema[] = [];
+    let actions: Action[] = [];
     Object.keys(model.paths).forEach((path) => {
       const methods = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
       methods.forEach((method) => {
         if (model.paths[path][method]) {
-          schemas = schemas.concat(this.generateSchemas(path, method, model.paths[path][method]));
+          actions = actions.concat(...this.generateSchemas(path, method, model.paths[path][method]));
         }
       });
     });
 
-    model.decorated.jsonSchemas = schemas;
+    model.decorated.jsonSchemas = actions;
     return model;
   }
 
@@ -37,13 +37,13 @@ export default class JsonSchemaDecorator implements Decorator {
     path: string,
     method: string,
     operation: OpenAPIOperation,
-  ): JsonSchema[] {
-    let schemas: JsonSchema[] = [];
+  ): Action[] {
+    let actions: Action[] = [];
     // Check whether a request body has been defined
     if (operation.requestBody) {
-      const request = operation.requestBody;
+      const content = operation.requestBody.content;
       // Iterate over media type contents, build schemas for json contents
-      schemas = this.createFromMediaTypes(request.content, schemas, path, method, 'request');
+      actions = actions.concat(...this.createFromMediaTypes(content, path, method, 'request'));
     }
     // Build schemas from successful responses (2xx) codes
     Object.keys(operation.responses).forEach((code: string) => {
@@ -51,39 +51,41 @@ export default class JsonSchemaDecorator implements Decorator {
         return;
       }
       if (operation.responses[code].content) {
-        schemas = this.createFromMediaTypes(operation.responses[code].content, schemas, path, method, 'response');
+        const content = operation.responses[code].content;
+        actions = actions.concat(...this.createFromMediaTypes(content, path, method, 'response'));
       }
     });
 
-    return schemas;
+    return actions;
   }
 
   /**
    * Create transformed JSON Schema definitions from media types map.
    * @param types
-   * @param schemas
    * @param path
    * @param method
    * @param operation
    */
   protected createFromMediaTypes(
     types: OpenAPIMediaTypes,
-    schemas: JsonSchema[],
     path: string,
     method: string,
     operation: 'request' | 'response',
-  ): JsonSchema[] {
+  ): Action[] {
+    const actions: Action[] = [];
     Object.keys(types).forEach((type: string) => {
       if (type.includes('json')) {
         if (types[type].schema) {
           const schema = Transformer.execute(types[type].schema);
-          schema.$path = path;
-          schema.$method = method;
-          schema.$operation = operation;
-          schemas.push(schema);
+          actions.push({
+            schema,
+            $path: path,
+            $method: method,
+            $operation: operation,
+          });
         }
       }
     });
-    return schemas;
+    return actions;
   }
 }

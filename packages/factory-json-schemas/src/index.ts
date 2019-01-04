@@ -3,10 +3,10 @@ import {
   Factory,
 } from '@comet-cli/types';
 import {
-  JsonSchema,
+  Action,
   OpenApiSpecJsonDecorated,
-} from '@comet-cli/decorator-json-schemas/types/OpenApiSpec';
-import { ensureDirSync, emptyDirSync, writeJSONSync } from 'fs-extra';
+} from '@comet-cli/decorator-json-schemas/types/json-schema';
+import { ensureDir, emptyDir, writeJSONSync, rmdir } from 'fs-extra';
 const path = require('path');
 
 export default class JsonSchemaFactory implements Factory {
@@ -17,28 +17,40 @@ export default class JsonSchemaFactory implements Factory {
    */
   async execute(model: OpenApiSpecJsonDecorated , config: CommandConfig) {
     const outputDir = config.output;
-    ensureDirSync(path.join(outputDir, 'requests'));
-    emptyDirSync(path.join(outputDir, 'requests'));
-    ensureDirSync(path.join(outputDir, 'responses'));
-    emptyDirSync(path.join(outputDir, 'responses'));
-    const schemas: JsonSchema[] = model.decorated.jsonSchemas;
-    this.exportSchemas(schemas, outputDir);
+    await ensureDir(path.join(outputDir, 'requests'));
+    await emptyDir(path.join(outputDir, 'requests'));
+    await ensureDir(path.join(outputDir, 'responses'));
+    await emptyDir(path.join(outputDir, 'responses'));
+    const actions: Action[] = model.decorated.jsonSchemas;
+    await this.exportSchemas(actions, outputDir);
   }
 
   /**
    * Export all generated JSON Schemas.
-   * @param schemas
+   * @param actions
    * @param outputDir
    */
-  protected exportSchemas(schemas: JsonSchema[], outputDir: string) {
-    schemas.map((schema) => {
-      const filename = JsonSchemaFactory.getFilePath(schema.$path, schema.$method, schema.$operation);
-      // Remove invalid keys.
-      delete schema.$path;
-      delete schema.$method;
-      delete schema.$operation;
-      writeJSONSync(path.join(outputDir, filename), schema, { spaces: 4 });
+  protected async exportSchemas(actions: Action[], outputDir: string) {
+    let hasRequests = false;
+    let hasResponses = false;
+    actions.map((action: Action) => {
+      const filename = JsonSchemaFactory.getFilePath(action.$path, action.$method, action.$operation);
+      writeJSONSync(path.join(outputDir, filename), action.schema, { spaces: 4 });
+      if (action.$operation === 'request') {
+        hasRequests = true;
+      }
+      if (action.$operation === 'response') {
+        hasResponses = true;
+      }
     });
+
+    // Delete empty directories
+    if (hasRequests === false) {
+      await rmdir(path.join(outputDir, 'requests'));
+    }
+    if (hasResponses === false) {
+      await rmdir(path.join(outputDir, 'responses'));
+    }
   }
 
   /**
