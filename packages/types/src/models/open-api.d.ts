@@ -70,9 +70,6 @@ export interface OpenAPIServerVariable {
 export interface OpenAPIPaths {
   [path: string]: OpenAPIPath;
 }
-export interface OpenAPIRef {
-  $ref: string;
-}
 
 export interface OpenAPIPath {
   summary?: string;
