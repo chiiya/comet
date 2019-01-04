@@ -1,16 +1,25 @@
 import { Omit, OpenAPISchema, OpenApiSpec } from '@comet-cli/types';
 
 interface Decorated {
-  jsonSchemas: JsonSchema[];
+  jsonSchemas: Action[];
   [key: string] : any;
 }
 
-interface JsonSchema extends Omit<OpenAPISchema,
+export interface Action {
+  $path: string;
+  $method: string;
+  $operation: 'request' | 'response';
+  schema: JsonSchema;
+}
+
+export interface JsonSchema extends Omit<OpenAPISchema,
   | 'type'
   | 'oneOf'
   | 'anyOf'
   | 'allOf'
   | 'not'
+  | 'items'
+  | 'additionalProperties'
   | 'properties'
   | 'nullable'
   | 'discriminator'
@@ -25,10 +34,9 @@ interface JsonSchema extends Omit<OpenAPISchema,
   anyOf?: JsonSchema[];
   allOf?: JsonSchema[];
   not?: JsonSchema;
+  items?: JsonSchema;
+  additionalProperties?: boolean | JsonSchema;
   properties?: { [name: string]: JsonSchema };
-  $path: string;
-  $method: string;
-  $operation: 'request' | 'response';
 }
 
 export interface OpenApiSpecJsonDecorated extends OpenApiSpec {
