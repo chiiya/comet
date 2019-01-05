@@ -2,7 +2,7 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import {CommandConfig, Decorator, Factory, OpenApiSpec, Parser} from '@comet-cli/types'
+import { CommandConfig, Decorator, Factory, OpenApiSpec, Parser } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 
@@ -53,6 +53,21 @@ export default abstract class BaseCommand extends Command {
   }
 
   /**
+   * Load and parse specified input file.
+   * @param args
+   */
+  protected async loadFile(args: { input: string; }): Promise<File> {
+    let file;
+    try {
+      file = new File(args.input);
+    } catch (error) {
+      this.logger.fail(`${args.input} is not a valid file.\n${error.message}`);
+      this.exit(-1);
+    }
+    return file;
+  }
+
+  /**
    * Parse an api specification from a given file.
    */
   protected async parseSpec(file: File): Promise<OpenApiSpec> {
@@ -86,7 +101,7 @@ export default abstract class BaseCommand extends Command {
       }
     } catch (error) {
       this.logger.fail(error.message);
-      process.exit(-1);
+      this.exit(-1);
     }
   }
 
@@ -101,7 +116,7 @@ export default abstract class BaseCommand extends Command {
       }
     } catch (error) {
       this.logger.fail(error.message);
-      process.exit(-1);
+      this.exit(-1);
     }
   }
 }

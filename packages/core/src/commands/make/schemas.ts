@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
-import File from '../../helpers/File';
 import BaseCommand from '../../application/BaseCommand';
+import { OpenApiSpec } from '@comet-cli/types';
 
 export default class MakeSchemas extends BaseCommand {
   /** Description of the command, displayed when using help flag */
@@ -34,23 +34,28 @@ export default class MakeSchemas extends BaseCommand {
   /** Command config key */
   protected configKey = 'make.schemas';
 
+  /**
+   * Run the command.
+   * Generates valid JSON schemas.
+   */
   async run() {
     this.logger.comet('Generating JSON schema files...');
     // Parse passed arguments
     const { args, flags } = this.parse(MakeSchemas);
-    let file;
-    try {
-      file = new File(args.input);
-    } catch (error) {
-      error.message = `${args.input} is not a valid file.\n${error.message}`;
-      throw error;
-    }
+    const file = await this.loadFile(args);
 
     if (flags.output) {
       this.configRepository.set(`commands.${this.configKey}.output`, flags.output);
     }
 
     const specification = await this.parseSpec(file);
+    await this.execute(specification);
+  }
+
+  /**
+   * Execute the command itself (decorate and write output).
+   */
+  async execute(specification: OpenApiSpec) {
     this.logger.spin('Creating JSON Schemas...');
     await this.runDecorators(specification);
     await this.runFactories(specification);
