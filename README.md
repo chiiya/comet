@@ -18,7 +18,6 @@ yarn config set workspaces-experimental true
 ```bash
 $ git clone https://github.com/chiiya/comet
 $ cd comet
-$ yarn
 $ make bootstrap
 ```
 
@@ -42,7 +41,7 @@ factories = ["@comet-cli/factory-json-schemas"]
 output = "exports/schemas"
 
 [commands.make.tests]
-decorators = ["@comet-cli/decorator-json-schemas", "@comet-cli/decorator-tests"]
-factories = ["@comet-cli/factory-json-schemas", "@comet-cli/factory-tests-laravel"]
+decorators = ["@comet-cli/decorator-tests"]
+factories = ["@comet-cli/factory-tests-laravel"]
 output = "tests/Comet"
 ```
