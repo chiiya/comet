@@ -18,6 +18,7 @@ yarn config set workspaces-experimental true
 ```bash
 $ git clone https://github.com/chiiya/comet
 $ cd comet
+$ yarn
 $ make bootstrap
 ```
 
