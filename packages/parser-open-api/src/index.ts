@@ -9,7 +9,12 @@ export default class OpenApiParser implements Parser {
       schema.decorated = {};
       return schema;
     } catch (error) {
-      error.message = `${path} is not a valid OpenAPI Schema. \n${error.message}`;
+      // Provide a more helpful error message
+      if (error.code === 'ENOENT') {
+        error.message = `${path}: No such file or directory`;
+      } else {
+        error.message = `${path} is not a valid OpenAPI Schema. \n${error.message}`;
+      }
       throw error;
     }
   }
