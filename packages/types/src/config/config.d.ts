@@ -11,7 +11,7 @@ export interface CommandConfig {
 
 export interface CometConfig {
   readonly default : CommandConfig;
-  readonly commands: Key | CommandConfig;
+  readonly commands: Key;
 }
 
 export type ConfigValue = string | string[];
