@@ -9,7 +9,8 @@ schema definitions to valid JSON schemas.
 import JsonSchemaDecorator from '@comet-cli/decorator-json-schemas';
 
 async function main() {
+  const model = {} // Your API specification meta-model
   const decorator = new JsonSchemaDecorator();
-  const schema = decorator.execute(openApiSchema);
+  const schema = decorator.execute(model);
 }
 ```
