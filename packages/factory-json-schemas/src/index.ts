@@ -6,6 +6,7 @@ import {
   Action,
   OpenApiSpecJsonDecorated,
 } from '@comet-cli/decorator-json-schemas/types/json-schema';
+import { getOperationName } from '@comet-cli/utils';
 import { ensureDir, emptyDir, writeJSONSync, rmdir } from 'fs-extra';
 const path = require('path');
 
@@ -64,35 +65,8 @@ export default class JsonSchemaFactory implements Factory {
    * @param operation
    */
   protected static getFilePath(apiPath: string, method: string, operation: 'request' | 'response'): string {
-    const parameterEndsPath = /(\/?{.+}\/?$)/g;
-    let isSingleResourceOperation = false;
-    if (parameterEndsPath.test(path) === true) {
-      isSingleResourceOperation = true;
-    }
-    const base = apiPath
-      .replace(/^\//, '')
-      .replace(/(\/?{.+}(?:\/$)?)/g, '')
-      .replace('/', '-');
-    let suffix;
-    switch (method) {
-      case 'get':
-        if (isSingleResourceOperation === true) {
-          suffix = 'show';
-        } else {
-          suffix = 'index';
-        }
-        break;
-      case 'post':
-        suffix = 'store';
-        break;
-      case 'put':
-      case 'patch':
-        suffix = 'update';
-        break;
-      default:
-        suffix = method;
-    }
+    const operationName = getOperationName(apiPath, method);
 
-    return path.join(`${operation}s`, `${base}-${suffix}.json`);
+    return path.join(`${operation}s`, `${operationName}.json`);
   }
 }
