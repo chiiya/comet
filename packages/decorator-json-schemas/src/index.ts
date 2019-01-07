@@ -40,12 +40,15 @@ export default class JsonSchemaDecorator implements Decorator {
     method: string,
     operation: OpenAPIOperation,
   ): Action[] {
-    let actions: Action[] = [];
+    const actions: Action[] = [];
     // Check whether a request body has been defined
     if (operation.requestBody) {
       const content = operation.requestBody.content;
       // Iterate over media type contents, build schemas for json contents
-      actions = actions.concat(...this.createFromMediaTypes(content, path, method, 'request'));
+      const builtAction = this.createFromMediaTypes(content, path, method, 'request');
+      if (builtAction) {
+        actions.push(builtAction);
+      }
     }
     // Build schemas from successful responses (2xx) codes
     Object.keys(operation.responses).forEach((code: string) => {
@@ -54,7 +57,10 @@ export default class JsonSchemaDecorator implements Decorator {
       }
       if (operation.responses[code].content) {
         const content = operation.responses[code].content;
-        actions = actions.concat(...this.createFromMediaTypes(content, path, method, 'response'));
+        const builtAction = this.createFromMediaTypes(content, path, method, 'response');
+        if (builtAction) {
+          actions.push(builtAction);
+        }
       }
     });
 
@@ -73,21 +79,20 @@ export default class JsonSchemaDecorator implements Decorator {
     path: string,
     method: string,
     operation: 'request' | 'response',
-  ): Action[] {
-    const actions: Action[] = [];
+  ): Action | null {
     Object.keys(types).forEach((type: string) => {
       if (type.includes('json')) {
         if (types[type].schema) {
           const schema = Transformer.execute(types[type].schema);
-          actions.push({
+          return {
             schema,
             $path: path,
             $method: method,
             $operation: operation,
-          });
+          };
         }
       }
     });
-    return actions;
+    return null;
   }
 }
