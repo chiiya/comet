@@ -112,7 +112,10 @@ export default abstract class BaseCommand extends Command {
   protected async runDecorators(specification: OpenApiSpec) {
     try {
       for (let i = 0; i < this.decorators.length; i = i + 1) {
-        await this.decorators[i].execute(specification);
+        await this.decorators[i].execute(
+          specification,
+          this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
+        );
       }
     } catch (error) {
       this.logger.fail(error.message);

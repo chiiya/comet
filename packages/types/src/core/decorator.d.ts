@@ -1,5 +1,5 @@
-import { OpenApiSpec } from '..';
+import { CommandConfig, OpenApiSpec } from '..';
 
 export interface Decorator {
-  execute(model: OpenApiSpec): void;
+  execute(model: OpenApiSpec, config: CommandConfig): any;
 }
