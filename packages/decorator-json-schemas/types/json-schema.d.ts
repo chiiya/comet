@@ -1,4 +1,8 @@
-import { Omit, OpenAPISchema, OpenApiSpec } from '@comet-cli/types';
+import {
+  Omit,
+  OpenAPISchema,
+  OpenApiSpec,
+} from '@comet-cli/types';
 
 interface Decorated {
   jsonSchemas: Action[];
