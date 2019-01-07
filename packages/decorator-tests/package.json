@@ -1,0 +1,31 @@
+{
+  "name": "@comet-cli/decorator-tests",
+  "version": "0.0.0",
+  "description": "Decorator for infering parameter values and creating test models",
+  "keywords": [
+    "comet",
+    "tests",
+    "testing"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/decorator-tests#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  }
+}
