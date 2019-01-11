@@ -118,7 +118,8 @@ export default abstract class BaseCommand extends Command {
         );
       }
     } catch (error) {
-      this.logger.fail(error.message);
+      this.logger.fail(`${error.message}
+      Stack: ${error.stack}`);
       this.exit(-1);
     }
   }

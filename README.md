@@ -44,5 +44,5 @@ output = "exports/schemas"
 decorators = ["@comet-cli/decorator-tests"]
 factories = ["@comet-cli/factory-tests-laravel"]
 output = "tests/Comet"
-app_url = "http://localhost" # Local app url used for sending requests to infer parameter values
+base_url = "http://localhost" # Local app url used for sending requests to infer parameter values
 ```

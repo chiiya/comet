@@ -1,10 +1,12 @@
+import { OpenAPIParameterLocation } from '@comet-cli/types';
+
 export interface TestSuite {
   name: string;
   url: string;
-  operations: Operation[];
+  testCases: TestCase[];
 }
 
-export interface Operation {
+export interface TestCase {
   name: string;
   path: string;
   method: Method;
@@ -24,5 +26,12 @@ export type Method =
 export interface Parameter {
   name: string;
   value: any;
-  location: 'query' | 'header';
+  location: OpenAPIParameterLocation;
+  required: boolean;
 }
+
+export type ParametersObject = {
+  required: Parameter[],
+  optional: Parameter[],
+  hasAllRequiredParameters: boolean,
+};

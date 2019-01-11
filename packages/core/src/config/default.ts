@@ -6,11 +6,13 @@ module.exports = {
     make: {
       tests: {
         decorators: [
-          '@comet-cli/decorator-tests-default',
+          '@comet-cli/decorator-json-schemas',
+          '@comet-cli/decorator-tests',
         ],
         factories: [
-          '@comet-cli/factory-tests-laravel',
+          '@comet-cli/factory-json-schemas',
         ],
+        output: 'exports/tests',
       },
       schemas: {
         decorators: [

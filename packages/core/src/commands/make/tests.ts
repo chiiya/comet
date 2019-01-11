@@ -1,6 +1,7 @@
 import { flags } from '@oclif/command';
-import File from '../../helpers/File';
 import BaseCommand from '../../application/BaseCommand';
+import { OpenApiSpec } from '@comet-cli/types';
+import spec = Mocha.reporters.spec;
 
 export default class MakeTests extends BaseCommand {
   /** Description of the command, displayed when using help flag */
@@ -23,24 +24,43 @@ export default class MakeTests extends BaseCommand {
   /** Optional flags passed to the command */
   static flags = {
     help: flags.help({ char: 'h' }),
+    output: flags.string({
+      char: 'o',
+    }),
   };
 
   /** Command signature */
   protected signature = 'make:tests';
 
+  /** Command config key */
+  protected configKey = 'make.tests';
+
+  /**
+   * Run the command.
+   * Generates test cases.
+   */
   async run() {
+    this.logger.comet('Generating test cases...');
     // Parse passed arguments
-    const { args } = this.parse(MakeTests);
-    let file;
-    try {
-      file = new File(args.input);
-    } catch (error) {
-      error.message = `${args.input} is not a valid file.\n${error.message}`;
-      throw error;
+    const { args, flags } = this.parse(MakeTests);
+    const file = await this.loadFile(args);
+
+    if (flags.output) {
+      this.configRepository.set(`commands.${this.configKey}.output`, flags.output);
     }
 
     const specification = await this.parseSpec(file);
+    await this.execute(specification);
+  }
 
-    console.log(specification.paths);
+  /**
+   * Execute the command itself (decorate and write output).
+   */
+  async execute(specification: OpenApiSpec) {
+    this.logger.spin('Creating test case definitions...');
+    await this.runDecorators(specification);
+    console.log(specification.decorated.testSuite);
+    await this.runFactories(specification);
+    this.logger.succeed('Test cases created!');
   }
 }

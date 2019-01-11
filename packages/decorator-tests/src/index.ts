@@ -1,60 +1,105 @@
-import { CommandConfig, Decorator, OpenAPIOperation, OpenApiSpec } from '@comet-cli/types';
+import {
+  CommandConfig,
+  Decorator,
+  OpenAPIOperation,
+  OpenAPIParameter,
+  OpenApiSpec,
+} from '@comet-cli/types';
 import { OpenApiSpecJsonDecorated } from '@comet-cli/decorator-json-schemas/types/json-schema';
-import { Method, Operation, Parameter, TestSuite } from '../types/tests';
-import { getOperationName } from '@comet-cli/utils';
+import {
+  Method,
+  TestCase as ITestCase,
+  Parameter,
+  ParametersObject,
+  TestSuite as ITestSuite,
+} from '../types/tests';
+import TestSuite from './TestSuite';
+import ParameterResolver from './ParameterResolver';
+import Combination from './Combination';
+import TestCase from './TestCase';
 
 export default class TestsDecorator implements Decorator {
   execute(model: OpenApiSpec & OpenApiSpecJsonDecorated, config: CommandConfig): any {
-    const operations = [];
-    const testSuite = this.createTestSuite(model, config);
+    const testSuite = TestsDecorator.createTestSuite(model, config);
     Object.keys(model.paths).forEach((path) => {
       const methods: Method[] = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
       methods.forEach((method: Method) => {
         const operation = model.paths[path][method];
         if (operation) {
-          testSuite.operations.push(this.createTestOperation(path, method, operation));
+          if (operation.parameters) {
+            const parameters = this.getParameters(operation);
+            if (parameters.hasAllRequiredParameters === false) {
+              return;
+            }
+            const combinations = Combination.combinations(parameters.optional);
+            // Create one test case with just the required parameters...
+            testSuite.testCases.push(
+              this.createTestCase(path, method, operation, parameters.required),
+            );
+            combinations.forEach((combination: Parameter[]) => {
+              // ... and one for each combination of optional parameters (+ required)
+              testSuite.testCases.push(
+                this.createTestCase(path, method, operation, [...parameters.required, ...combination]),
+              );
+            });
+          } else {
+            testSuite.testCases.push(
+              this.createTestCase(path, method, operation, []),
+            );
+          }
         }
       });
     });
 
-    model.decorated.testOperations = operations;
+    model.decorated.testSuite = testSuite;
     return model;
   }
 
-  protected createTestSuite(model: OpenApiSpec, config: CommandConfig): TestSuite {
-    const testSuite = <TestSuite>{
-      name: 'ApiTest',
-      operations: [],
-    };
-    // Take base url from either config or the server configuration.
-    if (config.base_url) {
-      testSuite.url = config.base_url;
-    } else if (model.servers && model.servers.length > 0) {
-      testSuite.url = model.servers[0].url;
-    }
-    return testSuite;
+  protected static createTestSuite(model: OpenApiSpec, config: CommandConfig): ITestSuite {
+    return new TestSuite(
+      'CometApiTest',
+      TestSuite.parseUrl(config, model),
+    );
   }
 
-  protected createTestOperation(path: string, method: Method, operation: OpenAPIOperation): Operation {
-    const op = <Operation>{
-      path,
-      method,
+  protected getParameters(operation: OpenAPIOperation): ParametersObject {
+    // Get a list of all inferable parameters
+    const requiredParameters: Parameter[] = [];
+    const optionalParameters: Parameter[] = [];
+    let hasAllRequiredParameters = true;
+    operation.parameters.forEach((apiParameter: OpenAPIParameter) => {
+      let parameter: Parameter;
+      try {
+        parameter = ParameterResolver.execute(apiParameter);
+        if (parameter.required) {
+          requiredParameters.push(parameter);
+        } else {
+          optionalParameters.push(parameter);
+        }
+      } catch (error) {
+        console.warn(error.message);
+        if (apiParameter.required || apiParameter.in === 'path') {
+          hasAllRequiredParameters = false;
+        }
+      }
+    });
+
+    return {
+      hasAllRequiredParameters,
+      required: requiredParameters,
+      optional: optionalParameters,
     };
-    if (operation.operationId) {
-      op.name = `${operation.operationId}Test`;
-    } else {
-      const operationName = getOperationName(path, method)
-        .replace(
-          /-([a-z])/gi,
-          (match: string) => match[1].toUpperCase(),
-        );
-      op.name = `${operationName}Test`;
-    }
-    return op;
   }
 
-  protected createTestParameters(operation: OpenAPIOperation): Parameter[] {
-    const parameters: Parameter[] = [];
-    return parameters;
+  protected createTestCase(
+    path: string,
+    method: Method,
+    operation: OpenAPIOperation,
+    parameters: Parameter[],
+  ): ITestCase {
+    const testCase = new TestCase(method, path);
+    testCase.parameters = parameters;
+    testCase.parseName(operation);
+    return testCase;
   }
 }

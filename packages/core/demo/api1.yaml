@@ -15,6 +15,7 @@ paths:
       parameters:
         - name: country
           in: query
+          example: SE
           description: >-
             Country code in ISO 639x format (SE, US). If not provided, no
             content or asset versions will be returned
@@ -135,6 +136,11 @@ paths:
           required: true
           schema:
             type: string
+          content:
+            application/json:
+              schema:
+                type: string
+                example: SE
       responses:
         '200':
           description: Successfully retrieved information.

@@ -41,3 +41,33 @@ export const getOperationName = (apiPath: string, method: string): string  => {
 
   return `${base}-${suffix}`;
 };
+
+/**
+ * Transform any string into a slug:
+ * `Find Pets TestCase` -> `find-pets-operation`
+ * `filter[email]` -> `filter-email`
+ * @param text
+ */
+export const slugify = (text: string): string => {
+  return text.toLowerCase()
+    .replace(/[\s+_\[]/g, '-')      // Replace spaces, underscores and `[` with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+};
+
+/**
+ * Transform a string into camelCase:
+ * `find-pets-operation` -> `findPetsOperation`
+ * @param text
+ * @param separator
+ */
+export const camelize = (text: string, separator: string = '-'): string => {
+  const words: string[] = text.split(separator);
+  const result: string[] = [words[0]];
+  words.slice(1).forEach((word: string) => result.push(
+    word.charAt(0).toUpperCase() + word.slice(1),
+  ));
+  return result.join('');
+};
