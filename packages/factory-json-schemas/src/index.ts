@@ -12,11 +12,18 @@ const path = require('path');
 
 export default class JsonSchemaFactory implements Factory {
   /**
+   * Get the module name.
+   */
+  getName(): string {
+    return 'factory-json-schemas';
+  }
+
+  /**
    * Generate and export JSON Schemas from a comet meta-model.
    * @param model
    * @param config
    */
-  async execute(model: OpenApiSpecJsonDecorated , config: CommandConfig) {
+  async execute(model: OpenApiSpecJsonDecorated , config: CommandConfig): Promise<string[]> {
     const outputDir = config.output;
     await ensureDir(path.join(outputDir, 'requests'));
     await emptyDir(path.join(outputDir, 'requests'));
@@ -24,6 +31,7 @@ export default class JsonSchemaFactory implements Factory {
     await emptyDir(path.join(outputDir, 'responses'));
     const actions: Action[] = model.decorated.jsonSchemas;
     await this.exportSchemas(actions, outputDir);
+    return [];
   }
 
   /**

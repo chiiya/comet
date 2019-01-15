@@ -1,6 +1,7 @@
 import { OpenAPIParameter } from '@comet-cli/types';
 import { Parameter as IParameter } from '../types/tests';
 import Parameter from './Parameter';
+import UnresolvableParameterError from './UnresolvableParameterError';
 
 export default class ParameterResolver {
   /**
@@ -78,7 +79,10 @@ export default class ParameterResolver {
       }
     }
 
-    throw new Error(`Could not infer a value for parameter ${apiParameter.name}`);
+    throw new UnresolvableParameterError(
+      `Could not infer a value for parameter ${apiParameter.name}`,
+      apiParameter.name,
+    );
   }
 
   /**

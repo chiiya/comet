@@ -71,4 +71,12 @@ export default class Logger {
       this.spinner.fail(message);
     }
   }
+
+  /**
+   * Print a warning message to console.
+   * @param message
+   */
+  warn(message: string) {
+    this.console.warn(message);
+  }
 }

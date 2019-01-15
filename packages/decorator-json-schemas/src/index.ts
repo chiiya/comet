@@ -6,15 +6,22 @@ import {
   CommandConfig,
 } from '@comet-cli/types';
 import Transformer from './transformer';
-import { Action, OpenApiSpecJsonDecorated } from '../types/json-schema';
+import { Action } from '../types/json-schema';
 
 export default class JsonSchemaDecorator implements Decorator {
+  /**
+   * Get the module name.
+   */
+  getName(): string {
+    return 'decorator-json-schemas';
+  }
+
   /**
    * Execute the json schema decorator.
    * @param model
    * @param config
    */
-  public execute(model: OpenApiSpec, config: CommandConfig): OpenApiSpecJsonDecorated {
+  public execute(model: OpenApiSpec, config: CommandConfig): Promise<string[]> {
     let actions: Action[] = [];
     Object.keys(model.paths).forEach((path) => {
       const methods = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
@@ -26,7 +33,7 @@ export default class JsonSchemaDecorator implements Decorator {
     });
 
     model.decorated.jsonSchemas = actions;
-    return model;
+    return Promise.resolve([]);
   }
 
   /**

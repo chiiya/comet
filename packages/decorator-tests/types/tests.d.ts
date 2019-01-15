@@ -34,4 +34,5 @@ export type ParametersObject = {
   required: Parameter[],
   optional: Parameter[],
   hasAllRequiredParameters: boolean,
+  warnings: string[],
 };

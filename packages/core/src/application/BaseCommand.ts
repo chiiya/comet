@@ -5,6 +5,7 @@ import Resolver from '../services/Resolver';
 import { CommandConfig, Decorator, Factory, OpenApiSpec, Parser } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
+const chalk = require('chalk');
 
 export default abstract class BaseCommand extends Command {
   /** Comet config repository */
@@ -27,6 +28,9 @@ export default abstract class BaseCommand extends Command {
 
   /** Command config key, e.g. `make.schemas` */
   protected configKey: string | undefined;
+
+  /** Warnings from executed decorators and factories */
+  protected warnings: string[] = [];
 
   /**
    * BaseCommand constructor.
@@ -94,10 +98,14 @@ export default abstract class BaseCommand extends Command {
   protected async runFactories(specification: OpenApiSpec) {
     try {
       for (let i = 0; i < this.factories.length; i = i + 1) {
-        await this.factories[i].execute(
+        let warnings = await this.factories[i].execute(
           specification,
           this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
         );
+        warnings = warnings.map((warning: string) => {
+          return `${chalk.italic.cyan(this.factories[i].getName())} - ${warning}`;
+        });
+        this.warnings.push(...warnings);
       }
     } catch (error) {
       this.logger.fail(error.message);
@@ -112,15 +120,28 @@ export default abstract class BaseCommand extends Command {
   protected async runDecorators(specification: OpenApiSpec) {
     try {
       for (let i = 0; i < this.decorators.length; i = i + 1) {
-        await this.decorators[i].execute(
+        let warnings = await this.decorators[i].execute(
           specification,
           this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
         );
+        warnings = warnings.map((warning: string) => {
+          return `${chalk.italic.cyan(this.decorators[i].getName())} - ${warning}`;
+        });
+        this.warnings.push(...warnings);
       }
     } catch (error) {
       this.logger.fail(`${error.message}
       Stack: ${error.stack}`);
       this.exit(-1);
     }
+  }
+
+  /**
+   * Print all warnings from decorators and factories.
+   */
+  protected printWarnings() {
+    this.warnings.forEach((warning: string) => {
+      this.logger.warn(warning);
+    });
   }
 }

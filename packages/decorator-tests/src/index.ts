@@ -19,15 +19,24 @@ import Combination from './Combination';
 import TestCase from './TestCase';
 
 export default class TestsDecorator implements Decorator {
-  execute(model: OpenApiSpec & OpenApiSpecJsonDecorated, config: CommandConfig): any {
+  /**
+   * Get the module name.
+   */
+  getName(): string {
+    return 'decorator-tests';
+  }
+
+  execute(model: OpenApiSpec & OpenApiSpecJsonDecorated, config: CommandConfig): Promise<string[]> {
     const testSuite = TestsDecorator.createTestSuite(model, config);
+    const warnings: string[] = [];
     Object.keys(model.paths).forEach((path) => {
       const methods: Method[] = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
       methods.forEach((method: Method) => {
         const operation = model.paths[path][method];
         if (operation) {
           if (operation.parameters) {
-            const parameters = this.getParameters(operation);
+            const parameters = this.getParameters(operation, path, method);
+            warnings.push(...parameters.warnings);
             if (parameters.hasAllRequiredParameters === false) {
               return;
             }
@@ -52,7 +61,7 @@ export default class TestsDecorator implements Decorator {
     });
 
     model.decorated.testSuite = testSuite;
-    return model;
+    return Promise.resolve(warnings);
   }
 
   protected static createTestSuite(model: OpenApiSpec, config: CommandConfig): ITestSuite {
@@ -62,10 +71,11 @@ export default class TestsDecorator implements Decorator {
     );
   }
 
-  protected getParameters(operation: OpenAPIOperation): ParametersObject {
+  protected getParameters(operation: OpenAPIOperation, path: string, method: Method): ParametersObject {
     // Get a list of all inferable parameters
     const requiredParameters: Parameter[] = [];
     const optionalParameters: Parameter[] = [];
+    const warnings: string[] = [];
     let hasAllRequiredParameters = true;
     operation.parameters.forEach((apiParameter: OpenAPIParameter) => {
       let parameter: Parameter;
@@ -77,7 +87,11 @@ export default class TestsDecorator implements Decorator {
           optionalParameters.push(parameter);
         }
       } catch (error) {
-        console.warn(error.message);
+        if (error.name === 'UnresolvableParameterError') {
+          warnings.push(
+            `${method.toUpperCase()} ${path}: ${error.message}`,
+          );
+        }
         if (apiParameter.required || apiParameter.in === 'path') {
           hasAllRequiredParameters = false;
         }
@@ -86,6 +100,7 @@ export default class TestsDecorator implements Decorator {
 
     return {
       hasAllRequiredParameters,
+      warnings,
       required: requiredParameters,
       optional: optionalParameters,
     };

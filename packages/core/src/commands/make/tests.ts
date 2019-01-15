@@ -62,5 +62,6 @@ export default class MakeTests extends BaseCommand {
     console.log(specification.decorated.testSuite);
     await this.runFactories(specification);
     this.logger.succeed('Test cases created!');
+    this.printWarnings();
   }
 }
