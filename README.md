@@ -41,7 +41,7 @@ factories = ["@comet-cli/factory-json-schemas"]
 output = "exports/schemas"
 
 [commands.make.tests]
-decorators = ["@comet-cli/decorator-tests"]
+decorators = ["@comet-cli/decorator-json-schemas", "@comet-cli/decorator-tests"]
 factories = ["@comet-cli/factory-tests-laravel"]
 output = "tests/Comet"
 base_url = "http://localhost" # Local app url used for sending requests to infer parameter values
