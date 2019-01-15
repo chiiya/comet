@@ -49,7 +49,9 @@ export const getOperationName = (apiPath: string, method: string): string  => {
  * @param text
  */
 export const slugify = (text: string): string => {
-  return text.toLowerCase()
+  return text
+    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase() // camelCase to camel-case
+    .toLowerCase()
     .replace(/[\s+_\[]/g, '-')      // Replace spaces, underscores and `[` with -
     .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
     .replace(/\-\-+/g, '-')         // Replace multiple - with single -

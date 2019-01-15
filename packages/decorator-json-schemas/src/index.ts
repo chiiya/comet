@@ -87,11 +87,12 @@ export default class JsonSchemaDecorator implements Decorator {
     method: string,
     operation: 'request' | 'response',
   ): Action | null {
+    let action = null;
     Object.keys(types).forEach((type: string) => {
       if (type.includes('json')) {
         if (types[type].schema) {
           const schema = Transformer.execute(types[type].schema);
-          return {
+          action = {
             schema,
             $path: path,
             $method: method,
@@ -100,6 +101,6 @@ export default class JsonSchemaDecorator implements Decorator {
         }
       }
     });
-    return null;
+    return action;
   }
 }

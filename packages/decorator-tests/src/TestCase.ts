@@ -1,6 +1,7 @@
 import { Method, TestCase as ITestCase, Parameter } from '../types/tests';
 import { OpenAPIOperation } from '@comet-cli/types';
 import { getOperationName, slugify, camelize } from '@comet-cli/utils';
+import { JsonSchema } from '@comet-cli/decorator-json-schemas/types/json-schema';
 
 export default class TestCase implements ITestCase {
   method: Method;
@@ -9,6 +10,7 @@ export default class TestCase implements ITestCase {
   hasRequestBody: boolean;
   requestBody: any;
   path: string;
+  schema: JsonSchema;
 
   constructor(method: Method, path: string) {
     this.method = method;
@@ -39,6 +41,6 @@ export default class TestCase implements ITestCase {
       name = `${name}${parameterName.charAt(0).toUpperCase() + parameterName.slice(1)}`;
     });
 
-    this.name = `test${name.charAt(0).toUpperCase() + name.slice(1)}`;
+    this.name = name;
   }
 }
