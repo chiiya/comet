@@ -124,6 +124,17 @@ paths:
           description: Internal server error.
       security:
         - api_key: []
+    post:
+      description: 'Create a new country'
+      operationId: createCountry
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Country'
   '/contents/{country}':
     get:
       tags:

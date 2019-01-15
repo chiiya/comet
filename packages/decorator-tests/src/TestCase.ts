@@ -1,11 +1,13 @@
-import { Method, TestCase as IOperation, Parameter } from '../types/tests';
+import { Method, TestCase as ITestCase, Parameter } from '../types/tests';
 import { OpenAPIOperation } from '@comet-cli/types';
 import { getOperationName, slugify, camelize } from '@comet-cli/utils';
 
-export default class TestCase implements IOperation {
+export default class TestCase implements ITestCase {
   method: Method;
   name: string;
   parameters: Parameter[];
+  hasRequestBody: boolean;
+  requestBody: any;
   path: string;
 
   constructor(method: Method, path: string) {
@@ -39,5 +41,4 @@ export default class TestCase implements IOperation {
 
     this.name = `test${name.charAt(0).toUpperCase() + name.slice(1)}`;
   }
-
 }

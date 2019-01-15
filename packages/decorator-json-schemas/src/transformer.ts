@@ -1,6 +1,6 @@
 import { OpenAPISchema } from '@comet-cli/types';
 import { JsonSchema } from '../types/json-schema';
-const assign = require('assign-deep');
+import assign = require('assign-deep');
 
 export default class Transformer {
   /**
@@ -20,7 +20,7 @@ export default class Transformer {
    * @param schema
    */
   static transformSchema(schema: OpenAPISchema): JsonSchema {
-    const transformed: JsonSchema = assign({}, schema);
+    const transformed: JsonSchema = JSON.parse(JSON.stringify(schema));
     // Step 1: Transform type
     if (schema.type !== undefined) {
       transformed.type = this.transformType(schema);

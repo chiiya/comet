@@ -2,7 +2,7 @@ import {
   CommandConfig,
   Decorator,
   OpenAPIOperation,
-  OpenAPIParameter,
+  OpenAPIParameter, OpenAPIRequestBody,
   OpenApiSpec,
 } from '@comet-cli/types';
 import { OpenApiSpecJsonDecorated } from '@comet-cli/decorator-json-schemas/types/json-schema';
@@ -17,6 +17,7 @@ import TestSuite from './TestSuite';
 import ParameterResolver from './ParameterResolver';
 import Combination from './Combination';
 import TestCase from './TestCase';
+import RequestBodyResolver from './RequestBodyResolver';
 
 export default class TestsDecorator implements Decorator {
   /**
@@ -34,6 +35,17 @@ export default class TestsDecorator implements Decorator {
       methods.forEach((method: Method) => {
         const operation = model.paths[path][method];
         if (operation) {
+          let hasRequestBody = false;
+          let requestBody;
+          if (operation.requestBody) {
+            try {
+              requestBody = RequestBodyResolver.execute(operation.requestBody);
+              hasRequestBody = true;
+            } catch (error) {
+              warnings.push(error.message);
+              return;
+            }
+          }
           if (operation.parameters) {
             const parameters = this.getParameters(operation, path, method);
             warnings.push(...parameters.warnings);
@@ -43,17 +55,24 @@ export default class TestsDecorator implements Decorator {
             const combinations = Combination.combinations(parameters.optional);
             // Create one test case with just the required parameters...
             testSuite.testCases.push(
-              this.createTestCase(path, method, operation, parameters.required),
+              this.createTestCase(path, method, operation, parameters.required, hasRequestBody, requestBody),
             );
             combinations.forEach((combination: Parameter[]) => {
               // ... and one for each combination of optional parameters (+ required)
               testSuite.testCases.push(
-                this.createTestCase(path, method, operation, [...parameters.required, ...combination]),
+                this.createTestCase(
+                  path,
+                  method,
+                  operation,
+                  [...parameters.required, ...combination],
+                  hasRequestBody,
+                  requestBody,
+                ),
               );
             });
           } else {
             testSuite.testCases.push(
-              this.createTestCase(path, method, operation, []),
+              this.createTestCase(path, method, operation, [], hasRequestBody, requestBody),
             );
           }
         }
@@ -111,9 +130,15 @@ export default class TestsDecorator implements Decorator {
     method: Method,
     operation: OpenAPIOperation,
     parameters: Parameter[],
+    hasRequestBody: boolean,
+    requestBody: any,
   ): ITestCase {
     const testCase = new TestCase(method, path);
     testCase.parameters = parameters;
+    testCase.hasRequestBody = hasRequestBody;
+    if (hasRequestBody) {
+      testCase.requestBody = JSON.stringify(requestBody);
+    }
     testCase.parseName(operation);
     return testCase;
   }

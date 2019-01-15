@@ -11,6 +11,8 @@ export interface TestCase {
   path: string;
   method: Method;
   parameters: Parameter[];
+  hasRequestBody: boolean;
+  requestBody: any;
 }
 
 export type Method =

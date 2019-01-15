@@ -2,6 +2,8 @@ import { OpenAPIParameter } from '@comet-cli/types';
 import { Parameter as IParameter } from '../types/tests';
 import Parameter from './Parameter';
 import UnresolvableParameterError from './UnresolvableParameterError';
+import SchemaValueResolver from './SchemaValueResolver';
+import undefinedError = Mocha.utils.undefinedError;
 
 export default class ParameterResolver {
   /**
@@ -30,53 +32,18 @@ export default class ParameterResolver {
     let value;
 
     value = this.inferExampleValue(apiParameter);
-    if (value) {
+    if (value !== undefined) {
       return value;
     }
 
     value = this.inferDefaultValue(apiParameter);
-    if (value) {
+    if (value !== undefined) {
       return value;
     }
 
     value = this.inferEnumValue(apiParameter);
-    if (value) {
+    if (value !== undefined) {
       return value;
-    }
-  }
-
-  /**
-   * Infer a parameter's value from defined example values.
-   * These examples can be found in multiple locations.
-   * @param apiParameter
-   * @throws Error
-   */
-  protected static inferExampleValue(apiParameter: OpenAPIParameter) {
-    if (apiParameter.example) {
-      return apiParameter.example;
-    }
-
-    // Just take the first value
-    if (apiParameter.examples) {
-      return apiParameter.examples[Object.keys(apiParameter.examples)[0]].value;
-    }
-
-    if (apiParameter.schema && apiParameter.schema.example) {
-      return apiParameter.schema.example;
-    }
-
-    // content will always only have 1 key
-    if (apiParameter.content) {
-      const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
-      if (content.example) {
-        return content.example;
-      }
-      if (content.examples) {
-        return content.examples[Object.keys(apiParameter.examples)[0]].value;
-      }
-      if (content.schema && content.schema.example) {
-        return content.schema.example;
-      }
     }
 
     throw new UnresolvableParameterError(
@@ -86,52 +53,96 @@ export default class ParameterResolver {
   }
 
   /**
+   * Infer a parameter's value from defined example values.
+   * These examples can be found in multiple locations.
+   * @param apiParameter
+   * @throws Error
+   */
+  protected static inferExampleValue(apiParameter: OpenAPIParameter): any {
+    if (apiParameter.hasOwnProperty('example')) {
+      return apiParameter.example;
+    }
+
+    // Just take the first value
+    if (apiParameter.hasOwnProperty('examples')) {
+      return apiParameter.examples[Object.keys(apiParameter.examples)[0]].value;
+    }
+
+    if (apiParameter.schema) {
+      const result = SchemaValueResolver.resolveExampleValue(apiParameter.schema);
+      if (result !== undefined) {
+        return result;
+      }
+    }
+    // content will always only have 1 key
+    if (apiParameter.content) {
+      const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
+      if (content.hasOwnProperty('example')) {
+        return content.example;
+      }
+
+      if (content.hasOwnProperty('examples')) {
+        return content.examples[Object.keys(content.examples)[0]].value;
+      }
+
+      if (content.schema) {
+        const result = SchemaValueResolver.resolveExampleValue(content.schema);
+        if (result !== undefined) {
+          return result;
+        }
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
    * Infer a parameter's value from defined default values.
    * @param apiParameter
    */
-  protected static inferDefaultValue(apiParameter: OpenAPIParameter) {
-    if (apiParameter.schema && apiParameter.schema.default) {
-      return apiParameter.schema.default;
-    }
-
-    if (apiParameter.schema && apiParameter.schema.items && apiParameter.schema.items.default) {
-      return apiParameter.schema.items.default;
+  protected static inferDefaultValue(apiParameter: OpenAPIParameter): any {
+    if (apiParameter.schema) {
+      const result = SchemaValueResolver.resolveDefaultValue(apiParameter.schema);
+      if (result !== undefined) {
+        return result;
+      }
     }
 
     if (apiParameter.content) {
       const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
-      if (content.schema && content.schema.default) {
-        return content.schema.default;
-      }
-
-      if (content.schema && content.schema.items && content.schema.items.default) {
-        return content.schema.items.default;
+      if (content.schema) {
+        const result = SchemaValueResolver.resolveDefaultValue(content.schema);
+        if (result !== undefined) {
+          return result;
+        }
       }
     }
+
+    return undefined;
   }
 
   /**
    * Infer a parameter's value from defined enum values (take first).
    * @param apiParameter
    */
-  protected static inferEnumValue(apiParameter: OpenAPIParameter) {
-    if (apiParameter.schema && apiParameter.schema.enum) {
-      return apiParameter.schema.enum[0];
-    }
-
-    if (apiParameter.schema && apiParameter.schema.items && apiParameter.schema.items.enum) {
-      return apiParameter.schema.items.enum[0];
+  protected static inferEnumValue(apiParameter: OpenAPIParameter): any {
+    if (apiParameter.schema) {
+      const result = SchemaValueResolver.resolveEnumValue(apiParameter.schema);
+      if (result !== undefined) {
+        return result;
+      }
     }
 
     if (apiParameter.content) {
       const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
-      if (content.schema && content.schema.enum) {
-        return content.schema.enum[0];
-      }
-
-      if (content.schema && content.schema.items && content.schema.items.enum) {
-        return content.schema.items.enum[0];
+      if (content.schema) {
+        const result = SchemaValueResolver.resolveEnumValue(content.schema);
+        if (result !== undefined) {
+          return result;
+        }
       }
     }
+
+    return undefined;
   }
 }
