@@ -14,7 +14,7 @@ export interface TestCase {
   parameters: Parameter[];
   hasRequestBody: boolean;
   requestBody: any;
-  schema: JsonSchema;
+  schema: string;
 }
 
 export type Method =

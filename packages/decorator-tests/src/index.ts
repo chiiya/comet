@@ -23,7 +23,7 @@ import Combination from './Combination';
 import TestCase from './TestCase';
 import RequestBodyResolver from './RequestBodyResolver';
 import SchemaValueResolver from './SchemaValueResolver';
-import { camelize, slugify } from '@comet-cli/utils';
+import { camelize, getOperationName, slugify } from '@comet-cli/utils';
 
 export default class TestsDecorator implements Decorator {
   /**
@@ -189,17 +189,14 @@ export default class TestsDecorator implements Decorator {
     schemas: Action[],
     path: string,
     method: Method,
-  ): JsonSchema {
+  ): string | undefined {
     const action = schemas.find((action: Action) => {
       return action.$path === path && action.$method === method && action.$operation === 'response';
     });
-    let schema = {
-      $schema: 'http://json-schema.org/draft-04/schema#',
-    };
     if (action) {
-      schema = action.schema;
+      return `${getOperationName(action.$path, action.$method)}.json`;
     }
-    return schema;
+    return undefined;
   }
 
   /**
@@ -273,7 +270,7 @@ export default class TestsDecorator implements Decorator {
     method: Method,
     operation: OpenAPIOperation,
     parameters: Parameter[],
-    jsonSchema: JsonSchema,
+    jsonSchema: string,
     requestBody: any,
     schema: OpenAPISchema,
   ) {
@@ -317,7 +314,7 @@ export default class TestsDecorator implements Decorator {
     parameters: Parameter[],
     hasRequestBody: boolean,
     requestBody: any,
-    schema: JsonSchema,
+    schema: string,
   ): ITestCase {
     const testCase = new TestCase(method, path);
     testCase.parameters = parameters;
