@@ -10,4 +10,3 @@ package-lock.json
 node_modules
 lerna-debug.log
 packages/*/lib
-packages/core/exports

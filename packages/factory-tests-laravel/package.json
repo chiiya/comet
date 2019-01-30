@@ -1,0 +1,36 @@
+{
+  "name": "@comet-cli/factory-tests-laravel",
+  "version": "0.0.0",
+  "description": "Comet factory to generate testcases for the Laravel framework",
+  "keywords": [
+    "comet",
+    "factory",
+    "laravel",
+    "php",
+    "tests"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/factory-tests-laravel#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  },
+  "dependencies": {
+    "xml-js": "^1.6.9"
+  }
+}

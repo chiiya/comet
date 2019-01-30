@@ -10,7 +10,7 @@ module.exports = {
           '@comet-cli/decorator-tests',
         ],
         factories: [
-          '@comet-cli/factory-json-schemas',
+          '@comet-cli/factory-tests-laravel',
         ],
         output: 'exports/tests',
       },
