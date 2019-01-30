@@ -23,7 +23,7 @@ export default class TestCase implements ITestCase {
    * `{path: '/users', method: 'GET', parameters: ['filter[email]']}` -> testUsersIndexFilterEmail
    * @param apiOperation
    */
-  public parseName(apiOperation: OpenAPIOperation) {
+  public parseName(apiOperation: OpenAPIOperation): string {
     // Step 1: Get the operation base name.
     let name = 'Base';
     if (apiOperation.operationId) {
@@ -41,6 +41,6 @@ export default class TestCase implements ITestCase {
       name = `${name}${parameterName.charAt(0).toUpperCase() + parameterName.slice(1)}`;
     });
 
-    this.name = name;
+    return name;
   }
 }

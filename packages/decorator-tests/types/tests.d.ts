@@ -40,3 +40,13 @@ export type ParametersObject = {
   hasAllRequiredParameters: boolean,
   warnings: string[],
 };
+
+export type OperationObject = {
+  testCases: TestCase[],
+  warnings: string[],
+};
+
+export type FaultyValue = {
+  value: any,
+  fault: string,
+};

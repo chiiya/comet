@@ -128,8 +128,12 @@ paths:
       description: 'Create a new country'
       operationId: createCountry
       responses:
-        default:
-          description: successful operation
+        '200':
+          description: Successfully stored new country.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
       requestBody:
         content:
           application/json:
@@ -219,6 +223,8 @@ components:
         code:
           type: string
           example: SE
+          minLength: 2
+          maxLength: 2
         languages:
           description: Languages that belong to this country
           type: array

@@ -59,7 +59,7 @@ export default class MakeTests extends BaseCommand {
   async execute(specification: OpenApiSpec) {
     this.logger.spin('Creating test case definitions...');
     await this.runDecorators(specification);
-    // console.log(JSON.stringify(specification.decorated.testSuite, null, 4));
+    console.log(JSON.stringify(specification.decorated.testSuite, null, 4));
     await this.runFactories(specification);
     this.logger.succeed('Test cases created');
     this.printWarnings();
