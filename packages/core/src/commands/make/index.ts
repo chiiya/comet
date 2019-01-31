@@ -1,5 +1,4 @@
 import { flags } from '@oclif/command';
-import { displayHelp } from '../../helpers/Helpers';
 import BaseCommand from '../../application/BaseCommand';
 
 export default class Make extends BaseCommand {
@@ -21,7 +20,6 @@ The make commands will help you create different outputs (e.g. tests or document
    * Run the make command, displaying help.
    */
   async run() {
-    displayHelp(this.id);
     this.exit();
   }
 }
