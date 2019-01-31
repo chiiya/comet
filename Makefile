@@ -1,8 +1,9 @@
 bootstrap: clean
-	yarn --ignore-engines
-	./node_modules/.bin/lerna bootstrap
-	./node_modules/.bin/lerna run tsc
-	./node_modules/.bin/lerna bootstrap
+	yarn --ignore-engines;\
+	./node_modules/.bin/lerna bootstrap;\
+	cd packages/utils && yarn run tsc && cd ../..;\
+	./node_modules/.bin/lerna run tsc;\
+	./node_modules/.bin/lerna bootstrap;\
 
 clean:
 	rm -rf node_modules
