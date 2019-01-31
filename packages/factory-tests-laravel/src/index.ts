@@ -11,6 +11,11 @@ export default class LaravelTestsFactory implements Factory {
     return 'factory-tests-laravel';
   }
 
+  /**
+   * Execute the factory, creating Laravel test cases.
+   * @param model
+   * @param config
+   */
   async execute(model: OpenApiSpec, config: CommandConfig): Promise<string[]> {
     const warnings: string[] = [];
     const outputDir = config.output;
@@ -26,10 +31,7 @@ export default class LaravelTestsFactory implements Factory {
     }
     // Step 2: Update the composer.json file
     try {
-      const file = await readFile('composer.json', 'utf-8');
-      const object = JSON.parse(file);
-      object.require['estahn/phpunit-json-assertions'] = '^3.0';
-      await writeJson('composer.json', object, { spaces: 4 });
+      await LaravelTestsFactory.updateComposerConfig();
     } catch (error) {
       if (error.code === 'ENOENT') {
         warnings.push('No composer.json file found. Could not add PHP dependencies.');
@@ -40,6 +42,10 @@ export default class LaravelTestsFactory implements Factory {
     return Promise.resolve(warnings);
   }
 
+  /**
+   * Update the PHPUnit configuration to include an additional test suite.
+   * @param {string} outputDir
+   */
   protected static async updatePhpUnitConfig(outputDir: string) {
     const file = await readFile('phpunit.xml', 'utf-8');
     const object = await xml2js(file, { compact: true });
@@ -74,5 +80,15 @@ export default class LaravelTestsFactory implements Factory {
 
     const xml = js2xml(object, { compact: true, ignoreComment: true, spaces: 4 });
     await writeFile('phpunit.xml', xml, 'utf8');
+  }
+
+  /**
+   * Update the composer.json file and add missing dependencies.
+   */
+  protected static async updateComposerConfig() {
+    const file = await readFile('composer.json', 'utf-8');
+    const object = JSON.parse(file);
+    object['require']['estahn/phpunit-json-assertions'] = '^3.0';
+    await writeJson('composer.json', object, { spaces: 4 });
   }
 }
