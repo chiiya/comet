@@ -1,6 +1,8 @@
 import { CommandConfig, Factory, OpenApiSpec } from '@comet-cli/types';
-import { readFile, writeFile, writeJson } from 'fs-extra';
+import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
+import { TestCase } from '@comet-cli/decorator-tests/types/tests';
+import { Action } from '@comet-cli/decorator-json-schemas/types/json-schema';
 const path = require('path');
 
 export default class LaravelTestsFactory implements Factory {
@@ -39,6 +41,8 @@ export default class LaravelTestsFactory implements Factory {
         throw error;
       }
     }
+    // Step 3: Write relevant JSON Schemas to files
+    await LaravelTestsFactory.writeJsonSchemaFiles(model, config);
     return Promise.resolve(warnings);
   }
 
@@ -90,5 +94,25 @@ export default class LaravelTestsFactory implements Factory {
     const object = JSON.parse(file);
     object['require']['estahn/phpunit-json-assertions'] = '^3.0';
     await writeJson('composer.json', object, { spaces: 4 });
+  }
+
+  /**
+   * Write relevant json schemas into the tests folder.
+   * @param model
+   * @param config
+   */
+  protected static async writeJsonSchemaFiles(model: OpenApiSpec, config: CommandConfig) {
+    const usedSchemas = new Set(model.decorated.testSuite.testCases.map((testCase: TestCase) => {
+      return testCase.schema;
+    }));
+    const schemasToWrite = model.decorated.jsonSchemas.filter((action: Action) => {
+      return action.$operation === 'response' && usedSchemas.has(action.$name) === true;
+    });
+    for (let i = 0; i < schemasToWrite.length; i += 1) {
+      const action: Action = schemasToWrite[i];
+      await ensureDir(path.join(config.output, 'schemas'));
+      const file = path.join(config.output, 'schemas', `${action.$name}.json`);
+      await writeJson(file, action.schema, { spaces: 4 });
+    }
   }
 }

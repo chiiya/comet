@@ -23,7 +23,7 @@ import Combination from './Combination';
 import TestCase from './TestCase';
 import RequestBodyResolver from './RequestBodyResolver';
 import SchemaValueResolver from './SchemaValueResolver';
-import { camelize, getOperationName, slugify } from '@comet-cli/utils';
+import { camelize, slugify } from '@comet-cli/utils';
 
 export default class TestsDecorator implements Decorator {
   /**
@@ -194,7 +194,7 @@ export default class TestsDecorator implements Decorator {
       return action.$path === path && action.$method === method && action.$operation === 'response';
     });
     if (action) {
-      return `${getOperationName(action.$path, action.$method)}.json`;
+      return action.$name;
     }
     return undefined;
   }
@@ -288,6 +288,7 @@ export default class TestsDecorator implements Decorator {
         let attributeName = camelize(slugify(key));
         attributeName = `${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}`;
         testCase.name = `${testCase.parseName(operation)}WithFaulty${attributeName}${faultyValue.fault}`;
+        testCase.isFaulty = true;
         testCases.push(testCase);
       });
     }
@@ -324,6 +325,7 @@ export default class TestsDecorator implements Decorator {
       testCase.requestBody = JSON.stringify(requestBody);
     }
     testCase.name = testCase.parseName(operation);
+    testCase.isFaulty = false;
     return testCase;
   }
 }

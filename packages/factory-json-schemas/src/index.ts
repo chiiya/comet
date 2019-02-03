@@ -6,7 +6,6 @@ import {
   Action,
   OpenApiSpecJsonDecorated,
 } from '@comet-cli/decorator-json-schemas/types/json-schema';
-import { getOperationName } from '@comet-cli/utils';
 import { ensureDir, emptyDir, writeJSONSync, rmdir } from 'fs-extra';
 const path = require('path');
 
@@ -43,7 +42,7 @@ export default class JsonSchemaFactory implements Factory {
     let hasRequests = false;
     let hasResponses = false;
     actions.map((action: Action) => {
-      const filename = JsonSchemaFactory.getFilePath(action.$path, action.$method, action.$operation);
+      const filename = JsonSchemaFactory.getFilePath(action.$name, action.$operation);
       writeJSONSync(path.join(outputDir, filename), action.schema, { spaces: 4 });
       if (action.$operation === 'request') {
         hasRequests = true;
@@ -68,13 +67,10 @@ export default class JsonSchemaFactory implements Factory {
    * `GET countries` -> `countries-index-response.json`
    * `GET countries/{id}` -> `countries-show-response.json`
    * `POST countries` -> `countries-store-response.json`
-   * @param apiPath
-   * @param method
+   * @param name
    * @param operation
    */
-  protected static getFilePath(apiPath: string, method: string, operation: 'request' | 'response'): string {
-    const operationName = getOperationName(apiPath, method);
-
-    return path.join(`${operation}s`, `${operationName}.json`);
+  protected static getFilePath(name: string, operation: 'request' | 'response'): string {
+    return path.join(`${operation}s`, `${name}.json`);
   }
 }

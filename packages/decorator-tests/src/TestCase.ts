@@ -10,6 +10,7 @@ export default class TestCase implements ITestCase {
   requestBody: any;
   path: string;
   schema: string;
+  isFaulty: boolean;
 
   constructor(method: Method, path: string) {
     this.method = method;

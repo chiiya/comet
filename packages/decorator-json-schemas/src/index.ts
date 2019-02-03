@@ -7,6 +7,7 @@ import {
 } from '@comet-cli/types';
 import Transformer from './transformer';
 import { Action } from '../types/json-schema';
+import { getOperationName } from '@comet-cli/utils';
 
 export default class JsonSchemaDecorator implements Decorator {
   /**
@@ -97,6 +98,7 @@ export default class JsonSchemaDecorator implements Decorator {
             $path: path,
             $method: method,
             $operation: operation,
+            $name: getOperationName(path, method),
           };
         }
       }

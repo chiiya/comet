@@ -1,5 +1,4 @@
 import { OpenAPIParameterLocation } from '@comet-cli/types';
-import { JsonSchema } from '@comet-cli/decorator-json-schemas/types/json-schema';
 
 export interface TestSuite {
   name: string;
@@ -15,6 +14,7 @@ export interface TestCase {
   hasRequestBody: boolean;
   requestBody: any;
   schema: string;
+  isFaulty: boolean;
 }
 
 export type Method =
