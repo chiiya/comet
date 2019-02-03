@@ -1,7 +1,7 @@
 import { CommandConfig, Factory, OpenApiSpec } from '@comet-cli/types';
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
-import { TestCase } from '@comet-cli/decorator-tests/types/tests';
+import { Parameter, TestCase } from '@comet-cli/decorator-tests/types/tests';
 import { Action } from '@comet-cli/decorator-json-schemas/types/json-schema';
 const path = require('path');
 
@@ -21,6 +21,7 @@ export default class LaravelTestsFactory implements Factory {
   async execute(model: OpenApiSpec, config: CommandConfig): Promise<string[]> {
     const warnings: string[] = [];
     const outputDir = config.output;
+    await ensureDir(path.resolve(__dirname, config.output));
     // Step 1: Update the PHPUnit configuration file
     try {
       await LaravelTestsFactory.updatePhpUnitConfig(outputDir);
@@ -43,6 +44,10 @@ export default class LaravelTestsFactory implements Factory {
     }
     // Step 3: Write relevant JSON Schemas to files
     await LaravelTestsFactory.writeJsonSchemaFiles(model, config);
+    // Step 4: Create hook trait
+    await LaravelTestsFactory.createHookTraitFile(config);
+    // Step 5: Create test case definitions
+    await LaravelTestsFactory.createTestCases(model.decorated.testSuite.testCases, config);
     return Promise.resolve(warnings);
   }
 
@@ -61,7 +66,7 @@ export default class LaravelTestsFactory implements Factory {
         _attributes: {
           suffix: 'Test.php',
         },
-        _text: path.join(outputDir, 'Comet'),
+        _text: `./${outputDir}`,
       },
     };
     // @ts-ignore
@@ -92,7 +97,7 @@ export default class LaravelTestsFactory implements Factory {
   protected static async updateComposerConfig() {
     const file = await readFile('composer.json', 'utf-8');
     const object = JSON.parse(file);
-    object['require']['estahn/phpunit-json-assertions'] = '^3.0';
+    object['require-dev']['estahn/phpunit-json-assertions'] = '^3.0';
     await writeJson('composer.json', object, { spaces: 4 });
   }
 
@@ -114,5 +119,156 @@ export default class LaravelTestsFactory implements Factory {
       const file = path.join(config.output, 'schemas', `${action.$name}.json`);
       await writeJson(file, action.schema, { spaces: 4 });
     }
+  }
+
+  /**
+   * Create the template php hook trait file.
+   * @param config
+   */
+  protected static async createHookTraitFile(config: CommandConfig) {
+    await writeFile(path.join(config.output, 'HasHooks.php'), `<?php
+
+namespace Tests\\Comet;
+
+trait HasHooks
+{
+    /**
+     * Hook to be executed before every request.
+     * You can customize the request here, e.g.:
+     *      return $this->withHeaders([
+     *          'X-Authorization' => abcddefg12345,
+     *      ]);
+     * @return $this
+     */
+    protected function before() {
+        return $this;
+    }
+
+}
+
+`);
+  }
+
+  protected static async createTestCases(testCases: TestCase[], config: CommandConfig) {
+    let body = LaravelTestsFactory.getFileHeader();
+    testCases.forEach((testCase: TestCase) => {
+      const url = LaravelTestsFactory.getResolvedUrl(testCase);
+      if (testCase.isFaulty === false) {
+        body += LaravelTestsFactory.createNominalDefinition(testCase, url);
+      } else {
+        body += LaravelTestsFactory.createFaultyDefinition(testCase, url);
+      }
+    });
+    body += LaravelTestsFactory.getFileFooter();
+    await writeFile(path.join(config.output, 'CometApiTest.php'), body);
+  }
+
+  /**
+   * Get the full url with resolved path and query parameters.
+   * @param testCase
+   */
+  protected static getResolvedUrl(testCase: TestCase): string {
+    let url = testCase.path;
+    let hasAddedQueryParameter = false;
+    testCase.parameters.forEach((parameter: Parameter) => {
+      if (parameter.location === 'path') {
+        const replace = `{${parameter.name}}`;
+        const expression = new RegExp(replace, 'gi');
+        url = url.replace(expression, parameter.value);
+      }
+      if (parameter.location === 'query') {
+        const separator = hasAddedQueryParameter ? '&' : '?';
+        url = `${url}${separator}${parameter.name}=${parameter.value}`;
+        hasAddedQueryParameter = true;
+      }
+    });
+    return url;
+  }
+
+  protected static getFileHeader(): string {
+    return `<?php
+
+namespace Tests\\Feature;
+
+use Tests\\TestCase;
+use Illuminate\\Foundation\\Testing\\RefreshDatabase;
+use EnricoStahn\\JsonAssert\\Assert as JsonAssert;
+
+class CometApiTest extends TestCase
+{
+    use RefreshDatabase, JsonAssert, HasHooks;`;
+  }
+
+  protected static createNominalDefinition(testCase: TestCase, url: string): string {
+    return `
+
+    public function test${testCase.name.charAt(0).toUpperCase() + testCase.name.slice(1)}()
+    {
+        $body = ${testCase.hasRequestBody ? `'${testCase.requestBody}'` : 'null'};
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('${testCase.method}', '${url}', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/${testCase.schema}.json');
+    }`;
+  }
+
+  protected static createFaultyDefinition(testCase: TestCase, url: string): string {
+    return `
+
+    public function test${testCase.name.charAt(0).toUpperCase() + testCase.name.slice(1)}()
+    {
+        $body = ${testCase.hasRequestBody ? `'${testCase.requestBody}'` : '\'\''};
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('${testCase.method}', '${url}', $headers, $body);
+        $this->assertHasClientError($response);
+    }`;
+  }
+
+  protected static getFileFooter(): string {
+    return `
+
+    /**
+     * Assert that a test response returned a client error (4xx).
+     * @param \\Illuminate\\Foundation\\Testing\\TestResponse $response
+     */
+    protected function assertHasClientError($response)
+    {
+        PHPUnit::assertTrue(
+            $response->isClientError(),
+            'Response status code ['.$response->getStatusCode().'] is not a client error status code.'
+        );
+    }
+
+    /**
+     * Get default JSON request headers.
+     * @param string $body
+     * @return array
+     */
+    protected function getJsonHeaders($body)
+    {
+        return  [
+            'CONTENT_LENGTH' => mb_strlen($body, '8bit'),
+            'CONTENT_TYPE' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * Execute the test request.
+     * @param $method
+     * @param $path
+     * @param $headers
+     * @param $body
+     * @return \\Illuminate\\Foundation\\Testing\\TestResponse
+     */
+    protected function executeRequest($method, $path, $headers, $body)
+    {
+        return $this
+            ->before()
+            ->call($method, $path, [], [], [], $this->transformHeadersToServerVars($headers), $body);
+    }
+}
+    `;
   }
 }

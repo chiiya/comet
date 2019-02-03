@@ -11,7 +11,7 @@
             <directory suffix="Test.php">./tests/Database</directory>
         </testsuite>
         <testsuite name="Comet">
-            <directory suffix="Test.php">exports/tests/Comet</directory>
+            <directory suffix="Test.php">./tests/Comet</directory>
         </testsuite>
     </testsuites>
     <filter>

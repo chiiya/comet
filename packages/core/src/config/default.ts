@@ -12,7 +12,7 @@ module.exports = {
         factories: [
           '@comet-cli/factory-tests-laravel',
         ],
-        output: 'exports/tests',
+        output: 'tests/Comet',
       },
       schemas: {
         decorators: [
