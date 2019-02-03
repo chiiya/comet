@@ -46,3 +46,127 @@ factories = ["@comet-cli/factory-tests-laravel"]
 output = "tests/Comet"
 base_url = "http://localhost" # Local app url used for sending requests to infer parameter values
 ```
+
+## Example
+From the `demo/api1.yaml` file, Comet can generate the following Laravel test case definitions:
+```php
+<?php
+
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use EnricoStahn\JsonAssert\Assert as JsonAssert;
+
+class CometApiTest extends TestCase
+{
+    use RefreshDatabase, JsonAssert, HasHooks;
+
+    public function testVersionIndex()
+    {
+        $body = null;
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('get', '/version', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/version-index.json');
+    }
+
+    public function testVersionIndexWithCountry()
+    {
+        $body = null;
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('get', '/version?country=SE', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/version-index.json');
+    }
+
+    public function testCountriesIndex()
+    {
+        $body = null;
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('get', '/countries', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/countries-index.json');
+    }
+
+    public function testCreateCountry()
+    {
+        $body = '{"name":"Sweden","code":"SE","languages":[{"name":"English","code":"en"}]}';
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('post', '/countries', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/countries-store.json');
+    }
+
+    public function testCreateCountryWithFaultyCodeMinLength()
+    {
+        $body = '{"name":"Sweden","code":"k","languages":[{"name":"English","code":"en"}]}';
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('post', '/countries', $headers, $body);
+        $this->assertHasClientError($response);
+    }
+
+    public function testCreateCountryWithFaultyCodeMaxLength()
+    {
+        $body = '{"name":"Sweden","code":"SxB","languages":[{"name":"English","code":"en"}]}';
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('post', '/countries', $headers, $body);
+        $this->assertHasClientError($response);
+    }
+
+    public function testContentsShowWithCountry()
+    {
+        $body = null;
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('get', '/contents/SE', $headers, $body);
+        $response->assertSuccessful();
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/contents-show.json');
+    }
+
+    /**
+     * Assert that a test response returned a client error (4xx).
+     * @param \Illuminate\Foundation\Testing\TestResponse $response
+     */
+    protected function assertHasClientError($response)
+    {
+        PHPUnit::assertTrue(
+            $response->isClientError(),
+            'Response status code ['.$response->getStatusCode().'] is not a client error status code.'
+        );
+    }
+
+    /**
+     * Get default JSON request headers.
+     * @param string $body
+     * @return array
+     */
+    protected function getJsonHeaders($body)
+    {
+        return  [
+            'CONTENT_LENGTH' => mb_strlen($body, '8bit'),
+            'CONTENT_TYPE' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * Execute the test request.
+     * @param $method
+     * @param $path
+     * @param $headers
+     * @param $body
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    protected function executeRequest($method, $path, $headers, $body)
+    {
+        return $this
+            ->before()
+            ->call($method, $path, [], [], [], $this->transformHeadersToServerVars($headers), $body);
+    }
+}
+```
