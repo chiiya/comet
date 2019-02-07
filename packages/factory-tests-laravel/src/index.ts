@@ -188,7 +188,7 @@ trait HasHooks
   protected static getFileHeader(): string {
     return `<?php
 
-namespace Tests\\Feature;
+namespace Tests\\Comet;
 
 use Tests\\TestCase;
 use Illuminate\\Foundation\\Testing\\RefreshDatabase;
@@ -208,8 +208,7 @@ class CometApiTest extends TestCase
         $headers = $this->getJsonHeaders($body);
         $response = $this->executeRequest('${testCase.method}', '${url}', $headers, $body);
         $response->assertSuccessful();
-        $responseContent = $response->getContent();
-        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/${testCase.schema}.json');
+        ${testCase.schema ? this.getJsonSchemaAssertion(testCase) : ''}
     }`;
   }
 
@@ -270,5 +269,10 @@ class CometApiTest extends TestCase
     }
 }
     `;
+  }
+
+  protected static getJsonSchemaAssertion(testCase: TestCase): string {
+    return `$responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/${testCase.schema}.json');`;
   }
 }

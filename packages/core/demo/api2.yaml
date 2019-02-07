@@ -117,6 +117,7 @@ paths:
           description: ID of pet to return
           required: true
           deprecated: true
+          example: 1
           schema:
             type: integer
             format: int64
@@ -147,6 +148,7 @@ paths:
           in: path
           description: ID of pet that needs to be updated
           required: true
+          example: 1
           schema:
             type: integer
             format: int64
@@ -184,6 +186,7 @@ paths:
           example: "Bearer <TOKEN>"
         - name: petId
           in: path
+          example: 1
           description: Pet id to delete
           required: true
           schema:
@@ -208,6 +211,7 @@ paths:
           in: path
           description: ID of pet to update
           required: true
+          example: 1
           schema:
             type: integer
             format: int64
@@ -288,6 +292,7 @@ paths:
           description: Tags to filter by
           required: true
           style: form
+          example: tag1,tag2
           schema:
             type: array
             items:
@@ -504,30 +509,6 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-  /user/createWithArray:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithArrayInput
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        $ref: '#/components/requestBodies/UserArray'
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: ''
-      operationId: createUsersWithListInput
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        $ref: '#/components/requestBodies/UserArray'
   /user/login:
     get:
       tags:
@@ -740,9 +721,6 @@ components:
           items:
             type: string
             format: url
-        friend:
-          allOf:
-            - $ref: '#/components/schemas/Pet'
         tags:
           description: Tags attached to the pet
           type: array
