@@ -206,7 +206,7 @@ class CometApiTest extends TestCase
     {
         $body = ${testCase.hasRequestBody ? `'${testCase.requestBody}'` : 'null'};
         $headers = $this->getJsonHeaders($body);
-        $response = $this->executeRequest('${testCase.method}', '${url}', $headers, $body);
+        $response = $this->executeRequest('${testCase.method.toUpperCase()}', '${url}', $headers, $body);
         $response->assertSuccessful();
         ${testCase.schema ? this.getJsonSchemaAssertion(testCase) : ''}
     }`;
@@ -219,7 +219,7 @@ class CometApiTest extends TestCase
     {
         $body = ${testCase.hasRequestBody ? `'${testCase.requestBody}'` : '\'\''};
         $headers = $this->getJsonHeaders($body);
-        $response = $this->executeRequest('${testCase.method}', '${url}', $headers, $body);
+        $response = $this->executeRequest('${testCase.method.toUpperCase()}', '${url}', $headers, $body);
         $this->assertHasClientError($response);
     }`;
   }
