@@ -151,8 +151,9 @@ trait HasHooks
 
   protected static async createTestCases(testCases: TestCase[], config: CommandConfig) {
     let body = LaravelTestsFactory.getFileHeader();
+    const baseUrl = config.base_url;
     testCases.forEach((testCase: TestCase) => {
-      const url = LaravelTestsFactory.getResolvedUrl(testCase);
+      const url = LaravelTestsFactory.getResolvedUrl(baseUrl, testCase);
       if (testCase.isFaulty === false) {
         body += LaravelTestsFactory.createNominalDefinition(testCase, url);
       } else {
@@ -165,9 +166,10 @@ trait HasHooks
 
   /**
    * Get the full url with resolved path and query parameters.
+   * @param baseUrl
    * @param testCase
    */
-  protected static getResolvedUrl(testCase: TestCase): string {
+  protected static getResolvedUrl(baseUrl: string, testCase: TestCase): string {
     let url = testCase.path;
     let hasAddedQueryParameter = false;
     testCase.parameters.forEach((parameter: Parameter) => {
@@ -182,7 +184,7 @@ trait HasHooks
         hasAddedQueryParameter = true;
       }
     });
-    return url;
+    return `${baseUrl}${url}`;
   }
 
   protected static getFileHeader(): string {

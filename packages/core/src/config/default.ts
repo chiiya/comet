@@ -13,6 +13,7 @@ module.exports = {
           '@comet-cli/factory-tests-laravel',
         ],
         output: 'tests/Comet',
+        base_url: '/api',
       },
       schemas: {
         decorators: [
