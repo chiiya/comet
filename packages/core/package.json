@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/core",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Core comet cli application",
   "keywords": [
     "comet",
@@ -58,7 +58,7 @@
     "@comet-cli/decorator-json-schemas": "^0.1.2",
     "@comet-cli/decorator-tests": "^0.1.2",
     "@comet-cli/factory-json-schemas": "^0.1.2",
-    "@comet-cli/factory-tests-laravel": "^0.1.3",
+    "@comet-cli/factory-tests-laravel": "^0.1.4",
     "@comet-cli/parser-open-api": "^0.1.2",
     "@comet-cli/utils": "^0.1.1",
     "@iarna/toml": "^2.2.1",
