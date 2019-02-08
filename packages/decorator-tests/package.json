@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/decorator-tests",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Decorator for infering parameter values and creating test models",
   "keywords": [
     "comet",
@@ -35,8 +35,8 @@
     "@comet-cli/utils": "^0.1.1"
   },
   "devDependencies": {
-    "@comet-cli/types": "^0.1.1",
-    "@comet-cli/decorator-json-schemas": "^0.1.1"
+    "@comet-cli/decorator-json-schemas": "^0.1.2",
+    "@comet-cli/types": "^0.1.1"
   },
   "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"
 }

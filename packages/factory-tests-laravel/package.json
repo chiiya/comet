@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/factory-tests-laravel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Comet factory to generate testcases for the Laravel framework",
   "keywords": [
     "comet",
@@ -38,9 +38,9 @@
     "xml-js": "^1.6.9"
   },
   "devDependencies": {
-    "@comet-cli/types": "^0.1.1",
-    "@comet-cli/decorator-tests": "^0.1.1",
-    "@comet-cli/decorator-json-schemas": "^0.1.1"
+    "@comet-cli/decorator-json-schemas": "^0.1.2",
+    "@comet-cli/decorator-tests": "^0.1.2",
+    "@comet-cli/types": "^0.1.1"
   },
   "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"
 }
