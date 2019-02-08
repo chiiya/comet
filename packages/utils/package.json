@@ -10,6 +10,9 @@
   "author": "Elisha Witte <elishawitte@gmail.com>",
   "homepage": "https://github.com/chiiya/comet/tree/master/packages/utils#readme",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "directories": {
@@ -27,5 +30,6 @@
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"
-  }
+  },
+  "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"
 }

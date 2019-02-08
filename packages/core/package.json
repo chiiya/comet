@@ -40,6 +40,9 @@
     "type": "git",
     "url": "git+https://github.com/chiiya/comet.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "tsc": "tsc",
     "postpack": "rm -f oclif.manifest.json",
@@ -79,5 +82,6 @@
     "tslint": "^5",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.0"
-  }
+  },
+  "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"
 }
