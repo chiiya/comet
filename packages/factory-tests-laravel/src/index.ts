@@ -199,7 +199,16 @@ use EnricoStahn\\JsonAssert\\Assert as JsonAssert;
 
 class CometApiTest extends TestCase
 {
-    use RefreshDatabase, JsonAssert, HasHooks;`;
+    use RefreshDatabase, JsonAssert, HasHooks;
+
+    /**
+     * Run seeds.
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('db:seed');
+    }`;
   }
 
   protected static createNominalDefinition(testCase: TestCase, url: string, outputDir: string): string {
