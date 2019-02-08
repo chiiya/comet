@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/decorator-json-schemas",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A decorator for transforming OpenAPI schema definitions to JSON schemas",
   "keywords": [
     "comet",

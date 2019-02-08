@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/parser-open-api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "OpenAPI v3 parser for comet",
   "keywords": [
     "comet",

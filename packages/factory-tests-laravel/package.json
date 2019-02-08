@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/factory-tests-laravel",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Comet factory to generate testcases for the Laravel framework",
   "keywords": [
     "comet",
