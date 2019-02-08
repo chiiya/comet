@@ -3,7 +3,6 @@ import { Parameter as IParameter } from '../types/tests';
 import Parameter from './Parameter';
 import UnresolvableParameterError from './UnresolvableParameterError';
 import SchemaValueResolver from './SchemaValueResolver';
-import undefinedError = Mocha.utils.undefinedError;
 
 export default class ParameterResolver {
   /**

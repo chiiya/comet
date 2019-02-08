@@ -1,6 +1,5 @@
 import { OpenAPISchema } from '@comet-cli/types';
 import { JsonSchema } from '../types/json-schema';
-import assign = require('assign-deep');
 
 export default class Transformer {
   /**

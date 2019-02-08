@@ -23,6 +23,12 @@
   "files": [
     "lib"
   ],
+  "dependencies": {
+    "swagger-parser": "^6.0.2"
+  },
+  "devDependencies": {
+    "@comet-cli/types": "^0.1.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chiiya/comet.git"

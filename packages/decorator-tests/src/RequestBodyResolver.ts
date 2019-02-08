@@ -1,4 +1,4 @@
-import { OpenAPIRequestBody, OpenAPISchema } from '@comet-cli/types';
+import { OpenAPIRequestBody } from '@comet-cli/types';
 import SchemaValueResolver from './SchemaValueResolver';
 
 export default class RequestBodyResolver {

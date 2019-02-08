@@ -35,6 +35,8 @@
     "fs-extra": "^7.0.1"
   },
   "devDependencies": {
+    "@comet-cli/types": "^0.1.1",
+    "@comet-cli/decorator-json-schemas": "^0.1.1",
     "@types/fs-extra": "^5.0.4"
   },
   "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"

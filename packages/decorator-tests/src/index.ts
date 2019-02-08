@@ -10,6 +10,7 @@ import {
   JsonSchema,
   OpenApiSpecJsonDecorated,
 } from '@comet-cli/decorator-json-schemas/types/json-schema';
+import { camelize, slugify } from '@comet-cli/utils';
 import {
   Method,
   TestCase as ITestCase,
@@ -23,7 +24,6 @@ import Combination from './Combination';
 import TestCase from './TestCase';
 import RequestBodyResolver from './RequestBodyResolver';
 import SchemaValueResolver from './SchemaValueResolver';
-import { camelize, slugify } from '@comet-cli/utils';
 
 export default class TestsDecorator implements Decorator {
   /**

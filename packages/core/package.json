@@ -55,6 +55,12 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
+    "@comet-cli/decorator-json-schemas": "^0.1.1",
+    "@comet-cli/decorator-tests": "^0.1.1",
+    "@comet-cli/factory-json-schemas": "^0.1.1",
+    "@comet-cli/factory-tests-laravel": "^0.1.1",
+    "@comet-cli/parser-open-api": "^0.1.1",
+    "@comet-cli/utils": "^0.1.1",
     "@iarna/toml": "^2.2.1",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
@@ -70,6 +76,7 @@
     "tslib": "^1"
   },
   "devDependencies": {
+    "@comet-cli/types": "^0.1.1",
     "@oclif/dev-cli": "^1",
     "@types/chai": "^4",
     "@types/cosmiconfig": "^5.0.3",
