@@ -2,11 +2,17 @@
 
 This package contains the comet cli application
 
+### Installation
+Install the CLI application:
+```bash
+npm install --dev @comet-cli/core
+# or with yarn:
+yarn add --dev @comet-cli/core
+```
+
 ### Usage
 
 ```bash
-$ npm install @comet-cli/core
-
 # Version
 $ comet --version
 
