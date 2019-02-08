@@ -152,10 +152,11 @@ trait HasHooks
   protected static async createTestCases(testCases: TestCase[], config: CommandConfig) {
     let body = LaravelTestsFactory.getFileHeader();
     const baseUrl = config.base_url;
+    const outputDir = config.output;
     testCases.forEach((testCase: TestCase) => {
       const url = LaravelTestsFactory.getResolvedUrl(baseUrl, testCase);
       if (testCase.isFaulty === false) {
-        body += LaravelTestsFactory.createNominalDefinition(testCase, url);
+        body += LaravelTestsFactory.createNominalDefinition(testCase, url, outputDir);
       } else {
         body += LaravelTestsFactory.createFaultyDefinition(testCase, url);
       }
@@ -201,7 +202,7 @@ class CometApiTest extends TestCase
     use RefreshDatabase, JsonAssert, HasHooks;`;
   }
 
-  protected static createNominalDefinition(testCase: TestCase, url: string): string {
+  protected static createNominalDefinition(testCase: TestCase, url: string, outputDir: string): string {
     return `
 
     public function test${testCase.name.charAt(0).toUpperCase() + testCase.name.slice(1)}()
@@ -210,7 +211,7 @@ class CometApiTest extends TestCase
         $headers = $this->getJsonHeaders($body);
         $response = $this->executeRequest('${testCase.method.toUpperCase()}', '${url}', $headers, $body);
         $response->assertSuccessful();
-        ${testCase.schema ? this.getJsonSchemaAssertion(testCase) : ''}
+        ${testCase.schema ? this.getJsonSchemaAssertion(outputDir, testCase) : ''}
     }`;
   }
 
@@ -235,7 +236,7 @@ class CometApiTest extends TestCase
      */
     protected function assertHasClientError($response)
     {
-        PHPUnit::assertTrue(
+        $this->assertTrue(
             $response->isClientError(),
             'Response status code ['.$response->getStatusCode().'] is not a client error status code.'
         );
@@ -273,8 +274,9 @@ class CometApiTest extends TestCase
     `;
   }
 
-  protected static getJsonSchemaAssertion(testCase: TestCase): string {
+  protected static getJsonSchemaAssertion(outputDir: string, testCase: TestCase): string {
+    const schemaPath = `base_path().'/${outputDir}/schemas/${testCase.schema}.json'`;
     return `$responseContent = $response->getContent();
-        $this->assertJsonMatchesSchema(json_decode($responseContent), './schemas/${testCase.schema}.json');`;
+        $this->assertJsonMatchesSchema(json_decode($responseContent), ${schemaPath});`;
   }
 }
