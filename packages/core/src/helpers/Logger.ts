@@ -29,6 +29,7 @@ export default class Logger {
    */
   constructor() {
     this.console = new Signale(options);
+    // @ts-ignore
     this.spinner = new Ora({ spinner: 'star' });
   }
 
