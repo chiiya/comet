@@ -1,5 +1,11 @@
 let mix = require('laravel-mix');
-require('laravel-mix-tailwind');
+const glob = require('glob-all')
+const tailwind = require('tailwindcss');
+const cssImport = require('postcss-import');
+const cssPresetEnv = require('postcss-preset-env');
+const cssNested = require('postcss-nested');
+const purgeCss = require('@fullhuman/postcss-purgecss');
+
 
 /*
  |--------------------------------------------------------------------------
@@ -12,6 +18,24 @@ require('laravel-mix-tailwind');
  |
  */
 
-mix.sass('src/scss/app.scss', 'dist')
-  .tailwind()
+mix.postCss('src/css/main.css', 'dist/css', [
+  cssImport(),
+  tailwind('./tailwind.config.js'),
+  cssNested(),
+  cssPresetEnv(),
+  purgeCss({
+    content: glob.sync([
+      path.join(__dirname, 'dist/index.html'),
+      // Add any other files that reference class names here
+    ]),
+    extractors: [{
+      extractor: class {
+        static extract (content) {
+          return content.match(/[A-z0-9-:\/]+/g) || [];
+        }
+      },
+      extensions: ['html', 'js', 'php'],
+    }]
+  }),
+])
   .setPublicPath('dist');

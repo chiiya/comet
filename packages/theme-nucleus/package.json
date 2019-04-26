@@ -29,9 +29,14 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^1.2.0",
     "cross-env": "^5.2.0",
+    "glob-all": "^3.1.0",
     "laravel-mix": "^4.0.15",
     "laravel-mix-tailwind": "^0.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.1.2",
+    "postcss-preset-env": "^6.6.0",
     "resolve-url-loader": "2.3.1",
     "sass": "^1.19.0",
     "sass-loader": "7.*",
