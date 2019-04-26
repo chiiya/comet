@@ -1,0 +1,40 @@
+{
+  "name": "@comet-cli/theme-nucleus",
+  "version": "0.1.5",
+  "description": "> TODO: description",
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/theme-nucleus#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "dev": "npm run development",
+    "development": "npx cross-env NODE_ENV=development npx webpack --progress --hide-modules --config=../../node_modules/laravel-mix/setup/webpack.config.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "laravel-mix": "^4.0.15",
+    "laravel-mix-tailwind": "^0.1.0",
+    "resolve-url-loader": "2.3.1",
+    "sass": "^1.19.0",
+    "sass-loader": "7.*",
+    "tailwindcss": "^1.0.0-beta.5"
+  }
+}
