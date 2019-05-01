@@ -1,0 +1,43 @@
+{
+  "name": "@comet-cli/parser-api-blueprint",
+  "version": "0.1.5",
+  "description": "Parser for the API Blueprint description language",
+  "keywords": [
+    "comet",
+    "api",
+    "api-blueprint",
+    "blueprint",
+    "documentation",
+    "restful"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/parser-api-blueprint#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.1",
+    "fury": "^3.0.0-beta.10",
+    "fury-adapter-apib-parser": "^0.14.0"
+  }
+}
