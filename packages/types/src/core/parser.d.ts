@@ -1,5 +1,5 @@
-import { OpenApiSpec } from '..';
+import { ApiModel, CommandConfig, LoggerInterface } from '..';
 
-export interface Parser {
-  execute(path: string): Promise<OpenApiSpec>;
+export interface ParserInterface {
+  execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel>;
 }

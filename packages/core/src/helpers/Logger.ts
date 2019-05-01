@@ -1,5 +1,6 @@
 import { Signale } from 'signale';
 import * as Ora from 'ora';
+import { LoggerInterface } from '@comet-cli/types';
 
 // Signale options
 const options = {
@@ -20,7 +21,7 @@ const options = {
  * Logger class
  * Used for custom console logging.
  */
-export default class Logger {
+export default class Logger implements LoggerInterface {
   protected console: Signale;
   protected spinner: any;
 
@@ -37,7 +38,7 @@ export default class Logger {
    * Log a console message using the comet style defined above.
    * @param {string} message
    */
-  comet(message: string) {
+  comet(message: string): void {
     // @ts-ignore
     this.console.comet(message);
   }
@@ -46,7 +47,7 @@ export default class Logger {
    * Start spinning the spinner instance.
    * @param {string} message
    */
-  spin(message: string) {
+  spin(message: string): void {
     this.spinner.text = message;
     if (this.spinner.isSpinning === false) {
       this.spinner.start();
@@ -57,7 +58,7 @@ export default class Logger {
    * Stop the spinner, set it to green, and persist it.
    * @param {string} message
    */
-  succeed(message: string) {
+  succeed(message: string): void {
     if (this.spinner.isSpinning === true) {
       this.spinner.succeed(message);
     }
@@ -67,7 +68,7 @@ export default class Logger {
    * Stop the spinner, set it to red, and persist it.
    * @param {string} message
    */
-  fail(message: string) {
+  fail(message: string): void {
     if (this.spinner.isSpinning === true) {
       this.spinner.fail(message);
     }
@@ -77,7 +78,7 @@ export default class Logger {
    * Print a warning message to console.
    * @param message
    */
-  warn(message: string) {
+  warn(message: string): void {
     this.console.warn(message);
   }
 }
