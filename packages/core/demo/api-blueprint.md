@@ -1,0 +1,209 @@
+FORMAT: 1A
+HOST: https://api.tankstelle.aral.de
+
+# API Blueprint Demo API
+
+The API Blueprint Demo API can be used to retrieve information on everything related
+to api documentations.
+
+# Versioning
+
+Currently, the only supported version of the API is `v2`, accessible under `/api/v2/`.
+
+# JSON API
+
+In the following section, a short overview of the general capabilities
+of the API will be given.
+
+**Note:** This documentation will display parameters with brackets
+(`[` and `]`) for readability, but actual URLs will need to be
+percent-encoded (`%5B` and `%5D`).
+
+## Filtering and Search
+
+Filtering lets you query data that contains certain matching
+attributes or relationships. These take the form of
+`filter[attribute]=value`. 
+
+## Pagination
+
+Pagination is enabled by default for large sets of results (as is the case
+with stations). You can optionally disable pagination by passing
+along the `paginated` parameter and setting it to false:
+
+```
+/formats?paginated=false
+```
+
+Paginated responses will include URLs for the first, last, previous and next page
+of resources in the `links` object. 
+
+## Includes
+
+For some resources, you can also include related resources
+with `include=[relationship]`. A comma-delimited list can be used to
+request multiple relationships.
+
+## Dates
+All dates will be `UTC` by default. If you wish to use a different timezone,
+you should convert these dates locally on your client.
+
+# HTTP Methods
+
+Method   | Description
+-------- | -----------
+`GET`    | Fetch - retrieve resources
+
+# Status Codes
+
+Code  | Description
+----- | -----------
+`200` | OK
+`400` | Bad Request - malformed request
+`401` | Unauthorized - invalid or no authentication details provided
+`404` | Not Found - resource does not exist
+`405` | Method Not Allowed
+`5xx` | Server Error
+
+# Brands [/brands]
+
++ Attributes (Brand)
+
+## Fetch Collection [GET /brands]
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (array, required, fixed-type)
+            + (Brand, fixed-type)
++ Response 500 (application/json)
+    + Attributes (Error500)
+
+## Fetch Resource [GET /brands/{id}]
+
++ Parameters
+    + id (number, `1`) - ID of the brand
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (Brand, fixed-type)
+
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
+    
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])      
+
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])
+
+# Cards [/cards]
+
++ Attributes (Card)
+
+## Fetch Collection [GET /cards]
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (array, required,fixed-type)
+            + (Card, fixed-type)
++ Response 500 (application/json)
+    + Attributes (Error500)
+
+## Fetch Resource [GET /cards/{id}]
+
++ Parameters
+    + id (number, `1`) - ID of the card
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (Card, fixed-type)
+
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
+    
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])      
+
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])
+
+# Distribution Channels [/channels]
+
++ Attributes (Channel)
+
+## Fetch Collection [GET /channels]
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (array, required, fixed-type)
+            + (Channel, fixed-type)
++ Response 500 (application/json)
+    + Attributes (Error500)
+
+## Fetch Resource [GET /channels/{id}]
+
++ Parameters
+    + id (number, `1`) - ID of the distribution channel
+
++ Response 200 (application/json)
+    + Attributes (fixed-type)
+        + data (Channel, fixed-type)
+
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
+    
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])      
+
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])
+
+## Data Structures
+
+### Brand (object)
++ `id`: 1 (number, required)
++ `name`: `ARAL Tankstelle` (string, required) - Name of the station brand
+
+### Card (object)
++ `id`: 1 (number, required)
++ `name`: `Visacard` (string, required) - Name of the card
++ `icon`: null (string, nullable) - Optional icon (png) path
+
+### Channel (object)
++ `id`: 1 (number, required)
++ `name`: `Company Owned, Dealer Operated` (string, required) - Name of the distribution channel
++ `identifier`: `CODO` (string, required) - Unique string identifier of the distribution channel
+
+### Error400 (object)
++ title: `Bad Request` (required, string) - Short, human-readable summary of the error
++ message: `The requested resource could not be found` (required, string) - Human-readable explanation for this specific error
++ status: 400 (required, number) - HTTP status code generated by the origin server
+
+### Error401 (object)
++ title: `Unauthorized` (required, string) - Short, human-readable summary of the error
++ message: `The requested resource could not be found` (required, string) - Human-readable explanation for this specific error
++ status: 401 (required, number) - HTTP status code generated by the origin server
+
+### Error404 (object)
++ title: `Record not found` (required, string) - Short, human-readable summary of the error
++ message: `The requested resource could not be found` (required, string) - Human-readable explanation for this specific error
++ status: 404 (required, number) - HTTP status code generated by the origin server
+
+### Error405 (object)
++ title: `Method Not Allowed` (required, string) - Short, human-readable summary of the error
++ message: `The method specified in the request is not allowed for this resource` (required, string) - Human-readable explanation for this specific error
++ status: 405 (required, number) - HTTP status code generated by the origin server
+
+### Error500 (object)
++ title: `Internal Server Error` (required, string) - Short, human-readable summary of the error
++ message: `Whoops, looks like something went wrong.` (required, string) - Human-readable explanation for this specific error
++ status: 500 (required, number) - HTTP status code generated by the origin server
