@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://api.tankstelle.aral.de
+HOST: https://api.example.org
 
 # API Blueprint Demo API
 
@@ -65,11 +65,15 @@ Code  | Description
 `405` | Method Not Allowed
 `5xx` | Server Error
 
-# Brands [/brands]
+# Group Base
+
+This group contains all base resources.
+
+## Brands [/brands]
 
 + Attributes (Brand)
 
-## Fetch Collection [GET /brands]
+### Fetch Collection [GET /brands]
 
 + Response 200 (application/json)
     + Attributes (fixed-type)
@@ -78,7 +82,7 @@ Code  | Description
 + Response 500 (application/json)
     + Attributes (Error500)
 
-## Fetch Resource [GET /brands/{id}]
+### Fetch Resource [GET /brands/{id}]
 
 + Parameters
     + id (number, `1`) - ID of the brand

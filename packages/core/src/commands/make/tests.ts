@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../application/BaseCommand';
-import { OpenApiSpec } from '@comet-cli/types';
+import { ApiModel, OpenApiSpec } from '@comet-cli/types';
 
 export default class MakeTests extends BaseCommand {
   /** Description of the command, displayed when using help flag */
@@ -55,11 +55,11 @@ export default class MakeTests extends BaseCommand {
   /**
    * Execute the command itself (decorate and write output).
    */
-  async execute(specification: OpenApiSpec) {
+  async execute(specification: ApiModel) {
     this.logger.spin('Creating test case definitions...');
-    await this.runDecorators(specification);
+    // await this.runDecorators(specification);
     // console.log(JSON.stringify(specification.decorated.testSuite, null, 4));
-    await this.runFactories(specification);
+    // await this.runFactories(specification);
     this.logger.succeed('Test cases created');
     this.printWarnings();
   }

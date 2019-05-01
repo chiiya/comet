@@ -1,14 +1,14 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../application/BaseCommand';
-import { ApiModel, OpenApiSpec } from '@comet-cli/types';
+import { ApiModel } from '@comet-cli/types';
 
-export default class MakeSchemas extends BaseCommand {
+export default class MakeDocumentation extends BaseCommand {
   /** Description of the command, displayed when using help flag */
-  static description = 'Parse an API specification, and automatically generate JSON schemas';
+  static description = 'Parse an API specification, and automatically generate API documentation';
 
   /** Example usages, displayed when using help flag */
   static examples = [
-    '$ comet make:schemas api.json',
+    '$ comet make:documentation api.json',
   ];
 
   /** Positional arguments passed to the command */
@@ -29,19 +29,19 @@ export default class MakeSchemas extends BaseCommand {
   };
 
   /** Command signature */
-  protected signature = 'make:schemas';
+  protected signature = 'make:documentation';
 
   /** Command config key */
-  protected configKey = 'make.schemas';
+  protected configKey = 'make.documentation';
 
   /**
    * Run the command.
    * Generates valid JSON schemas.
    */
   async run() {
-    this.logger.comet('Generating JSON schema files...');
+    this.logger.comet('Generating API documentation...');
     // Parse passed arguments
-    const { args, flags } = this.parse(MakeSchemas);
+    const { args, flags } = this.parse(MakeDocumentation);
     const file = await this.loadFile(args);
 
     if (flags.output) {
@@ -56,9 +56,8 @@ export default class MakeSchemas extends BaseCommand {
    * Execute the command itself (decorate and write output).
    */
   async execute(specification: ApiModel) {
-    this.logger.spin('Creating JSON Schemas...');
+    console.log(JSON.stringify(specification, null, 2));
     // await this.runDecorators(specification);
     // await this.runFactories(specification);
-    this.logger.succeed('JSON Schemas created');
   }
 }

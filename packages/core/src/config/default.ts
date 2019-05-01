@@ -1,6 +1,6 @@
 module.exports = {
   default: {
-    parser: '@comet-cli/parser-open-api',
+    parser: '@comet-cli/parser-api-blueprint',
   },
   commands: {
     make: {
@@ -23,6 +23,15 @@ module.exports = {
           '@comet-cli/factory-json-schemas',
         ],
         output: 'exports/schemas',
+      },
+      documentation: {
+        decorators: [
+          // '@comet-cli/decorator-json-schemas',
+        ],
+        factories: [
+          // '@comet-cli/factory-json-schemas',
+        ],
+        output: 'exports/documentation',
       },
     },
   },

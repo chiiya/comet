@@ -2,7 +2,14 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import { CommandConfig, Decorator, Factory, OpenApiSpec, ParserInterface } from '@comet-cli/types';
+import {
+  ApiModel,
+  CommandConfig,
+  Decorator,
+  Factory,
+  OpenApiSpec,
+  ParserInterface
+} from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 const chalk = require('chalk');
@@ -74,7 +81,7 @@ export default abstract class BaseCommand extends Command {
   /**
    * Parse an api specification from a given file.
    */
-  protected async parseSpec(file: File): Promise<OpenApiSpec> {
+  protected async parseSpec(file: File): Promise<ApiModel> {
     // Parse input file
     this.logger.spin('Parsing input file');
     let spec;
@@ -88,6 +95,7 @@ export default abstract class BaseCommand extends Command {
       );
     } catch (error) {
       this.logger.fail(error.message);
+      console.error(error.stack);
       process.exit(-1);
     }
 
