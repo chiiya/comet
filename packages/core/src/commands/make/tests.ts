@@ -1,7 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../application/BaseCommand';
 import { OpenApiSpec } from '@comet-cli/types';
-import spec = Mocha.reporters.spec;
 
 export default class MakeTests extends BaseCommand {
   /** Description of the command, displayed when using help flag */
