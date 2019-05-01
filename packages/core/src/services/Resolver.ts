@@ -1,5 +1,5 @@
 import ConfigRepository from '../config/ConfigRepository';
-import { Decorator, Factory, Parser } from '@comet-cli/types';
+import { Decorator, Factory, ParserInterface } from '@comet-cli/types';
 
 export default class Resolver {
   /** Comet config repository */
@@ -25,7 +25,7 @@ export default class Resolver {
   /**
    * Resolve the configured parser for a command and return an instance of it.
    */
-  public async resolveParser(): Promise<Parser> {
+  public async resolveParser(): Promise<ParserInterface> {
     // Fetch configured parser from config
     const configuredParser = this.config.get(`commands.${this.signature}.parser`);
     if (configuredParser == null) {

@@ -2,7 +2,7 @@ import { Command } from '@oclif/command';
 import * as Config from '@oclif/config';
 import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
-import { CommandConfig, Decorator, Factory, OpenApiSpec, Parser } from '@comet-cli/types';
+import { CommandConfig, Decorator, Factory, OpenApiSpec, ParserInterface } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 const chalk = require('chalk');
@@ -12,7 +12,7 @@ export default abstract class BaseCommand extends Command {
   protected configRepository: ConfigRepository;
 
   /** Resolved parser instance */
-  protected parser: Parser;
+  protected parser: ParserInterface;
 
   /** Resolved decorator instances */
   protected decorators: Decorator[];
@@ -81,7 +81,11 @@ export default abstract class BaseCommand extends Command {
 
     try {
       await this.resolve();
-      spec = await this.parser.execute(file.path());
+      spec = await this.parser.execute(
+        file.path(),
+        this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
+        this.logger,
+      );
     } catch (error) {
       this.logger.fail(error.message);
       process.exit(-1);

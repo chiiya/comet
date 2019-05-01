@@ -1,9 +1,14 @@
-import { Parser, OpenApiSpec } from '@comet-cli/types';
+import {
+  ParserInterface,
+  CommandConfig,
+  LoggerInterface,
+  ApiModel,
+} from '@comet-cli/types';
 
 const parser = require('swagger-parser');
 
-export default class OpenApiParser implements Parser {
-  async execute(path: string): Promise<OpenApiSpec> {
+export default class OpenApiParser implements ParserInterface {
+  async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
     try {
       const schema = await parser.dereference(path);
       schema.decorated = {};
