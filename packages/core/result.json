@@ -124,22 +124,58 @@
                   ]
                 }
               ]
-            },
+            }
+          ],
+          "content": [
+            {
+              "element": "dataStructure",
+              "content": [
+                {
+                  "element": "Brand",
+                  "meta": {
+                    "id": "Brands"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "element": "resource",
+          "name": "Brand",
+          "description": "",
+          "uriTemplate": "/brands/{palette}",
+          "model": {},
+          "parameters": [
+            {
+              "name": "palette",
+              "description": "\nColor Palette Code\n",
+              "type": "string",
+              "required": true,
+              "default": "all",
+              "example": "1508",
+              "values": [
+                {
+                  "value": "all"
+                },
+                {
+                  "value": "1508"
+                },
+                {
+                  "value": "1602"
+                },
+                {
+                  "value": "1604"
+                }
+              ]
+            }
+          ],
+          "actions": [
             {
               "name": "Fetch Resource",
               "description": "",
               "method": "GET",
-              "parameters": [
-                {
-                  "name": "id",
-                  "description": "",
-                  "type": "number",
-                  "required": true,
-                  "default": "",
-                  "example": "1",
-                  "values": []
-                }
-              ],
+              "parameters": [],
               "attributes": {
                 "relation": "",
                 "uriTemplate": "/brands/{id}"
@@ -325,19 +361,7 @@
               ]
             }
           ],
-          "content": [
-            {
-              "element": "dataStructure",
-              "content": [
-                {
-                  "element": "Brand",
-                  "meta": {
-                    "id": "Brands"
-                  }
-                }
-              ]
-            }
-          ]
+          "content": []
         },
         {
           "element": "resource",
@@ -453,7 +477,7 @@
               "parameters": [
                 {
                   "name": "id",
-                  "description": "",
+                  "description": "The id of the card.",
                   "type": "number",
                   "required": true,
                   "default": "",
@@ -1101,22 +1125,58 @@
                   ]
                 }
               ]
-            },
+            }
+          ],
+          "content": [
+            {
+              "element": "dataStructure",
+              "content": [
+                {
+                  "element": "Brand",
+                  "meta": {
+                    "id": "Brands"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "element": "resource",
+          "name": "Brand",
+          "description": "",
+          "uriTemplate": "/brands/{palette}",
+          "model": {},
+          "parameters": [
+            {
+              "name": "palette",
+              "description": "\nColor Palette Code\n",
+              "type": "string",
+              "required": true,
+              "default": "all",
+              "example": "1508",
+              "values": [
+                {
+                  "value": "all"
+                },
+                {
+                  "value": "1508"
+                },
+                {
+                  "value": "1602"
+                },
+                {
+                  "value": "1604"
+                }
+              ]
+            }
+          ],
+          "actions": [
             {
               "name": "Fetch Resource",
               "description": "",
               "method": "GET",
-              "parameters": [
-                {
-                  "name": "id",
-                  "description": "",
-                  "type": "number",
-                  "required": true,
-                  "default": "",
-                  "example": "1",
-                  "values": []
-                }
-              ],
+              "parameters": [],
               "attributes": {
                 "relation": "",
                 "uriTemplate": "/brands/{id}"
@@ -1302,19 +1362,7 @@
               ]
             }
           ],
-          "content": [
-            {
-              "element": "dataStructure",
-              "content": [
-                {
-                  "element": "Brand",
-                  "meta": {
-                    "id": "Brands"
-                  }
-                }
-              ]
-            }
-          ]
+          "content": []
         },
         {
           "element": "resource",
@@ -1430,7 +1478,7 @@
               "parameters": [
                 {
                   "name": "id",
-                  "description": "",
+                  "description": "The id of the card.",
                   "type": "number",
                   "required": true,
                   "default": "",

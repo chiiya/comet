@@ -82,11 +82,18 @@ This group contains all base resources.
 + Response 500 (application/json)
     + Attributes (Error500)
 
-### Fetch Resource [GET /brands/{id}]
-
+## Brand [/brands/{palette}]
 + Parameters
-    + id (number, `1`) - ID of the brand
-
+    + palette: `1508` (enum[string], required)
+        Color Palette Code
+        + Default: `all`
+        + Members
+            + `all`
+            + `1508`
+            + `1602`
+            + `1604`
+        
+### Fetch Resource [GET /brands/{id}]
 + Response 200 (application/json)
     + Attributes (fixed-type)
         + data (Brand, fixed-type)
@@ -120,6 +127,7 @@ This group contains all base resources.
 
 + Parameters
     + id (number, `1`) - ID of the card
+        The id of the card.
 
 + Response 200 (application/json)
     + Attributes (fixed-type)
