@@ -1,27 +1,21 @@
 <p align="center"><img src="https://i.postimg.cc/1RYn00Tg/comet-logo.png" alt="Comet"></p>
 <p align="center"><strong>Automated testing and documentation for RESTful APIs.</strong></p>
 
+<pre>
+<a href="#usage"
+>> Usage .....................................................................</a>
+<a href="#configuration"
+>> Configuration .............................................................</a>
+<a href="#examples"
+>> Examples ..................................................................</a>
+<a href="#setup"
+>> Setup .....................................................................</a>
+</pre>
+
 ## Usage
 For usage, see the [core package](https://github.com/chiiya/comet/tree/master/packages/core).
 
-## Setup
-Comet is set up as a monorepo using lerna and yarn workspaces.
-
-### Requirements
-```bash
-node # >=8.0.0
-yarn # with workspaces enabled:
-yarn config set workspaces-experimental true
-```
-
-### Installation
-```bash
-$ git clone https://github.com/chiiya/comet
-$ cd comet
-$ make bootstrap
-```
-
-### Configuration
+## Configuration
 Comet can be configured in many ways:
 - `comet` key in your `package.json`
 - `.cometrc` in JSON or YAML format
@@ -47,6 +41,23 @@ output = "tests/Comet"
 base_url = "/api" # Base url to which the endpoints get appended.
 ```
 
-## Example
+## Examples
 For an example laravel project check out [comet-demo](https://github.com/chiiya/comet-demo). You can find the generated
 test cases in the `tests/Comet` folder.
+
+## Setup
+Comet is set up as a monorepo using lerna and yarn workspaces.
+
+### Requirements
+```bash
+node # >=8.0.0
+yarn # with workspaces enabled:
+yarn config set workspaces-experimental true
+```
+
+### Installation
+```bash
+$ git clone https://github.com/chiiya/comet
+$ cd comet
+$ make bootstrap
+```
