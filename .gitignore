@@ -7,6 +7,7 @@ package-lock.json
 /yarn.lock
 /tmp
 .idea/
+result.json
 node_modules
 lerna-debug.log
 packages/*/lib
