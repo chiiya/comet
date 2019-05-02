@@ -1,6 +1,7 @@
 <p align="center"><img src="https://i.postimg.cc/1RYn00Tg/comet-logo.png" alt="Comet"></p>
 <p align="center"><strong>Automated testing and documentation for RESTful APIs.</strong></p>
 
+## Index
 <pre>
 <a href="#usage"
 >> Usage .....................................................................</a>
