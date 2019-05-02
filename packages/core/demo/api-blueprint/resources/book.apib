@@ -1,0 +1,64 @@
+## Book [/books/{id}]
+
+Resource representing a single book.
+
++ Parameters
+    + id: `1` (number, required) - ID of the requested book
++ Attributes (BookResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "id": 1,
+            "title": "reprehenderit quod enim",
+            "description": "Quas dicta itaque iure ut consequatur laborum voluptatibus. Nihil sint sint non rerum laborum. Et laudantium est quia sunt vero vel natus. Perspiciatis est non esse hic neque id fuga rerum.",
+            "publisher": "omnis",
+            "price": 24,
+            "author_id": 4,
+            "country_code": "DE",
+            "language_code": "de"
+        }
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/book.json)
+        ```
+ 
+### Show book [GET /books/{id}{?include}]
+
++ Parameters
+    + include: `author` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Book][]
+:[](../errors/fetch.apib) 
+
+### Update book [PATCH]
+
+Update an existing book object with new data.
+
+:[](../requests/book.apib)
++ Response 200 (application/json)
+    [Book][]
+:[](../errors/update.apib)   
+
+### Delete book [DELETE]
+
+Delete an existing book from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
+:[](../errors/fetch.apib)

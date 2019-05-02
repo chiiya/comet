@@ -1,0 +1,62 @@
+## Author [/authors/{id}]
+
+Resource representing a single author.
+
++ Parameters
+    + id: `1` (number, required) - ID of the requested author
++ Attributes (AuthorResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "id": 1,
+            "last_name": "Wehner",
+            "first_name": "Tony",
+            "date_of_birth": "2002-08-20 00:00:00",
+            "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
+            "country_code": "DE"
+        }
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/author.json)
+        ```
+ 
+### Show author [GET /authors/{id}{?include}]
+
++ Parameters
+    + include: `books` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Author][]
+:[](../errors/fetch.apib)   
+
+### Update author [PATCH]
+
+Update an existing author object with new data.
+
+:[](../requests/author.apib)
++ Response 200 (application/json)
+    [Author][]
+:[](../errors/update.apib)   
+
+### Delete author [DELETE]
+
+Delete an existing author from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
+:[](../errors/fetch.apib)

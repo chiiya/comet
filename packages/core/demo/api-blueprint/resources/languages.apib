@@ -1,0 +1,63 @@
+## Languages [/languages]
+
+Resource representing a list of all languages.
+
++ Attributes (array, fixed-type)
+    + (Language)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "code": "de",
+                "name": "German"
+            },
+            {
+                "code": "en",
+                "name": "English"
+            },
+            {
+                "code": "fr",
+                "name": "French"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/languages.json)
+        ```  
+
+### Retrieve languages [GET /languages{?include}]
+
+Retrieve a list of all languages. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`countries` |
+`books`     |
+
++ Parameters
+    + include: `books` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Languages][]
+:[](../errors/fetch.apib)
+
+### Create language [POST]
+
+Endpoint for creating a new language.
+
+:[](../requests/language.apib)
++ Response 201 (application/json)
+    [Language][]
+:[](../errors/update.apib)

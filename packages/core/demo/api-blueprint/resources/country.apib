@@ -1,0 +1,60 @@
+## Country [/countries/{code}]
+
+Resource representing a single country.
+
++ Parameters
+    + code: `CH` (string, required) - ISO 3166-1 alpha-2 code of the requested country
++ Attributes (object, fixed-type)
+    + code: `CH` (string, required) - ISO 3166-1 alpha-2 code of the country
+    + name: `Switzerland` (string, required) - English name of the country
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "code": "CH",
+            "name": "Switzerland"
+        }
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/country.json)
+        ```
+ 
+### Show country [GET /countries/{code}{?include}]
+
++ Parameters
+    + include: `languages,authors` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Country][]
+:[](../errors/fetch.apib)
+
+### Update country [PATCH]
+
+Update an existing country object with new data.
+
+:[](../requests/country.apib)
++ Response 200 (application/json)
+    [Country][]
+:[](../errors/update.apib)
+
+### Delete country [DELETE]
+
+Delete an existing country from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
+:[](../errors/fetch.apib)

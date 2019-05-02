@@ -1,0 +1,19 @@
+{
+  "description": "Language specified by name and language-code",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2
+    }
+  },
+  "type": "object",
+  "required": [
+    "name",
+    "code"
+  ],
+  "$schema": "http://json-schema.org/draft-04/schema#"
+}

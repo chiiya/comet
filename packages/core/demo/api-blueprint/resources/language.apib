@@ -1,0 +1,60 @@
+## Language [/languages/{code}]
+
+Resource representing a single language.
+
++ Parameters
+    + code: `de` (string, required) - ISO 639-1 code of the requested language
++ Attributes (object, fixed-type)
+    + code: `de` (string, required) - ISO 639-1 code of the language
+    + name: `German` (string, required) - English name of the language
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "code": "de",
+            "name": "German"
+        }
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/country.json)
+        ```
+ 
+### Show language [GET /languages/{code}{?include}]
+
++ Parameters
+    + include: `books,countries` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Language][]
+:[](../errors/fetch.apib)
+
+### Update language [PATCH]
+
+Update an existing language object with new data.
+
+:[](../requests/language.apib)
++ Response 200 (application/json)
+    [Language][]
+:[](../errors/update.apib)
+
+### Delete language [DELETE]
+
+Delete an existing language from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
+:[](../errors/fetch.apib)

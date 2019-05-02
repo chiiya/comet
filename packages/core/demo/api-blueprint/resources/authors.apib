@@ -1,0 +1,74 @@
+## Authors [/authors]
+
+Resource representing a list of all authors.
+
++ Attributes (array, fixed-type)
+    + (AuthorResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "id": 1,
+                "last_name": "Wehner",
+                "first_name": "Tony",
+                "date_of_birth": "2002-08-20 00:00:00",
+                "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
+                "country_code": "DE"
+            },
+            {
+                "id": 2,
+                "last_name": "Jakubowski",
+                "first_name": "Beryl",
+                "date_of_birth": "1949-08-16 00:00:00",
+                "homepage": "http://murphy.biz/sit-non-accusantium-sunt-rerum-et-et-nisi-qui.html",
+                "country_code": "DE"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/authors.json)
+        ```  
+
+### Retrieve authors [GET /authors{?include,filter%5bname%5d}]
+
+Retrieve a list of all countries. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`books`     |
+`country`   |
+
+**Filters**
+
+Filter | Example | Notes
+-----: | :------ | :----
+`name` | `Tony`  | Filter by author name (first name and/or last name)
+
++ Parameters
+    + include: `books,country` (array[string], optional) - Comma-separated list of relationships to include
+    + filter%5bname%5d: `Tony` (string, optional) - Filter by author name
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Authors][]
+:[](../errors/fetch.apib) 
+
+### Create author [POST]
+
+Endpoint for creating a new author.
+
+:[](../requests/author.apib)
++ Response 201 (application/json)
+    [Author][]
+:[](../errors/update.apib)   

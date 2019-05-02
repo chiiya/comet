@@ -1,0 +1,105 @@
+{
+  "type": "array",
+  "items": {
+    "description": "Author model",
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "first_name": {
+        "type": "string"
+      },
+      "last_name": {
+        "type": "string"
+      },
+      "date_of_birth": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "homepage": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "uri"
+      },
+      "country_code": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "books": {
+        "description": "Books that the author has written",
+        "type": "array",
+        "items": {
+          "description": "Book model",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "publisher": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number"
+            },
+            "author_id": {
+              "type": "integer"
+            },
+            "country_code": {
+              "type": "string"
+            },
+            "language_code": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "title",
+            "description",
+            "publisher",
+            "price",
+            "author_id",
+            "country_code",
+            "language_code"
+          ]
+        }
+      },
+      "country": {
+        "description": "Country the author is from",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "code"
+        ]
+      }
+    },
+    "type": "object",
+    "required": [
+      "id",
+      "first_name",
+      "last_name"
+    ]
+  },
+  "$schema": "http://json-schema.org/draft-04/schema#"
+}

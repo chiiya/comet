@@ -1,0 +1,68 @@
+## Countries [/countries]
+
+Resource representing a list of all countries.
+
++ Attributes (array, fixed-type)
+    + (Country)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: <remaining-requests>
+        ```
+    + Body
+        ```json
+        [
+            {
+                "code": "CH",
+                "name": "Switzerland"
+            },
+            {
+                "code": "DE",
+                "name": "Germany"
+            },
+            {
+                "code": "FR",
+                "name": "France"
+            },
+            {
+                "code": "US",
+                "name": "United States of America"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/countries.json)
+        ```  
+
+### Retrieve countries [GET /countries{?include}]
+
+Retrieve a list of all countries. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`languages` |
+`books`     |
+`authors`   |
+
++ Parameters
+    + include: `languages,authors` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Countries][]
+:[](../errors/fetch.apib)
+
+### Create country [POST]
+
+Endpoint for creating a new country.
+
+:[](../requests/country.apib)
++ Response 201 (application/json)
+    [Country][]
+:[](../errors/update.apib)

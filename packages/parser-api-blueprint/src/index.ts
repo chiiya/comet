@@ -109,7 +109,10 @@ export default class ApiBlueprintParser implements ParserInterface {
       // there should be a new resource for it.
       for (const action of resource.actions || []) {
         const uri = get(action, 'attributes.uriTemplate');
-        if (uri === undefined) continue;
+        if (uri === undefined || uri === '' || uri === null) {
+          actions.push(action);
+          continue;
+        }
         const trimmedUri = uri.replace(/{[?&#+].+}/g, '');
         if (trimmedUri === resource.uriTemplate) {
           actions.push(action);
@@ -163,7 +166,7 @@ export default class ApiBlueprintParser implements ParserInterface {
       }
       parameters.push({
         location,
-        name: param.name,
+        name: decodeURI(param.name),
         description: param.description.trim(),
         required: param.required || defaultRequired,
         example: param.example || null,
@@ -202,9 +205,12 @@ export default class ApiBlueprintParser implements ParserInterface {
 
     const schema: JsonSchema = {
       $schema: 'http://json-schema.org/draft-04/schema#',
-      default: data.default,
       type: data.type,
     };
+
+    if (data.default) {
+      schema.default = data.default;
+    }
 
     // If it's an enum (values array present), adjust the schema
     if (data.values && data.values.length > 0) {
@@ -217,10 +223,27 @@ export default class ApiBlueprintParser implements ParserInterface {
       };
     }
 
+    // If it's a nested array type definition (e.g. array[string]), adjust the schema
+    if (this.isNestedArrayType(data.type)) {
+      const nestedType = /array\[(\w+)]/g.exec(data.type)[1];
+      schema.type = 'array';
+      if (this.isValidType(nestedType)) {
+        schema.items = {
+          $schema: 'http://json-schema.org/draft-04/schema#',
+          type: nestedType,
+        };
+      }
+    }
+
     return schema;
   }
 
   protected isValidType(type: string): boolean {
-    return ['null', 'boolean', 'object', 'array', 'number', 'integer', 'string'].includes(type);
+    return ['null', 'boolean', 'object', 'array', 'number', 'integer', 'string'].includes(type)
+      || this.isNestedArrayType(type);
+  }
+
+  protected isNestedArrayType(type: string): boolean {
+    return /array\[\w+]/g.test(type);
   }
 }

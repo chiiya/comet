@@ -1,0 +1,77 @@
+## Books [/books]
+
+Resource representing a list of all books.
+
++ Attributes (array, fixed-type)
+    + (BookResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "id": 1,
+                "title": "reprehenderit quod enim",
+                "description": "Quas dicta itaque iure ut consequatur laborum voluptatibus. Nihil sint sint non rerum laborum. Et laudantium est quia sunt vero vel natus. Perspiciatis est non esse hic neque id fuga rerum.",
+                "publisher": "omnis",
+                "price": 24,
+                "author_id": 4,
+                "country_code": "DE",
+                "language_code": "de"
+            },
+            {
+                "id": 2,
+                "title": "illum sit voluptas",
+                "description": "Repudiandae molestiae sit et magni. Reiciendis illo qui voluptas facere doloremque. Amet magnam voluptates saepe dolores.",
+                "publisher": "voluptatem",
+                "price": 20,
+                "author_id": 4,
+                "country_code": "DE",
+                "language_code": "de"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        :[](../../schemas/books.json)
+        ```  
+
+### Retrieve books [GET /books{?include,filter%5btitle%5d,filter%5bpublisher%5d,filter%5bauthor%5d,filter%5bcountry%5d,filter%5blanguage%5d}]
+
+Retrieve a list of all books. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`author`    |
+`country`   |
+`language`  |
+
++ Parameters
+    + include: `author,country` (array[string], optional) - Comma-separated list of relationships to include
+    + filter%5btitle%5d: `Reprehenderit` (string, optional) - Filter by book title
+    + filter%5bpublisher%5d: `omnis` (string, optional) - Filter by publisher name
+    + filter%5bauthor%5d: `1` (number, optional) - Filter by author id
+    + filter%5bcountry%5d: `DE` (string, optional) - Filter by country code
+    + filter%5blanguage%5d: `en` (string, optional) - Filter by language code
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Books][]
+:[](../errors/fetch.apib)
+
+### Create book [POST]
+
+Endpoint for creating a new book.
+
+:[](../requests/book.apib)
++ Response 201 (application/json)
+    [Book][]
+:[](../errors/update.apib)

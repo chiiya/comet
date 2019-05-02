@@ -1,0 +1,2098 @@
+FORMAT: 1A
+HOST: http://local.comet-demo.test/api/
+AUTH_TYPE: key
+AUTH_NAME: X-Authorization
+AUTH_LOCATION: header
+
+# Travel Books API
+This project contains the implementation of a simple Laravel example RESTful API for travel books. 
+We have several different models: countries, languages, authors and books. Travel books are written 
+by one author, in one language, for one country. For this relatively simple API with 20 
+endpoints, Comet is able to generate 112 test-cases.
+
+## JSON API
+
+In the following section, a short overview of the general capabilities
+of the API will be given.
+
+**Note:** This documentation will display parameters with brackets
+(`[` and `]`) for readability, but actual URLs will need to be
+percent-encoded (`%5B` and `%5D`).
+
+### Filtering and Search
+
+Filtering lets you query data that contains certain matching
+attributes or relationships. These take the form of
+`filter[attribute]=value`. For example, you can request all the
+books by a certain publisher:
+```http
+/books?filter[publisher]=ABC
+```
+
+### Includes
+
+For some resources (e.g. books), you can also include related resources
+with `include=[relationship]`. A comma-delimited list can be used to
+request multiple relationships.
+
+```
+/books?include=author,country
+```
+
+## Status Codes
+
+Code  | Description
+----- | -----------
+`200` | OK
+`204` | No Content - successful request with no response content
+`400` | Bad Request - malformed request
+`401` | Unauthorized - invalid or no authentication details provided
+`404` | Not Found - resource does not exist
+`405` | Method Not Allowed
+`5xx` | Server Error
+
+# Group Locales
+
+The locale endpoints can be used to access information about countries and 
+their respective languages.
+
+## Countries [/countries]
+
+Resource representing a list of all countries.
+
++ Attributes (array, fixed-type)
+    + (Country)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: <remaining-requests>
+        ```
+    + Body
+        ```json
+        [
+            {
+                "code": "CH",
+                "name": "Switzerland"
+            },
+            {
+                "code": "DE",
+                "name": "Germany"
+            },
+            {
+                "code": "FR",
+                "name": "France"
+            },
+            {
+                "code": "US",
+                "name": "United States of America"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        {
+          "type": "array",
+          "items": {
+            "description": "Country specified by name and country-code",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 2
+              },
+              "languages": {
+                "description": "Languages that belong to this country",
+                "type": "array",
+                "items": {
+                  "description": "Language specified by name and language-code",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 2,
+                      "maxLength": 2
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "code"
+                  ]
+                }
+              },
+              "authors": {
+                "description": "Authors belonging to this country",
+                "type": "array",
+                "items": {
+                  "description": "Author model",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "date_of_birth": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "homepage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uri"
+                    },
+                    "country_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "first_name",
+                    "last_name"
+                  ]
+                }
+              },
+              "books": {
+                "description": "Travel books for this country",
+                "type": "array",
+                "items": {
+                  "description": "Book model",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    },
+                    "author_id": {
+                      "type": "integer"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    },
+                    "language_code": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "publisher",
+                    "price",
+                    "author_id",
+                    "country_code",
+                    "language_code"
+                  ]
+                }
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "code"
+            ]
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```  
+
+### Retrieve countries [GET /countries{?include}]
+
+Retrieve a list of all countries. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`languages` |
+`books`     |
+`authors`   |
+
++ Parameters
+    + include: `languages,authors` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Countries][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Create country [POST]
+
+Endpoint for creating a new country.
+
++ Request (application/json)
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
+    + Body
+        ```json
+        {
+            "code": "DE",
+            "name": "Germany"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Country specified by name and country-code",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            }
+          },
+          "type": "object",
+          "required": [
+            "name",
+            "code"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ``` 
++ Response 201 (application/json)
+    [Country][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+## Country [/countries/{code}]
+
+Resource representing a single country.
+
++ Parameters
+    + code: `CH` (string, required) - ISO 3166-1 alpha-2 code of the requested country
++ Attributes (object, fixed-type)
+    + code: `CH` (string, required) - ISO 3166-1 alpha-2 code of the country
+    + name: `Switzerland` (string, required) - English name of the country
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "code": "CH",
+            "name": "Switzerland"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Country specified by name and country-code",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            },
+            "languages": {
+              "description": "Languages that belong to this country",
+              "type": "array",
+              "items": {
+                "description": "Language specified by name and language-code",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ]
+              }
+            },
+            "authors": {
+              "description": "Authors belonging to this country",
+              "type": "array",
+              "items": {
+                "description": "Author model",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "date_of_birth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "homepage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uri"
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "first_name",
+                  "last_name"
+                ]
+              }
+            },
+            "books": {
+              "description": "Travel books for this country",
+              "type": "array",
+              "items": {
+                "description": "Book model",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "author_id": {
+                    "type": "integer"
+                  },
+                  "country_code": {
+                    "type": "string"
+                  },
+                  "language_code": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "title",
+                  "description",
+                  "publisher",
+                  "price",
+                  "author_id",
+                  "country_code",
+                  "language_code"
+                ]
+              }
+            }
+          },
+          "type": "object",
+          "required": [
+            "name",
+            "code"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
+ 
+### Show country [GET /countries/{code}{?include}]
+
++ Parameters
+    + include: `languages,authors` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Country][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Update country [PATCH]
+
+Update an existing country object with new data.
+
++ Request (application/json)
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
+    + Body
+        ```json
+        {
+            "code": "DE",
+            "name": "Germany"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Country specified by name and country-code",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            }
+          },
+          "type": "object",
+          "required": [
+            "name",
+            "code"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ``` 
++ Response 200 (application/json)
+    [Country][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Delete country [DELETE]
+
+Delete an existing country from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+## Languages [/languages]
+
+Resource representing a list of all languages.
+
++ Attributes (array, fixed-type)
+    + (Language)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "code": "de",
+                "name": "German"
+            },
+            {
+                "code": "en",
+                "name": "English"
+            },
+            {
+                "code": "fr",
+                "name": "French"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        {
+          "type": "array",
+          "items": {
+            "description": "Language specified by name and language-code",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 2
+              },
+              "countries": {
+                "description": "Countries the language is spoken in",
+                "type": "array",
+                "items": {
+                  "description": "Country specified by name and country-code",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string",
+                      "minLength": 2,
+                      "maxLength": 2
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "code"
+                  ]
+                }
+              },
+              "books": {
+                "description": "Travel books in this language",
+                "type": "array",
+                "items": {
+                  "description": "Book model",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    },
+                    "author_id": {
+                      "type": "integer"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    },
+                    "language_code": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "publisher",
+                    "price",
+                    "author_id",
+                    "country_code",
+                    "language_code"
+                  ]
+                }
+              }
+            },
+            "type": "object",
+            "required": [
+              "name",
+              "code"
+            ]
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```  
+
+### Retrieve languages [GET /languages{?include}]
+
+Retrieve a list of all languages. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`countries` |
+`books`     |
+
++ Parameters
+    + include: `books` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Languages][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Create language [POST]
+
+Endpoint for creating a new language.
+
++ Request (application/json)
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
+        + Body
+            ```json
+            {
+                "code": "de",
+                "name": "German"
+            }
+            ```
+        + Schema
+            ```json
+            {
+              "description": "Language specified by name and language-code",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
+                }
+              },
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+            ``` 
++ Response 201 (application/json)
+    [Language][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+## Language [/languages/{code}]
+
+Resource representing a single language.
+
++ Parameters
+    + code: `de` (string, required) - ISO 639-1 code of the requested language
++ Attributes (object, fixed-type)
+    + code: `de` (string, required) - ISO 639-1 code of the language
+    + name: `German` (string, required) - English name of the language
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "code": "de",
+            "name": "German"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Country specified by name and country-code",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 2
+            },
+            "languages": {
+              "description": "Languages that belong to this country",
+              "type": "array",
+              "items": {
+                "description": "Language specified by name and language-code",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ]
+              }
+            },
+            "authors": {
+              "description": "Authors belonging to this country",
+              "type": "array",
+              "items": {
+                "description": "Author model",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "date_of_birth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "homepage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uri"
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "first_name",
+                  "last_name"
+                ]
+              }
+            },
+            "books": {
+              "description": "Travel books for this country",
+              "type": "array",
+              "items": {
+                "description": "Book model",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "author_id": {
+                    "type": "integer"
+                  },
+                  "country_code": {
+                    "type": "string"
+                  },
+                  "language_code": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "title",
+                  "description",
+                  "publisher",
+                  "price",
+                  "author_id",
+                  "country_code",
+                  "language_code"
+                ]
+              }
+            }
+          },
+          "type": "object",
+          "required": [
+            "name",
+            "code"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
+ 
+### Show language [GET /languages/{code}{?include}]
+
++ Parameters
+    + include: `books,countries` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Language][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Update language [PATCH]
+
+Update an existing language object with new data.
+
++ Request (application/json)
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
+        + Body
+            ```json
+            {
+                "code": "de",
+                "name": "German"
+            }
+            ```
+        + Schema
+            ```json
+            {
+              "description": "Language specified by name and language-code",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
+                }
+              },
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ],
+              "$schema": "http://json-schema.org/draft-04/schema#"
+            }
+            ``` 
++ Response 200 (application/json)
+    [Language][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Delete language [DELETE]
+
+Delete an existing language from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+# Group Root
+
+## Authors [/authors]
+
+Resource representing a list of all authors.
+
++ Attributes (array, fixed-type)
+    + (AuthorResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "id": 1,
+                "last_name": "Wehner",
+                "first_name": "Tony",
+                "date_of_birth": "2002-08-20 00:00:00",
+                "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
+                "country_code": "DE"
+            },
+            {
+                "id": 2,
+                "last_name": "Jakubowski",
+                "first_name": "Beryl",
+                "date_of_birth": "1949-08-16 00:00:00",
+                "homepage": "http://murphy.biz/sit-non-accusantium-sunt-rerum-et-et-nisi-qui.html",
+                "country_code": "DE"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        {
+          "type": "array",
+          "items": {
+            "description": "Author model",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "date_of_birth": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "homepage": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri"
+              },
+              "country_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "books": {
+                "description": "Books that the author has written",
+                "type": "array",
+                "items": {
+                  "description": "Book model",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    },
+                    "author_id": {
+                      "type": "integer"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    },
+                    "language_code": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "publisher",
+                    "price",
+                    "author_id",
+                    "country_code",
+                    "language_code"
+                  ]
+                }
+              },
+              "country": {
+                "description": "Country the author is from",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ]
+              }
+            },
+            "type": "object",
+            "required": [
+              "id",
+              "first_name",
+              "last_name"
+            ]
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```  
+
+### Retrieve authors [GET /authors{?include,filter%5bname%5d}]
+
+Retrieve a list of all countries. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`books`     |
+`country`   |
+
+**Filters**
+
+Filter | Example | Notes
+-----: | :------ | :----
+`name` | `Tony`  | Filter by author name (first name and/or last name)
+
++ Parameters
+    + include: `books,country` (array[string], optional) - Comma-separated list of relationships to include
+    + filter%5bname%5d: `Tony` (string, optional) - Filter by author name
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Authors][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])   
+
+### Create author [POST]
+
+Endpoint for creating a new author.
+
++ Request (application/json)
+    + Attributes (AuthorRequest)
+    + Headers
+         ```
+         X-Authorization: <your-api-key>
+         ```
+    + Body
+        ```json
+        {
+            "id": 10,
+            "last_name": "Rau",
+            "first_name": "Gage",
+            "date_of_birth": "2011-10-30 00:00:00",
+            "homepage": "http://www.lowe.biz/fugiat-doloribus-in-beatae-aut-alias",
+            "country_code": "US"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Author model",
+          "properties": {
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "date_of_birth": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "uri"
+            },
+            "country_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "first_name",
+            "last_name"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
++ Response 201 (application/json)
+    [Author][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])     
+
+## Author [/authors/{id}]
+
+Resource representing a single author.
+
++ Parameters
+    + id: `1` (number, required) - ID of the requested author
++ Attributes (AuthorResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "id": 1,
+            "last_name": "Wehner",
+            "first_name": "Tony",
+            "date_of_birth": "2002-08-20 00:00:00",
+            "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
+            "country_code": "DE"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Author model",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "date_of_birth": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "uri"
+            },
+            "country_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "books": {
+              "description": "Books that the author has written",
+              "type": "array",
+              "items": {
+                "description": "Book model",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "publisher": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "author_id": {
+                    "type": "integer"
+                  },
+                  "country_code": {
+                    "type": "string"
+                  },
+                  "language_code": {
+                    "type": "string"
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "title",
+                  "description",
+                  "publisher",
+                  "price",
+                  "author_id",
+                  "country_code",
+                  "language_code"
+                ]
+              }
+            },
+            "country": {
+              "description": "Country the author is from",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
+                }
+              },
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "first_name",
+            "last_name"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
+ 
+### Show author [GET /authors/{id}{?include}]
+
++ Parameters
+    + include: `books` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Author][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])     
+
+### Update author [PATCH]
+
+Update an existing author object with new data.
+
++ Request (application/json)
+    + Attributes (AuthorRequest)
+    + Headers
+         ```
+         X-Authorization: <your-api-key>
+         ```
+    + Body
+        ```json
+        {
+            "id": 10,
+            "last_name": "Rau",
+            "first_name": "Gage",
+            "date_of_birth": "2011-10-30 00:00:00",
+            "homepage": "http://www.lowe.biz/fugiat-doloribus-in-beatae-aut-alias",
+            "country_code": "US"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Author model",
+          "properties": {
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "date_of_birth": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "uri"
+            },
+            "country_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "first_name",
+            "last_name"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
++ Response 200 (application/json)
+    [Author][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])     
+
+### Delete author [DELETE]
+
+Delete an existing author from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+## Books [/books]
+
+Resource representing a list of all books.
+
++ Attributes (array, fixed-type)
+    + (BookResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        [
+            {
+                "id": 1,
+                "title": "reprehenderit quod enim",
+                "description": "Quas dicta itaque iure ut consequatur laborum voluptatibus. Nihil sint sint non rerum laborum. Et laudantium est quia sunt vero vel natus. Perspiciatis est non esse hic neque id fuga rerum.",
+                "publisher": "omnis",
+                "price": 24,
+                "author_id": 4,
+                "country_code": "DE",
+                "language_code": "de"
+            },
+            {
+                "id": 2,
+                "title": "illum sit voluptas",
+                "description": "Repudiandae molestiae sit et magni. Reiciendis illo qui voluptas facere doloremque. Amet magnam voluptates saepe dolores.",
+                "publisher": "voluptatem",
+                "price": 20,
+                "author_id": 4,
+                "country_code": "DE",
+                "language_code": "de"
+            }
+        ]
+        ```
+    + Schema
+        ```json
+        {
+          "type": "array",
+          "items": {
+            "description": "Book model",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "publisher": {
+                "type": "string"
+              },
+              "price": {
+                "type": "number"
+              },
+              "author_id": {
+                "type": "integer"
+              },
+              "country_code": {
+                "type": "string"
+              },
+              "language_code": {
+                "type": "string"
+              },
+              "author": {
+                "description": "The author of the book",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "date_of_birth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "homepage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "uri"
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "id",
+                  "first_name",
+                  "last_name"
+                ]
+              },
+              "country": {
+                "description": "Country the travel book is for",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ]
+              },
+              "language": {
+                "description": "Language the book is written in",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 2
+                  }
+                },
+                "type": "object",
+                "required": [
+                  "name",
+                  "code"
+                ]
+              }
+            },
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "description",
+              "publisher",
+              "price",
+              "author_id",
+              "country_code",
+              "language_code"
+            ]
+          },
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```  
+
+### Retrieve books [GET /books{?include,filter%5btitle%5d,filter%5bpublisher%5d,filter%5bauthor%5d,filter%5bcountry%5d,filter%5blanguage%5d}]
+
+Retrieve a list of all books. The following relationships can optionally be included
+in the response:
+
+name        |
+----------- |
+`author`    |
+`country`   |
+`language`  |
+
++ Parameters
+    + include: `author,country` (array[string], optional) - Comma-separated list of relationships to include
+    + filter%5btitle%5d: `Reprehenderit` (string, optional) - Filter by book title
+    + filter%5bpublisher%5d: `omnis` (string, optional) - Filter by publisher name
+    + filter%5bauthor%5d: `1` (number, optional) - Filter by author id
+    + filter%5bcountry%5d: `DE` (string, optional) - Filter by country code
+    + filter%5blanguage%5d: `en` (string, optional) - Filter by language code
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Books][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+### Create book [POST]
+
+Endpoint for creating a new book.
+
++ Request (application/json)
+    + Attributes (BookRequest)
+    + Headers
+         ```
+         X-Authorization: <your-api-key>
+         ```
+    + Body
+        ```json
+        {
+            "id": 25,
+            "title": "maxime sint voluptates",
+            "description": "Et qui ab odit hic nemo illum. Sint velit adipisci qui mollitia est. Qui vel qui dignissimos qui.",
+            "publisher": "sint",
+            "price": 15,
+            "author_id": 16,
+            "country_code": "CH",
+            "language_code": "fr"
+        }
+        ```
++ Response 201 (application/json)
+    [Book][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+## Book [/books/{id}]
+
+Resource representing a single book.
+
++ Parameters
+    + id: `1` (number, required) - ID of the requested book
++ Attributes (BookResponse)
++ Model (application/json)
+    + Headers
+        ```
+        X-RateLimit-Limit: 60
+        X-RateLimit-Remaining: 59
+        ```
+    + Body
+        ```json
+        {
+            "id": 1,
+            "title": "reprehenderit quod enim",
+            "description": "Quas dicta itaque iure ut consequatur laborum voluptatibus. Nihil sint sint non rerum laborum. Et laudantium est quia sunt vero vel natus. Perspiciatis est non esse hic neque id fuga rerum.",
+            "publisher": "omnis",
+            "price": 24,
+            "author_id": 4,
+            "country_code": "DE",
+            "language_code": "de"
+        }
+        ```
+    + Schema
+        ```json
+        {
+          "description": "Book model",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "publisher": {
+              "type": "string"
+            },
+            "price": {
+              "type": "number"
+            },
+            "author_id": {
+              "type": "integer"
+            },
+            "country_code": {
+              "type": "string"
+            },
+            "language_code": {
+              "type": "string"
+            },
+            "author": {
+              "description": "The author of the book",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "date_of_birth": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "homepage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "uri"
+                },
+                "country_code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": "object",
+              "required": [
+                "id",
+                "first_name",
+                "last_name"
+              ]
+            },
+            "country": {
+              "description": "Country the travel book is for",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
+                }
+              },
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ]
+            },
+            "language": {
+              "description": "Language the book is written in",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 2
+                }
+              },
+              "type": "object",
+              "required": [
+                "name",
+                "code"
+              ]
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "title",
+            "description",
+            "publisher",
+            "price",
+            "author_id",
+            "country_code",
+            "language_code"
+          ],
+          "$schema": "http://json-schema.org/draft-04/schema#"
+        }
+        ```
+ 
+### Show book [GET /books/{id}{?include}]
+
++ Parameters
+    + include: `author` (array[string], optional) - Comma-separated list of relationships to include
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 200 (application/json)
+    [Book][]
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])   
+
+### Update book [PATCH]
+
+Update an existing book object with new data.
+
++ Request (application/json)
+    + Attributes (BookRequest)
+    + Headers
+         ```
+         X-Authorization: <your-api-key>
+         ```
+    + Body
+        ```json
+        {
+            "id": 25,
+            "title": "maxime sint voluptates",
+            "description": "Et qui ab odit hic nemo illum. Sint velit adipisci qui mollitia est. Qui vel qui dignissimos qui.",
+            "publisher": "sint",
+            "price": 15,
+            "author_id": 16,
+            "country_code": "CH",
+            "language_code": "fr"
+        }
+        ```
++ Response 200 (application/json)
+    [Book][]
++ Response 422 (application/json)
+    + Attributes
+      + errors (array[Error422])    
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])     
+
+### Delete book [DELETE]
+
+Delete an existing book from database.
+
++ Request
+    + Headers
+        ```
+        X-Authorization: <your-api-key>
+        ```
++ Response 204 (application/json)
++ Response 401 (application/json)
+    + Attributes
+      + errors (array[Error401])    
++ Response 404 (application/json)
+    + Attributes
+      + errors (array[Error404])
++ Response 405 (application/json)
+    + Attributes
+      + errors (array[Error405])
++ Response 500 (application/json)
+    + Attributes
+      + errors (array[Error500])  
+
+# Data Structures
+
+## AuthorResponse (object, fixed-type)
+
++ id: `1` (number, required) - ID of the author
++ last_name: `Wehner` (string, required)
++ first_name: `Tony` (string, required)
++ date_of_birth: `2002-08-20 00:00:00` (string, optional)
++ homepage: `https://morar.com/facilis-labore.html` (string, optional) - Personal homepage of the author
++ country_code: `DE` (string, optional) - ISO 3166-1 alpha-2 code of the country
+
+## AuthorRequest (object, fixed-type)
+
++ last_name: `Wehner` (string, required)
++ first_name: `Tony` (string, required)
++ date_of_birth: `2002-08-20 00:00:00` (string, optional)
++ homepage: `https://morar.com/facilis-labore.html` (string, optional) - Personal homepage of the author
++ country_code: `DE` (string, optional) - ISO 3166-1 alpha-2 code of the country
+
+## BookResponse (object, fixed-type)
+
++ id: `1` (number, required) - ID of the book
++ title: `Reprehenderit quod enim` (string, required)
++ description: `Quas dicta itaque iure ut consequatur laborum voluptatibus.` (string, required)
++ publisher: `omnis` (string, required)
++ price: `24` (number, required) - Personal homepage of the author
++ author_id: `1` (number, required) - ID of the author
++ country_code: `DE` (string, required) - ISO 3166-1 alpha-2 code of the country
++ language_code: `de` (string, required) - ISO 639-1 code of the language
+
+## BookRequest (object, fixed-type)
+
++ title: `Reprehenderit quod enim` (string, required)
++ description: `Quas dicta itaque iure ut consequatur laborum voluptatibus.` (string, required)
++ publisher: `omnis` (string, required)
++ price: `24` (number, required) - Personal homepage of the author
++ author_id: `1` (number, required) - ID of the author
++ country_code: `DE` (string, required) - ISO 3166-1 alpha-2 code of the country
++ language_code: `de` (string, required) - ISO 639-1 code of the language
+
+## Error422 (object)
++ title: `Invalid Request` (required, string) - Short, human-readable summary of the error
++ message: `The given data was invalid.` (required, string) - Human-readable explanation for this specific error
++ errors (ValidationError, required)
++ status: 422 (required, number) - HTTP status code generated by the origin server
+
+## Error401 (object)
++ title: `Unauthorized` (required, string) - Short, human-readable summary of the error
++ message: `You are not authorized to access this resource.` (required, string) - Human-readable explanation for this specific error
++ status: 401 (required, number) - HTTP status code generated by the origin server
+
+## Error404 (object)
++ title: `Record not found` (required, string) - Short, human-readable summary of the error
++ message: `The requested resource could not be found.` (required, string) - Human-readable explanation for this specific error
++ status: 404 (required, number) - HTTP status code generated by the origin server
+
+## Error405 (object)
++ title: `Method Not Allowed` (required, string) - Short, human-readable summary of the error
++ message: `The method specified in the request is not allowed for this resource.` (required, string) - Human-readable explanation for this specific error
++ status: 405 (required, number) - HTTP status code generated by the origin server
+
+## Error500 (object)
++ title: `Internal Server Error` (required, string) - Short, human-readable summary of the error
++ message: `Whoops, looks like something went wrong.` (required, string) - Human-readable explanation for this specific error
++ status: 500 (required, number) - HTTP status code generated by the origin server
+
+## ValidationError (object)
++ *title (string)* (array[string])
+    + "Please specify a book title" (string)

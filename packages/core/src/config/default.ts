@@ -32,6 +32,7 @@ module.exports = {
           // '@comet-cli/factory-json-schemas',
         ],
         output: 'exports/documentation',
+        ungroupRoot: true,
       },
     },
   },
