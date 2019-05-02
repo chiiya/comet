@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.imgur.com/W61Wiyp.png" alt="Comet"></p>
+<p align="center"><img src="https://i.postimg.cc/1RYn00Tg/comet-logo.png" alt="Comet"></p>
 <p align="center">Automated testing and documentation for RESTful APIs.</p>
 
 ## Usage
