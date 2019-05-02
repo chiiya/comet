@@ -1,5 +1,5 @@
 <p align="center"><img src="https://i.postimg.cc/1RYn00Tg/comet-logo.png" alt="Comet"></p>
-<p align="center">Automated testing and documentation for RESTful APIs.</p>
+<p align="center"><strong>Automated testing and documentation for RESTful APIs.</strong></p>
 
 ## Usage
 For usage, see the [core package](https://github.com/chiiya/comet/tree/master/packages/core).
