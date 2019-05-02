@@ -52,8 +52,7 @@ Comet is set up as a monorepo using lerna and yarn workspaces.
 ### Requirements
 ```bash
 node # >=8.0.0
-yarn # with workspaces enabled:
-yarn config set workspaces-experimental true
+yarn
 ```
 
 ### Installation
