@@ -241,6 +241,7 @@ name        |
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Countries][]
@@ -265,6 +266,7 @@ Endpoint for creating a new country.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
     + Body
         ```json
@@ -475,6 +477,7 @@ Resource representing a single country.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Country][]
@@ -499,6 +502,7 @@ Update an existing country object with new data.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
     + Body
         ```json
@@ -555,6 +559,7 @@ Delete an existing country from database.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 204 (application/json)
 + Response 401 (application/json)
@@ -707,6 +712,7 @@ name        |
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Languages][]
@@ -731,6 +737,7 @@ Endpoint for creating a new language.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
         + Body
             ```json
@@ -941,6 +948,7 @@ Resource representing a single language.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Language][]
@@ -965,6 +973,7 @@ Update an existing language object with new data.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
         + Body
             ```json
@@ -1021,6 +1030,7 @@ Delete an existing language from database.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 204 (application/json)
 + Response 401 (application/json)
@@ -1203,6 +1213,7 @@ Filter | Example | Notes
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Authors][]
@@ -1228,6 +1239,7 @@ Endpoint for creating a new author.
     + Headers
          ```
          X-Authorization: <your-api-key>
+         Accept: application/json
          ```
     + Body
         ```json
@@ -1436,6 +1448,7 @@ Resource representing a single author.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Author][]
@@ -1461,6 +1474,7 @@ Update an existing author object with new data.
     + Headers
          ```
          X-Authorization: <your-api-key>
+         Accept: application/json
          ```
     + Body
         ```json
@@ -1539,6 +1553,7 @@ Delete an existing author from database.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 204 (application/json)
 + Response 401 (application/json)
@@ -1736,6 +1751,7 @@ name        |
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Books][]
@@ -1761,6 +1777,7 @@ Endpoint for creating a new book.
     + Headers
          ```
          X-Authorization: <your-api-key>
+         Accept: application/json
          ```
     + Body
         ```json
@@ -1819,125 +1836,6 @@ Resource representing a single book.
             "language_code": "de"
         }
         ```
-    + Schema
-        ```json
-        {
-          "description": "Book model",
-          "properties": {
-            "id": {
-              "type": "integer"
-            },
-            "title": {
-              "type": "string"
-            },
-            "description": {
-              "type": "string"
-            },
-            "publisher": {
-              "type": "string"
-            },
-            "price": {
-              "type": "number"
-            },
-            "author_id": {
-              "type": "integer"
-            },
-            "country_code": {
-              "type": "string"
-            },
-            "language_code": {
-              "type": "string"
-            },
-            "author": {
-              "description": "The author of the book",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "first_name": {
-                  "type": "string"
-                },
-                "last_name": {
-                  "type": "string"
-                },
-                "date_of_birth": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "homepage": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "format": "uri"
-                },
-                "country_code": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              },
-              "type": "object",
-              "required": [
-                "id",
-                "first_name",
-                "last_name"
-              ]
-            },
-            "country": {
-              "description": "Country the travel book is for",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "code": {
-                  "type": "string",
-                  "minLength": 2,
-                  "maxLength": 2
-                }
-              },
-              "type": "object",
-              "required": [
-                "name",
-                "code"
-              ]
-            },
-            "language": {
-              "description": "Language the book is written in",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "code": {
-                  "type": "string",
-                  "minLength": 2,
-                  "maxLength": 2
-                }
-              },
-              "type": "object",
-              "required": [
-                "name",
-                "code"
-              ]
-            }
-          },
-          "type": "object",
-          "required": [
-            "id",
-            "title",
-            "description",
-            "publisher",
-            "price",
-            "author_id",
-            "country_code",
-            "language_code"
-          ],
-          "$schema": "http://json-schema.org/draft-04/schema#"
-        }
-        ```
  
 ### Show book [GET /books/{id}{?include}]
 
@@ -1947,6 +1845,7 @@ Resource representing a single book.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 200 (application/json)
     [Book][]
@@ -1972,6 +1871,7 @@ Update an existing book object with new data.
     + Headers
          ```
          X-Authorization: <your-api-key>
+         Accept: application/json
          ```
     + Body
         ```json
@@ -2012,6 +1912,7 @@ Delete an existing book from database.
     + Headers
         ```
         X-Authorization: <your-api-key>
+        Accept: application/json
         ```
 + Response 204 (application/json)
 + Response 401 (application/json)

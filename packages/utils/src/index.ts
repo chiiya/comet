@@ -73,3 +73,11 @@ export const camelize = (text: string, separator: string = '-'): string => {
   ));
   return result.join('');
 };
+
+/**
+ * Check whether a value (string) is a number.
+ * @param str
+ */
+export const isNumber = (str: any): boolean => {
+  return !isNaN(str) && !isNaN(parseFloat(str));
+};

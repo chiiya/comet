@@ -1,10 +1,11 @@
 import {
   ApiModel, Authentication,
-  CommandConfig,
+  CommandConfig, Header,
   Information, JsonSchema,
   LoggerInterface, Operation, Parameter,
-  ParserInterface, Resource, ResourceGroup,
+  ParserInterface, Request, Resource, ResourceGroup, Response,
 } from '@comet-cli/types';
+import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
 import { readFile, writeFile } from 'fs-extra';
 import ParsingException from './ParsingException';
@@ -184,9 +185,73 @@ export default class ApiBlueprintParser implements ParserInterface {
       method: action.method,
       description: action.description || null,
       parameters: this.parseParameters(uri, action.parameters),
-      request: null,
-      responses: [],
+      request: this.parseRequest(action.examples),
+      responses: this.parseResponses(action.examples),
       deprecated: false,
+    };
+  }
+
+  protected parseRequest(examples: any): Request {
+    if (examples.length === 0 || examples[0].requests.length === 0) {
+      return null;
+    }
+
+    const request = examples[0].requests[0];
+    const headers = this.parseHeaders(request.headers);
+    const contentType = headers.find(header => header.key === 'Content-Type');
+    const schema = request.schema;
+    return {
+      headers,
+      description: request.description || null,
+      schema: schema !== '' ? JSON.parse(schema) : null,
+      example: request.body || null,
+      mediaType: contentType !== undefined ? contentType.example : null,
+    };
+  }
+
+  protected parseResponses(examples: any): Response[] {
+    if (examples.length === 0 || examples[0].requests.length === 0) {
+      return [];
+    }
+
+    const responses: Response[] = [];
+    const astResponses = examples[0].responses;
+
+    for (const response of astResponses) {
+      const headers = this.parseHeaders(response.headers);
+      const contentType = headers.find(header => header.key === 'Content-Type');
+      const schema = response.schema;
+      responses.push({
+        headers,
+        description: response.description || null,
+        schema: schema !== '' ? JSON.parse(schema) : null,
+        example: response.body || null,
+        mediaType: contentType !== undefined ? contentType.example : null,
+        statusCode: Number(response.name),
+      });
+    }
+
+    return responses;
+  }
+
+  protected parseHeaders(data: any): Header[] {
+    const headers: Header[] = [];
+    for (const header of data) {
+      headers.push({
+        description: null,
+        key: header.name,
+        example: header.value,
+        schema: this.inferSchemaFromValue(header.value),
+        deprecated: false,
+      });
+    }
+    return headers;
+  }
+
+  protected inferSchemaFromValue(value: any): JsonSchema {
+    return {
+      $schema: 'http://json-schema.org/draft-04/schema#',
+      type: isNumber(value) ? 'number' : 'string',
     };
   }
 

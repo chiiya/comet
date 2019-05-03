@@ -56,7 +56,7 @@ export default class MakeDocumentation extends BaseCommand {
    * Execute the command itself (decorate and write output).
    */
   async execute(specification: ApiModel) {
-    console.log(JSON.stringify(specification, null, 2));
+    console.log(JSON.stringify(specification.groups[0].resources[0], null, 2));
     // await this.runDecorators(specification);
     // await this.runFactories(specification);
   }
