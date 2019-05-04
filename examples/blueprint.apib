@@ -51,10 +51,10 @@ Code  | Description
 `405` | Method Not Allowed
 `5xx` | Server Error
 
-# Group Locales
-
 The locale endpoints can be used to access information about countries and 
 their respective languages.
+
+# Group Locales
 
 ## Countries [/countries]
 
@@ -1848,7 +1848,7 @@ Resource representing a single book.
         Accept: application/json
         ```
 + Response 200 (application/json)
-    [Book][]
+    + Attributes (BookResponse)
 + Response 401 (application/json)
     + Attributes
       + errors (array[Error401])    
@@ -1935,17 +1935,17 @@ Delete an existing book from database.
 + id: `1` (number, required) - ID of the author
 + last_name: `Wehner` (string, required)
 + first_name: `Tony` (string, required)
-+ date_of_birth: `2002-08-20 00:00:00` (string, optional)
-+ homepage: `https://morar.com/facilis-labore.html` (string, optional) - Personal homepage of the author
-+ country_code: `DE` (string, optional) - ISO 3166-1 alpha-2 code of the country
++ date_of_birth: `2002-08-20 00:00:00` (string, nullable, optional)
++ homepage: `https://morar.com/facilis-labore.html` (string, nullable, optional) - Personal homepage of the author
++ country_code: `DE` (string, nullable, optional) - ISO 3166-1 alpha-2 code of the country
 
 ## AuthorRequest (object, fixed-type)
 
 + last_name: `Wehner` (string, required)
 + first_name: `Tony` (string, required)
-+ date_of_birth: `2002-08-20 00:00:00` (string, optional)
-+ homepage: `https://morar.com/facilis-labore.html` (string, optional) - Personal homepage of the author
-+ country_code: `DE` (string, optional) - ISO 3166-1 alpha-2 code of the country
++ date_of_birth: `2002-08-20 00:00:00` (string, nullable, optional)
++ homepage: `https://morar.com/facilis-labore.html` (string, nullable, optional) - Personal homepage of the author
++ country_code: `DE` (string, nullable, optional) - ISO 3166-1 alpha-2 code of the country
 
 ## BookResponse (object, fixed-type)
 

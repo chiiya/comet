@@ -1,6 +1,7 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../application/BaseCommand';
 import { ApiModel } from '@comet-cli/types';
+import { writeFile } from 'fs-extra';
 
 export default class MakeDocumentation extends BaseCommand {
   /** Description of the command, displayed when using help flag */
@@ -56,7 +57,7 @@ export default class MakeDocumentation extends BaseCommand {
    * Execute the command itself (decorate and write output).
    */
   async execute(specification: ApiModel) {
-    console.log(JSON.stringify(specification.groups[0].resources[0], null, 2));
+    await writeFile('./result.json', JSON.stringify(specification, null, 2));
     // await this.runDecorators(specification);
     // await this.runFactories(specification);
   }

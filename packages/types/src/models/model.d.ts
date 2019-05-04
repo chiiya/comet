@@ -32,9 +32,9 @@ export interface JsonSchema {
 
 export interface ApiModel {
   info: Information;
-  resources: Resource[];
-  groups: ResourceGroup[];
   auth?: Authentication;
+  groups: ResourceGroup[];
+  resources: Resource[];
 }
 
 export interface Information {
