@@ -8,6 +8,7 @@ package-lock.json
 /tmp
 .idea/
 result.json
+examples/blueprint.apib
 node_modules
 lerna-debug.log
 packages/*/lib
