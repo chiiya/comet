@@ -1,11 +1,14 @@
-# `@comet-cli/parser-api-blueprint`
+## `@comet-cli/parser-api-blueprint`
 
-> TODO: description
+This package contains the implementation of an API Blueprint parser.
 
-## Usage
+### Usage
 
-```
-const parserApiBlueprint = require('@comet-cli/parser-api-blueprint');
+```typescript
+import ApiBlueprintParser from '@comet-cli/parser-api-blueprint';
 
-// TODO: DEMONSTRATE API
+async function main() {
+  const parser = new ApiBlueprintParser();
+  const model = await parser.execute('api.yaml', config, logger);
+}
 ```
