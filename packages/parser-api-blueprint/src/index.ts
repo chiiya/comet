@@ -82,11 +82,11 @@ export default class ApiBlueprintParser implements ParserInterface {
     const name = metadata['AUTH_NAME'] || null;
     const location = <ApiKeyLocation>metadata['AUTH_LOCATION'] || null;
 
-    if (['basic', 'digest', 'jwt', 'key', 'oauth2'].includes(type) === false) {
+    if (type && ['basic', 'digest', 'jwt', 'key', 'oauth2'].includes(type) === false) {
       throw new ParsingException(`Invalid AUTH_TYPE:  ${type}`);
     }
 
-    if (['header', 'cookie', 'query'].includes(location) === false) {
+    if (location && ['header', 'cookie', 'query'].includes(location) === false) {
       throw new ParsingException(`Invalid AUTH_LOCATION:  ${location}`);
     }
 
