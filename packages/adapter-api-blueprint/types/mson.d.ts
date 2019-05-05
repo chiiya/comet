@@ -1,3 +1,6 @@
+export interface ApiBlueprintSpec {
+}
+
 export interface Mson {
   type: string;
   default?: string;

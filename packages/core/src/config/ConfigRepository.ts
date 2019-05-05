@@ -23,7 +23,7 @@ export default class ConfigRepository {
   }
 
   /**
-   * Get the value of a config entry using dot notation (`get(commands.tests.make.parser)`).
+   * Get the value of a config entry using dot notation (`get(commands.tests.make.adapter)`).
    * @param key {string}
    * @return {ConfigValue}
    */

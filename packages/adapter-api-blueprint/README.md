@@ -8,7 +8,7 @@ This package contains the implementation of an API Blueprint adapter.
 import ApiBlueprintAdapter from '@comet-cli/adapter-api-blueprint';
 
 async function main() {
-  const parser = new ApiBlueprintAdapter();
-  const model = await parser.execute('api.apib', config, logger);
+  const adapter = new ApiBlueprintAdapter();
+  const model = await adapter.execute('api.apib', config, logger);
 }
 ```

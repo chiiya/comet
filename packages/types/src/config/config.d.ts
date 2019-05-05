@@ -3,7 +3,7 @@ interface Key {
 }
 
 export interface CommandConfig {
-  readonly parser: string;
+  readonly adapter: string;
   readonly decorators: string[];
   readonly factories: string[];
   readonly [key: string]: any;

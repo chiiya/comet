@@ -1,6 +1,6 @@
 module.exports = {
   default: {
-    parser: '@comet-cli/adapter-api-blueprint',
+    adapter: '@comet-cli/adapter-api-blueprint',
   },
   commands: {
     make: {

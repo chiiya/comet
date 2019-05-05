@@ -8,7 +8,7 @@ import {
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
-import { readFile } from 'fs-extra';
+import { readFile, writeFile } from 'fs-extra';
 import ParsingException from './ParsingException';
 import { Mson } from '../types/mson';
 const { promisify } = require('util');
@@ -27,6 +27,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       const source = await readFile(path, 'utf8');
       const parse = promisify(drafter.parse);
       const result = await parse(source, { type: 'ast' });
+      await writeFile('./blueprint.json', JSON.stringify(result, null, 2));
       const ast = result.ast;
       const metadata = ApiBlueprintAdapter.parseMetadata(ast);
       return {

@@ -11,7 +11,7 @@
     "restful"
   ],
   "author": "Elisha Witte <elishawitte@gmail.com>",
-  "homepage": "https://github.com/chiiya/comet/tree/master/packages/parser-api-blueprint#readme",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/adapter-api-blueprint#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

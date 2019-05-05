@@ -9,7 +9,7 @@ export * from './models/open-api';
 export * from './models/model';
 
 // Core interfaces
-export { AdapterInterface } from './core/parser';
+export { AdapterInterface } from './core/adapter';
 export { Factory } from './core/factory';
 export { Decorator } from './core/decorator';
 export { LoggerInterface } from './core/logger';
