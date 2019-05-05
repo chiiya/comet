@@ -8,9 +8,15 @@ import {
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
-import { readFile, writeFile } from 'fs-extra';
+import { readFile } from 'fs-extra';
 import ParsingException from './ParsingException';
-import { Mson } from '../types/mson';
+import {
+  ApiBlueprintAction,
+  ApiBlueprintAst,
+  ApiBlueprintCopy, ApiBlueprintExample, ApiBlueprintHeader, ApiBlueprintParameter,
+  ApiBlueprintResource,
+  ApiBlueprintSpec,
+} from '../types/blueprint';
 const { promisify } = require('util');
 const drafter = require('drafter');
 
@@ -26,13 +32,12 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     try {
       const source = await readFile(path, 'utf8');
       const parse = promisify(drafter.parse);
-      const result = await parse(source, { type: 'ast' });
-      await writeFile('./blueprint.json', JSON.stringify(result, null, 2));
+      const result: ApiBlueprintSpec = await parse(source, { type: 'ast' });
       const ast = result.ast;
       const metadata = ApiBlueprintAdapter.parseMetadata(ast);
       return {
         info: ApiBlueprintAdapter.parseInformation(ast, metadata),
-        auth: ApiBlueprintAdapter.parseAuthentication(ast, metadata),
+        auth: ApiBlueprintAdapter.parseAuthentication(metadata),
         groups: ApiBlueprintAdapter.parseGroups(ast, config),
         resources: ApiBlueprintAdapter.parseDefaultGroupedResources(ast, config),
       };
@@ -52,7 +57,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param ast
    * @param metadata
    */
-  protected static parseInformation(ast: any, metadata: Dict<string>): Information {
+  protected static parseInformation(ast: ApiBlueprintAst, metadata: Dict<string>): Information {
     const name = get(ast, 'name');
     const host = metadata['HOST'];
     const version = metadata['VERSION'] || null;
@@ -75,10 +80,9 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Parse authentication metadata. Throw error if value is not supported.
-   * @param ast
    * @param metadata
    */
-  protected static parseAuthentication(ast: any, metadata: Dict<string>): Authentication {
+  protected static parseAuthentication(metadata: Dict<string>): Authentication {
     const type = <AuthType>metadata['AUTH_TYPE'] || null;
     const name = metadata['AUTH_NAME'] || null;
     const location = <ApiKeyLocation>metadata['AUTH_LOCATION'] || null;
@@ -104,7 +108,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param ast
    * @param config
    */
-  protected static parseGroups(ast: any, config: CommandConfig): ResourceGroup[] {
+  protected static parseGroups(ast: ApiBlueprintAst, config: CommandConfig): ResourceGroup[] {
     const resourceGroups: ResourceGroup[] = [];
     // Only resource groups will have the `attributes` property. Unnamed resource groups
     // will not have a name. To allow mixing grouped resources and non-grouped resources,
@@ -117,7 +121,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       return config.ungroupRoot === true ? isGroup && item.attributes.name !== 'Root' : isGroup;
     });
     for (const group of astGroups) {
-      const description = group.content.find((item) => {
+      const description = <ApiBlueprintCopy>group.content.find((item) => {
         return item.element === 'copy';
       });
       resourceGroups.push({
@@ -134,7 +138,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param ast
    * @param config
    */
-  protected static parseDefaultGroupedResources(ast: any, config: CommandConfig): Resource[] {
+  protected static parseDefaultGroupedResources(ast: ApiBlueprintAst, config: CommandConfig): Resource[] {
     let resources: Resource[] = [];
 
     const defaultGroup = ast.content.find((item) => {
@@ -165,9 +169,9 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse resources from the AST.
    * @param content
    */
-  protected static parseResources(content: any): Resource[] {
+  protected static parseResources(content: (ApiBlueprintResource | ApiBlueprintCopy)[]): Resource[] {
     const resources: Resource[] = [];
-    const astResources = content.filter((item) => {
+    const astResources = <ApiBlueprintResource[]>content.filter((item) => {
       return item.element === 'resource';
     });
     for (const resource of astResources) {
@@ -190,7 +194,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         if (existingResource !== undefined) {
           existingResource.operations.push(ApiBlueprintAdapter.parseOperation(existingResource.path, action));
         } else {
-          const operation = ApiBlueprintAdapter.parseOperation(resource.path, action);
+          const operation = ApiBlueprintAdapter.parseOperation(resource.uriTemplate, action);
           resources.push({
             path: trimmedUri,
             name: null,
@@ -225,7 +229,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param uri
    * @param params
    */
-  protected static parseParameters(uri: string, params: any): Parameter[] {
+  protected static parseParameters(uri: string, params: ApiBlueprintParameter[]): Parameter[] {
     const parameters: Parameter[] = [];
     for (const param of params) {
       const isQueryParam = new RegExp(`{[?&#+].*${param.name}`);
@@ -245,9 +249,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         required: param.required || defaultRequired,
         example: param.example || null,
         deprecated: false,
-        schema: ApiBlueprintAdapter.transformMsonToJsonSchema(
-          { type: param.type, default: param.default, values: param.values },
-        ),
+        schema: ApiBlueprintAdapter.transformParameterToJsonSchema(param),
       });
     }
     return parameters;
@@ -258,7 +260,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param resourceUri
    * @param action
    */
-  protected static parseOperation(resourceUri: string, action: any): Operation {
+  protected static parseOperation(resourceUri: string, action: ApiBlueprintAction): Operation {
     const uri = get(action, 'attributes.uriTemplate', resourceUri);
     return {
       name: action.name,
@@ -275,7 +277,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse AST requests.
    * @param examples
    */
-  protected static parseRequest(examples: any): Request {
+  protected static parseRequest(examples: ApiBlueprintExample[]): Request {
     if (examples.length === 0 || examples[0].requests.length === 0) {
       return null;
     }
@@ -297,7 +299,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse AST responses.
    * @param examples
    */
-  protected static parseResponses(examples: any): Response[] {
+  protected static parseResponses(examples: ApiBlueprintExample[]): Response[] {
     if (examples.length === 0 || examples[0].responses.length === 0) {
       return [];
     }
@@ -326,7 +328,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse AST header definitions.
    * @param data
    */
-  protected static parseHeaders(data: any): Header[] {
+  protected static parseHeaders(data: ApiBlueprintHeader[]): Header[] {
     const headers: Header[] = [];
     for (const header of data) {
       headers.push({
@@ -355,7 +357,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse metadata from an API Blueprint AST into a dictionary.
    * @param ast
    */
-  protected static parseMetadata(ast: any): Dict<string> {
+  protected static parseMetadata(ast: ApiBlueprintAst): Dict<string> {
     const metadata = {};
     for (const item of ast.metadata) {
       metadata[item.name] = item.value;
@@ -367,7 +369,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Transform an MSON parameter type definition to a valid JSON schema definition.
    * @param data
    */
-  protected static transformMsonToJsonSchema(data: Mson): JsonSchema {
+  protected static transformParameterToJsonSchema(data: ApiBlueprintParameter): JsonSchema {
     const isNestedArrayType = ApiBlueprintAdapter.isNestedArrayType(data.type);
 
     if (ApiBlueprintAdapter.isValidType(data.type) === false && isNestedArrayType === false) {
