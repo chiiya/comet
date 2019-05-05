@@ -8,7 +8,7 @@ import {
   Decorator,
   Factory,
   OpenApiSpec,
-  AdapterInterface
+  AdapterInterface,
 } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
