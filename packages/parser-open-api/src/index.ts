@@ -1,5 +1,5 @@
 import {
-  ParserInterface,
+  AdapterInterface,
   CommandConfig,
   LoggerInterface,
   ApiModel,
@@ -7,7 +7,7 @@ import {
 
 const parser = require('swagger-parser');
 
-export default class OpenApiParser implements ParserInterface {
+export default class OpenApiParser implements AdapterInterface {
   async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
     try {
       const schema = await parser.dereference(path);

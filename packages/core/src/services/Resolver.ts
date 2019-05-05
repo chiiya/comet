@@ -1,5 +1,5 @@
 import ConfigRepository from '../config/ConfigRepository';
-import { Decorator, Factory, ParserInterface } from '@comet-cli/types';
+import { Decorator, Factory, AdapterInterface } from '@comet-cli/types';
 
 export default class Resolver {
   /** Comet config repository */
@@ -23,31 +23,31 @@ export default class Resolver {
   }
 
   /**
-   * Resolve the configured parser for a command and return an instance of it.
+   * Resolve the configured adapter for a command and return an instance of it.
    */
-  public async resolveParser(): Promise<ParserInterface> {
-    // Fetch configured parser from config
-    const configuredParser = this.config.get(`commands.${this.signature}.parser`);
-    if (configuredParser == null) {
+  public async resolveAdapter(): Promise<AdapterInterface> {
+    // Fetch configured adapter from config
+    const configuredAdapter = this.config.get(`commands.${this.signature}.adapter`);
+    if (configuredAdapter == null) {
       throw new Error(`ConfigError:
-      No parser configuration could be found for \`${this.command}\`.
+      No adapter configuration could be found for \`${this.command}\`.
       Please check your configuration file, and make sure that a value has been
-      defined for \`${this.signature}.parser\`
+      defined for \`${this.signature}.adapter\`
       `);
     }
 
-    // Try to import the configured parser
-    let parserClass;
+    // Try to import the configured adapter
+    let adapterClass;
     try {
-      parserClass = await import(String(configuredParser));
-      parserClass = parserClass.default;
+      adapterClass = await import(String(configuredAdapter));
+      adapterClass = adapterClass.default;
     } catch (error) {
       error.message =
-        `Could not find module \`${configuredParser}\`. Run \`npm install ${configuredParser}\` to install`;
+        `Could not find module \`${configuredAdapter}\`. Run \`npm install ${configuredAdapter}\` to install`;
       throw error;
     }
 
-    return new parserClass();
+    return new adapterClass();
   }
 
   /**

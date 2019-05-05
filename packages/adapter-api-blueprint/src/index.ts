@@ -4,7 +4,7 @@ import {
   CommandConfig, Header,
   Information, JsonSchema,
   LoggerInterface, Operation, Parameter,
-  ParserInterface, Request, Resource, ResourceGroup, Response,
+  AdapterInterface, Request, Resource, ResourceGroup, Response,
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
@@ -14,7 +14,7 @@ import { Mson } from '../types/mson';
 const { promisify } = require('util');
 const drafter = require('drafter');
 
-export default class ApiBlueprintParser implements ParserInterface {
+export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Read an API Blueprint specification from `path`, and parse it into an api model.
@@ -28,12 +28,12 @@ export default class ApiBlueprintParser implements ParserInterface {
       const parse = promisify(drafter.parse);
       const result = await parse(source, { type: 'ast' });
       const ast = result.ast;
-      const metadata = ApiBlueprintParser.parseMetadata(ast);
+      const metadata = ApiBlueprintAdapter.parseMetadata(ast);
       return {
-        info: ApiBlueprintParser.parseInformation(ast, metadata),
-        auth: ApiBlueprintParser.parseAuthentication(ast, metadata),
-        groups: ApiBlueprintParser.parseGroups(ast, config),
-        resources: ApiBlueprintParser.parseDefaultGroupedResources(ast, config),
+        info: ApiBlueprintAdapter.parseInformation(ast, metadata),
+        auth: ApiBlueprintAdapter.parseAuthentication(ast, metadata),
+        groups: ApiBlueprintAdapter.parseGroups(ast, config),
+        resources: ApiBlueprintAdapter.parseDefaultGroupedResources(ast, config),
       };
     } catch (error) {
       // Provide a more helpful error message
@@ -122,7 +122,7 @@ export default class ApiBlueprintParser implements ParserInterface {
       resourceGroups.push({
         name: group.attributes.name,
         description: description !== undefined ? description.content : null,
-        resources: ApiBlueprintParser.parseResources(group.content),
+        resources: ApiBlueprintAdapter.parseResources(group.content),
       });
     }
     return resourceGroups;
@@ -149,12 +149,12 @@ export default class ApiBlueprintParser implements ParserInterface {
     });
 
     if (defaultGroup !== undefined) {
-      resources = [...resources, ...ApiBlueprintParser.parseResources(defaultGroup.content)];
+      resources = [...resources, ...ApiBlueprintAdapter.parseResources(defaultGroup.content)];
     }
     // To allow mixing grouped resources and non-grouped resources, we will ungroup the `Root`
     // resource group, if present.
     if (config.ungroupRoot === true && rootGroup !== undefined) {
-      resources = [...resources, ...ApiBlueprintParser.parseResources(rootGroup.content)];
+      resources = [...resources, ...ApiBlueprintAdapter.parseResources(rootGroup.content)];
     }
 
     return resources;
@@ -187,14 +187,14 @@ export default class ApiBlueprintParser implements ParserInterface {
         }
         const existingResource = resources.find(item => item.path === trimmedUri);
         if (existingResource !== undefined) {
-          existingResource.operations.push(ApiBlueprintParser.parseOperation(existingResource.path, action));
+          existingResource.operations.push(ApiBlueprintAdapter.parseOperation(existingResource.path, action));
         } else {
-          const operation = ApiBlueprintParser.parseOperation(resource.path, action);
+          const operation = ApiBlueprintAdapter.parseOperation(resource.path, action);
           resources.push({
             path: trimmedUri,
             name: null,
             description: null,
-            parameters: ApiBlueprintParser.parseParameters(resource.uriTemplate, resource.parameters),
+            parameters: ApiBlueprintAdapter.parseParameters(resource.uriTemplate, resource.parameters),
             operations: [operation],
           });
         }
@@ -204,13 +204,13 @@ export default class ApiBlueprintParser implements ParserInterface {
       if (actions.length > 0) {
         const operations: Operation[] = [];
         for (const action of actions) {
-          operations.push(ApiBlueprintParser.parseOperation(resource.uriTemplate, action));
+          operations.push(ApiBlueprintAdapter.parseOperation(resource.uriTemplate, action));
         }
         resources.push({
           path: resource.uriTemplate,
           name: resource.name,
           description: resource.description,
-          parameters: ApiBlueprintParser.parseParameters(resource.uriTemplate, resource.parameters),
+          parameters: ApiBlueprintAdapter.parseParameters(resource.uriTemplate, resource.parameters),
           // tslint:disable-next-line:object-shorthand-properties-first
           operations,
         });
@@ -244,7 +244,7 @@ export default class ApiBlueprintParser implements ParserInterface {
         required: param.required || defaultRequired,
         example: param.example || null,
         deprecated: false,
-        schema: ApiBlueprintParser.transformMsonToJsonSchema(
+        schema: ApiBlueprintAdapter.transformMsonToJsonSchema(
           { type: param.type, default: param.default, values: param.values },
         ),
       });
@@ -263,9 +263,9 @@ export default class ApiBlueprintParser implements ParserInterface {
       name: action.name,
       method: action.method,
       description: action.description || null,
-      parameters: ApiBlueprintParser.parseParameters(uri, action.parameters),
-      request: ApiBlueprintParser.parseRequest(action.examples),
-      responses: ApiBlueprintParser.parseResponses(action.examples),
+      parameters: ApiBlueprintAdapter.parseParameters(uri, action.parameters),
+      request: ApiBlueprintAdapter.parseRequest(action.examples),
+      responses: ApiBlueprintAdapter.parseResponses(action.examples),
       deprecated: false,
     };
   }
@@ -280,7 +280,7 @@ export default class ApiBlueprintParser implements ParserInterface {
     }
 
     const request = examples[0].requests[0];
-    const headers = ApiBlueprintParser.parseHeaders(request.headers);
+    const headers = ApiBlueprintAdapter.parseHeaders(request.headers);
     const contentType = headers.find(header => header.key === 'Content-Type');
     const schema = request.schema;
     return {
@@ -305,7 +305,7 @@ export default class ApiBlueprintParser implements ParserInterface {
     const astResponses = examples[0].responses;
 
     for (const response of astResponses) {
-      const headers = ApiBlueprintParser.parseHeaders(response.headers);
+      const headers = ApiBlueprintAdapter.parseHeaders(response.headers);
       const contentType = headers.find(header => header.key === 'Content-Type');
       const schema = response.schema;
       responses.push({
@@ -332,7 +332,7 @@ export default class ApiBlueprintParser implements ParserInterface {
         description: null,
         key: header.name,
         example: header.value,
-        schema: ApiBlueprintParser.inferSchemaFromPrimitive(header.value),
+        schema: ApiBlueprintAdapter.inferSchemaFromPrimitive(header.value),
         deprecated: false,
       });
     }
@@ -367,9 +367,9 @@ export default class ApiBlueprintParser implements ParserInterface {
    * @param data
    */
   protected static transformMsonToJsonSchema(data: Mson): JsonSchema {
-    const isNestedArrayType = ApiBlueprintParser.isNestedArrayType(data.type);
+    const isNestedArrayType = ApiBlueprintAdapter.isNestedArrayType(data.type);
 
-    if (ApiBlueprintParser.isValidType(data.type) === false && isNestedArrayType === false) {
+    if (ApiBlueprintAdapter.isValidType(data.type) === false && isNestedArrayType === false) {
       throw new ParsingException(`Invalid type definition: ${data.type}`);
     }
 
@@ -397,7 +397,7 @@ export default class ApiBlueprintParser implements ParserInterface {
     if (isNestedArrayType) {
       const nestedType = /array\[(\w+)]/g.exec(data.type)[1];
       schema.type = 'array';
-      if (ApiBlueprintParser.isValidType(nestedType)) {
+      if (ApiBlueprintAdapter.isValidType(nestedType)) {
         schema.items = {
           $schema: 'http://json-schema.org/draft-04/schema#',
           type: nestedType,

@@ -1,7 +1,7 @@
 {
-  "name": "@comet-cli/parser-api-blueprint",
+  "name": "@comet-cli/adapter-api-blueprint",
   "version": "0.1.5",
-  "description": "Parser for the API Blueprint description language",
+  "description": "Adapter for the API Blueprint description language",
   "keywords": [
     "comet",
     "api",

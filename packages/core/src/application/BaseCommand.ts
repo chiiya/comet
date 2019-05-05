@@ -8,7 +8,7 @@ import {
   Decorator,
   Factory,
   OpenApiSpec,
-  ParserInterface
+  AdapterInterface
 } from '@comet-cli/types';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
@@ -18,8 +18,8 @@ export default abstract class BaseCommand extends Command {
   /** Comet config repository */
   protected configRepository: ConfigRepository;
 
-  /** Resolved parser instance */
-  protected parser: ParserInterface;
+  /** Resolved adapter instance */
+  protected adapter: AdapterInterface;
 
   /** Resolved decorator instances */
   protected decorators: Decorator[];
@@ -51,14 +51,14 @@ export default abstract class BaseCommand extends Command {
   }
 
   /**
-   * Resolve parser, decorator and factory instances for a command.
+   * Resolve adapter, decorator and factory instances for a command.
    */
   protected async resolve() {
     if (this.signature == null) {
       return;
     }
     const resolver = new Resolver(this.configRepository, this.signature);
-    this.parser = await resolver.resolveParser();
+    this.adapter = await resolver.resolveAdapter();
     this.decorators = await resolver.resolveDecorators();
     this.factories = await resolver.resolveFactories();
   }
@@ -88,7 +88,7 @@ export default abstract class BaseCommand extends Command {
 
     try {
       await this.resolve();
-      spec = await this.parser.execute(
+      spec = await this.adapter.execute(
         file.path(),
         this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
         this.logger,
