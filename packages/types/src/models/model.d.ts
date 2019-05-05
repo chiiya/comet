@@ -1,3 +1,7 @@
+export type Dict<T> = {
+  [key: string]: T;
+};
+
 export interface JsonSchema {
   $schema: string;
   $ref?: string;
@@ -32,9 +36,10 @@ export interface JsonSchema {
 
 export interface ApiModel {
   info: Information;
-  auth?: Authentication;
+  auth?: Dict<Authentication>;
   groups: ResourceGroup[];
   resources: Resource[];
+  securedBy?: Dict<string[]>;
   [key: string] : any; // For decoration
 }
 
@@ -64,8 +69,32 @@ export interface ResourceGroup {
 
 export interface Authentication {
   type?: AuthType;
+  description?: string;
   name?: string;
   location?: ApiKeyLocation;
+  flows?: {
+    implicit?: {
+      refreshUri?: string;
+      scopes: Dict<string>;
+      authorizationUri: string;
+    };
+    password?: {
+      refreshUri?: string;
+      scopes: Dict<string>;
+      tokenUri: string;
+    };
+    clientCredentials?: {
+      refreshUri?: string;
+      scopes: Dict<string>;
+      tokenUri: string;
+    };
+    authorizationCode?: {
+      refreshUri?: string;
+      authorizationUri: string;
+      scopes: Dict<string>;
+      tokenUri: string;
+    };
+  };
   [key: string] : any; // For decoration
 }
 
@@ -81,6 +110,7 @@ export interface Operation {
   request?: Request;
   responses?: Response[];
   deprecated?: boolean;
+  securedBy?: Dict<string[]>;
   [key: string] : any; // For decoration
 }
 
