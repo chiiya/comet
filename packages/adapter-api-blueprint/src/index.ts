@@ -1,10 +1,21 @@
 import {
+  AdapterInterface,
   ApiKeyLocation,
-  ApiModel, Authentication, AuthType,
-  CommandConfig, Header,
-  Information, JsonSchema,
-  LoggerInterface, Operation, Parameter,
-  AdapterInterface, Request, Resource, ResourceGroup, Response,
+  ApiModel,
+  Authentication,
+  AuthType,
+  CommandConfig,
+  Dict,
+  Header,
+  Information,
+  JsonSchema,
+  LoggerInterface,
+  Operation,
+  Parameter,
+  Request,
+  Resource,
+  ResourceGroup,
+  Response,
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
@@ -13,14 +24,22 @@ import ParsingException from './ParsingException';
 import {
   ApiBlueprintAction,
   ApiBlueprintAst,
-  ApiBlueprintCopy, ApiBlueprintExample, ApiBlueprintHeader, ApiBlueprintParameter,
+  ApiBlueprintCopy,
+  ApiBlueprintExample,
+  ApiBlueprintHeader,
+  ApiBlueprintParameter,
   ApiBlueprintResource,
   ApiBlueprintSpec,
 } from '../types/blueprint';
+
 const { promisify } = require('util');
 const drafter = require('drafter');
 
 export default class ApiBlueprintAdapter implements AdapterInterface {
+  protected config: CommandConfig;
+  protected logger: LoggerInterface;
+  protected ast: ApiBlueprintAst;
+  protected auth: Authentication;
 
   /**
    * Read an API Blueprint specification from `path`, and parse it into an api model.
@@ -29,17 +48,22 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param logger
    */
   async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
+    this.config = config;
+    this.logger = logger;
+
+    // Parse input file
     try {
       const source = await readFile(path, 'utf8');
       const parse = promisify(drafter.parse);
       const result: ApiBlueprintSpec = await parse(source, { type: 'ast' });
-      const ast = result.ast;
-      const metadata = ApiBlueprintAdapter.parseMetadata(ast);
+      this.ast = result.ast;
+      const metadata = this.parseMetadata();
+      this.auth = this.parseAuthentication(metadata);
       return {
-        info: ApiBlueprintAdapter.parseInformation(ast, metadata),
-        auth: ApiBlueprintAdapter.parseAuthentication(metadata),
-        groups: ApiBlueprintAdapter.parseGroups(ast, config),
-        resources: ApiBlueprintAdapter.parseDefaultGroupedResources(ast, config),
+        info: this.parseInformation(metadata),
+        auth: { Default: this.auth },
+        groups: this.parseGroups(),
+        resources: this.parseDefaultGroupedResources(),
       };
     } catch (error) {
       // Provide a more helpful error message
@@ -54,11 +78,10 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Parse basic information from AST and metadata.
-   * @param ast
    * @param metadata
    */
-  protected static parseInformation(ast: ApiBlueprintAst, metadata: Dict<string>): Information {
-    const name = get(ast, 'name');
+  protected parseInformation(metadata: Dict<string>): Information {
+    const name = get(this.ast, 'name');
     const host = metadata['HOST'];
     const version = metadata['VERSION'] || null;
 
@@ -74,7 +97,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       host,
       version,
       name,
-      description: get(ast, 'description', null),
+      description: get(this.ast, 'description', null),
     };
   }
 
@@ -82,43 +105,63 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse authentication metadata. Throw error if value is not supported.
    * @param metadata
    */
-  protected static parseAuthentication(metadata: Dict<string>): Authentication {
+  protected parseAuthentication(metadata: Dict<string>): Authentication {
     const type = <AuthType>metadata['AUTH_TYPE'] || null;
+    const description = metadata['AUTH_DESCRIPTION'] || null;
     const name = metadata['AUTH_NAME'] || null;
     const location = <ApiKeyLocation>metadata['AUTH_LOCATION'] || null;
+    const flowType = metadata['AUTH_FLOW_TYPE'] || null;
+    const refreshUri = metadata['AUTH_REFRESH_URI'] || null;
+    const authorizationUri = metadata['AUTH_REFRESH_URI'] || null;
+    const tokenUri = metadata['AUTH_TOKEN_URI'] || null;
 
     if (type && ['basic', 'digest', 'jwt', 'key', 'oauth2'].includes(type) === false) {
-      throw new ParsingException(`Invalid AUTH_TYPE:  ${type}`);
+      throw new ParsingException(`Invalid AUTH_TYPE:  ${type}. Requires one of [basic, digest, jwt, key, oauth2]`);
     }
 
     if (location && ['header', 'cookie', 'query'].includes(location) === false) {
-      throw new ParsingException(`Invalid AUTH_LOCATION:  ${location}`);
+      throw new ParsingException(`Invalid AUTH_LOCATION:  ${location}. Requires one of [header, cookie, query]`);
     }
+
+    if (flowType && ['implicit', 'password', 'clientCredentials', 'authorizationCode'].includes(flowType) === false) {
+      throw new ParsingException(
+        `Invalid AUTH_FLOW_TYPE:  ${flowType}. `
+        + 'Requires one of [implicit, password, clientCredentials, authorizationCode]',
+      );
+    }
+
+    const flows = {};
+    flows[flowType] = {
+      refreshUri,
+      authorizationUri,
+      tokenUri,
+      scopes: [],
+    };
 
     return {
       type,
+      description,
       name,
       location,
+      flows,
     };
   }
 
   /**
    * Parse named resource groups from the AST. Exclude default (unnamed) resource group,
    * and optionally the `Root` group.
-   * @param ast
-   * @param config
    */
-  protected static parseGroups(ast: ApiBlueprintAst, config: CommandConfig): ResourceGroup[] {
+  protected parseGroups(): ResourceGroup[] {
     const resourceGroups: ResourceGroup[] = [];
     // Only resource groups will have the `attributes` property. Unnamed resource groups
     // will not have a name. To allow mixing grouped resources and non-grouped resources,
     // we will ungroup the `Root` resource group, if present.
-    const astGroups = ast.content.filter((item) => {
+    const astGroups = this.ast.content.filter((item) => {
       const isGroup = item.content.length > 0
         && item.content[0].element === 'resource'
         && item.hasOwnProperty('attributes')
         && item.attributes.name !== '';
-      return config.ungroupRoot === true ? isGroup && item.attributes.name !== 'Root' : isGroup;
+      return this.config.ungroupRoot === true ? isGroup && item.attributes.name !== 'Root' : isGroup;
     });
     for (const group of astGroups) {
       const description = <ApiBlueprintCopy>group.content.find((item) => {
@@ -127,7 +170,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       resourceGroups.push({
         name: group.attributes.name,
         description: description !== undefined ? description.content : null,
-        resources: ApiBlueprintAdapter.parseResources(group.content),
+        resources: this.parseResources(group.content),
       });
     }
     return resourceGroups;
@@ -135,18 +178,16 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Parse resources that are grouped within the default resource group.
-   * @param ast
-   * @param config
    */
-  protected static parseDefaultGroupedResources(ast: ApiBlueprintAst, config: CommandConfig): Resource[] {
+  protected parseDefaultGroupedResources(): Resource[] {
     let resources: Resource[] = [];
 
-    const defaultGroup = ast.content.find((item) => {
+    const defaultGroup = this.ast.content.find((item) => {
       return item.content.length > 0
         && item.content[0].element === 'resource'
         && item.hasOwnProperty('attributes') === false;
     });
-    const rootGroup = ast.content.find((item) => {
+    const rootGroup = this.ast.content.find((item) => {
       return item.content.length > 0
         && item.content[0].element === 'resource'
         && item.hasOwnProperty('attributes')
@@ -154,12 +195,12 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     });
 
     if (defaultGroup !== undefined) {
-      resources = [...resources, ...ApiBlueprintAdapter.parseResources(defaultGroup.content)];
+      resources = [...resources, ...this.parseResources(defaultGroup.content)];
     }
     // To allow mixing grouped resources and non-grouped resources, we will ungroup the `Root`
     // resource group, if present.
-    if (config.ungroupRoot === true && rootGroup !== undefined) {
-      resources = [...resources, ...ApiBlueprintAdapter.parseResources(rootGroup.content)];
+    if (this.config.ungroupRoot === true && rootGroup !== undefined) {
+      resources = [...resources, ...this.parseResources(rootGroup.content)];
     }
 
     return resources;
@@ -169,7 +210,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse resources from the AST.
    * @param content
    */
-  protected static parseResources(content: (ApiBlueprintResource | ApiBlueprintCopy)[]): Resource[] {
+  protected parseResources(content: (ApiBlueprintResource | ApiBlueprintCopy)[]): Resource[] {
     const resources: Resource[] = [];
     const astResources = <ApiBlueprintResource[]>content.filter((item) => {
       return item.element === 'resource';
@@ -192,14 +233,14 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         }
         const existingResource = resources.find(item => item.path === trimmedUri);
         if (existingResource !== undefined) {
-          existingResource.operations.push(ApiBlueprintAdapter.parseOperation(existingResource.path, action));
+          existingResource.operations.push(this.parseOperation(existingResource.path, action));
         } else {
-          const operation = ApiBlueprintAdapter.parseOperation(resource.uriTemplate, action);
+          const operation = this.parseOperation(resource.uriTemplate, action);
           resources.push({
             path: trimmedUri,
             name: null,
             description: null,
-            parameters: ApiBlueprintAdapter.parseParameters(resource.uriTemplate, resource.parameters),
+            parameters: this.parseParameters(resource.uriTemplate, resource.parameters),
             operations: [operation],
           });
         }
@@ -209,13 +250,13 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       if (actions.length > 0) {
         const operations: Operation[] = [];
         for (const action of actions) {
-          operations.push(ApiBlueprintAdapter.parseOperation(resource.uriTemplate, action));
+          operations.push(this.parseOperation(resource.uriTemplate, action));
         }
         resources.push({
           path: resource.uriTemplate,
           name: resource.name,
           description: resource.description,
-          parameters: ApiBlueprintAdapter.parseParameters(resource.uriTemplate, resource.parameters),
+          parameters: this.parseParameters(resource.uriTemplate, resource.parameters),
           // tslint:disable-next-line:object-shorthand-properties-first
           operations,
         });
@@ -229,7 +270,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param uri
    * @param params
    */
-  protected static parseParameters(uri: string, params: ApiBlueprintParameter[]): Parameter[] {
+  protected parseParameters(uri: string, params: ApiBlueprintParameter[]): Parameter[] {
     const parameters: Parameter[] = [];
     for (const param of params) {
       const isQueryParam = new RegExp(`{[?&#+].*${param.name}`);
@@ -249,7 +290,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         required: param.required || defaultRequired,
         example: param.example || null,
         deprecated: false,
-        schema: ApiBlueprintAdapter.transformParameterToJsonSchema(param),
+        schema: this.transformParameterToJsonSchema(param),
       });
     }
     return parameters;
@@ -260,30 +301,60 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param resourceUri
    * @param action
    */
-  protected static parseOperation(resourceUri: string, action: ApiBlueprintAction): Operation {
+  protected parseOperation(resourceUri: string, action: ApiBlueprintAction): Operation {
     const uri = get(action, 'attributes.uriTemplate', resourceUri);
+    const parsedRequest = this.parseRequest(action.examples);
+    const parsedParameters = this.parseParameters(uri, action.parameters);
     return {
       name: action.name,
       method: action.method,
       description: action.description || null,
-      parameters: ApiBlueprintAdapter.parseParameters(uri, action.parameters),
-      request: ApiBlueprintAdapter.parseRequest(action.examples),
-      responses: ApiBlueprintAdapter.parseResponses(action.examples),
+      parameters: parsedParameters,
+      request: parsedRequest,
+      responses: this.parseResponses(action.examples),
       deprecated: false,
+      securedBy: this.getSecuredByFromRequestHeadersOrParameters(parsedRequest.headers, parsedParameters),
     };
+  }
+
+  protected getSecuredByFromRequestHeadersOrParameters(
+    headers: Header[],
+    parameters: Parameter[],
+  ): Dict<string[]> {
+    if (this.auth.type === null) {
+      return undefined;
+    }
+    // Handle case where auth key / token is passed via query parameter
+    if (this.auth.location === 'query') {
+      return parameters.find(item => item.name === this.auth.name) !== undefined ? { Default: [] } : undefined;
+    }
+    // Handle case where auth key / token is passed via HTTP header
+    let header;
+    switch (this.auth.type) {
+      case 'basic':
+      case 'digest':
+      case 'jwt':
+      case 'oauth2':
+        header = 'Authorization';
+        break;
+      case 'key':
+        header = this.auth.name;
+        break;
+    }
+    return headers.find(item => item.key === header) !== undefined ? { Default: [] } : undefined;
   }
 
   /**
    * Parse AST requests.
    * @param examples
    */
-  protected static parseRequest(examples: ApiBlueprintExample[]): Request {
+  protected parseRequest(examples: ApiBlueprintExample[]): Request {
     if (examples.length === 0 || examples[0].requests.length === 0) {
       return null;
     }
 
     const request = examples[0].requests[0];
-    const headers = ApiBlueprintAdapter.parseHeaders(request.headers);
+    const headers = this.parseHeaders(request.headers);
     const contentType = headers.find(header => header.key === 'Content-Type');
     const schema = request.schema;
     return {
@@ -299,7 +370,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse AST responses.
    * @param examples
    */
-  protected static parseResponses(examples: ApiBlueprintExample[]): Response[] {
+  protected parseResponses(examples: ApiBlueprintExample[]): Response[] {
     if (examples.length === 0 || examples[0].responses.length === 0) {
       return [];
     }
@@ -308,7 +379,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     const astResponses = examples[0].responses;
 
     for (const response of astResponses) {
-      const headers = ApiBlueprintAdapter.parseHeaders(response.headers);
+      const headers = this.parseHeaders(response.headers);
       const contentType = headers.find(header => header.key === 'Content-Type');
       const schema = response.schema;
       responses.push({
@@ -328,14 +399,14 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Parse AST header definitions.
    * @param data
    */
-  protected static parseHeaders(data: ApiBlueprintHeader[]): Header[] {
+  protected parseHeaders(data: ApiBlueprintHeader[]): Header[] {
     const headers: Header[] = [];
     for (const header of data) {
       headers.push({
         description: null,
         key: header.name,
         example: header.value,
-        schema: ApiBlueprintAdapter.inferSchemaFromPrimitive(header.value),
+        schema: this.inferSchemaFromPrimitive(header.value),
         deprecated: false,
       });
     }
@@ -346,7 +417,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Infer a valid JSON schema from a primitive (string/number).
    * @param value
    */
-  protected static inferSchemaFromPrimitive(value: any): JsonSchema {
+  protected inferSchemaFromPrimitive(value: any): JsonSchema {
     return {
       $schema: 'http://json-schema.org/draft-04/schema#',
       type: isNumber(value) ? 'number' : 'string',
@@ -355,11 +426,10 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Parse metadata from an API Blueprint AST into a dictionary.
-   * @param ast
    */
-  protected static parseMetadata(ast: ApiBlueprintAst): Dict<string> {
+  protected parseMetadata(): Dict<string> {
     const metadata = {};
-    for (const item of ast.metadata) {
+    for (const item of this.ast.metadata) {
       metadata[item.name] = item.value;
     }
     return metadata;
@@ -369,10 +439,10 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Transform an MSON parameter type definition to a valid JSON schema definition.
    * @param data
    */
-  protected static transformParameterToJsonSchema(data: ApiBlueprintParameter): JsonSchema {
-    const isNestedArrayType = ApiBlueprintAdapter.isNestedArrayType(data.type);
+  protected transformParameterToJsonSchema(data: ApiBlueprintParameter): JsonSchema {
+    const isNestedArrayType = this.isNestedArrayType(data.type);
 
-    if (ApiBlueprintAdapter.isValidType(data.type) === false && isNestedArrayType === false) {
+    if (this.isValidType(data.type) === false && isNestedArrayType === false) {
       throw new ParsingException(`Invalid type definition: ${data.type}`);
     }
 
@@ -400,7 +470,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     if (isNestedArrayType) {
       const nestedType = /array\[(\w+)]/g.exec(data.type)[1];
       schema.type = 'array';
-      if (ApiBlueprintAdapter.isValidType(nestedType)) {
+      if (this.isValidType(nestedType)) {
         schema.items = {
           $schema: 'http://json-schema.org/draft-04/schema#',
           type: nestedType,
@@ -415,7 +485,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Check whether an MSON type definition is a valid type.
    * @param type
    */
-  protected static isValidType(type: string): boolean {
+  protected isValidType(type: string): boolean {
     return ['null', 'boolean', 'object', 'array', 'number', 'integer', 'string'].includes(type);
   }
 
@@ -423,7 +493,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * Check whether an MSON type definition is a nested array, e.g. `array[string]`
    * @param type
    */
-  protected static isNestedArrayType(type: string): boolean {
+  protected isNestedArrayType(type: string): boolean {
     return /array\[\w+]/g.test(type);
   }
 }
