@@ -35,6 +35,7 @@ export interface ApiModel {
   auth?: Authentication;
   groups: ResourceGroup[];
   resources: Resource[];
+  [key: string] : any; // For decoration
 }
 
 export interface Information {
@@ -42,6 +43,7 @@ export interface Information {
   description?: string;
   host: string;
   version?: string;
+  [key: string] : any; // For decoration
 }
 
 export interface Resource {
@@ -50,18 +52,21 @@ export interface Resource {
   description?: string;
   parameters?: Parameter[];
   operations?: Operation[];
+  [key: string] : any; // For decoration
 }
 
 export interface ResourceGroup {
   name: string;
   description?: string;
   resources: Resource[];
+  [key: string] : any; // For decoration
 }
 
 export interface Authentication {
   type?: AuthType;
   name?: string;
   location?: ApiKeyLocation;
+  [key: string] : any; // For decoration
 }
 
 export type AuthType = 'basic' | 'digest' | 'jwt' | 'key' | 'oauth2';
@@ -76,6 +81,7 @@ export interface Operation {
   request?: Request;
   responses?: Response[];
   deprecated?: boolean;
+  [key: string] : any; // For decoration
 }
 
 export interface Request {
@@ -84,6 +90,7 @@ export interface Request {
   schema?: JsonSchema;
   headers?: Header[];
   example?: string;
+  [key: string] : any; // For decoration
 }
 
 export interface Response {
@@ -93,6 +100,7 @@ export interface Response {
   schema?: JsonSchema;
   headers?: Header[];
   example?: string;
+  [key: string] : any; // For decoration
 }
 
 export interface Header {
@@ -101,6 +109,7 @@ export interface Header {
   schema?: JsonSchema;
   example?: any;
   deprecated?: boolean;
+  [key: string] : any; // For decoration
 }
 
 export interface Parameter {
@@ -111,4 +120,5 @@ export interface Parameter {
   schema: JsonSchema;
   example?: any;
   deprecated?: boolean;
+  [key: string] : any; // For decoration
 }
