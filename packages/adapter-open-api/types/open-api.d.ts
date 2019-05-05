@@ -28,11 +28,11 @@
  */
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-// declare global {
-//   type Dict<T> = {
-//     [key: string]: T;
-//   };
-// }
+declare global {
+  type Dict<T> = {
+    [key: string]: T;
+  };
+}
 
 export interface OpenApiSpec {
   openapi: string;
@@ -44,7 +44,6 @@ export interface OpenApiSpec {
   tags?: OpenAPITag[];
   externalDocs?: OpenAPIExternalDocumentation;
   decorated: any;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIInfo {
@@ -54,21 +53,18 @@ export interface OpenAPIInfo {
   contact?: OpenAPIContact;
   license?: OpenAPILicense;
   version: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIServer {
   url: string;
   description?: string;
   variables?: { [name: string]: OpenAPIServerVariable };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIServerVariable {
   enum?: string[];
   default: string;
   description?: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIPaths {
@@ -88,7 +84,6 @@ export interface OpenAPIPath {
   trace?: OpenAPIOperation;
   servers?: OpenAPIServer[];
   parameters?: OpenAPIParameter[];
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIOperation {
@@ -104,7 +99,6 @@ export interface OpenAPIOperation {
   deprecated?: boolean;
   security?: OpenAPISecurityRequirement[];
   servers?: OpenAPIServer[];
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIParameter {
@@ -121,7 +115,6 @@ export interface OpenAPIParameter {
   example?: any;
   examples?: { [media: string]: OpenAPIExample };
   content?: { [media: string]: OpenAPIMediaType };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIExample {
@@ -129,7 +122,6 @@ export interface OpenAPIExample {
   summary?: string;
   description?: string;
   externalValue?: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPISchema {
@@ -169,13 +161,11 @@ export interface OpenAPISchema {
   minProperties?: number;
   enum?: any[];
   example?: any;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIDiscriminator {
   propertyName: string;
   mapping?: { [name: string]: string };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIMediaType {
@@ -183,7 +173,6 @@ export interface OpenAPIMediaType {
   example?: any;
   examples?: { [name: string]: OpenAPIExample };
   encoding?: { [field: string]: OpenAPIEncoding };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIEncoding {
@@ -192,7 +181,6 @@ export interface OpenAPIEncoding {
   style: OpenAPIParameterStyle;
   explode: boolean;
   allowReserved: boolean;
-  [key: string] : any; // For decoration
 }
 
 export type OpenAPIParameterLocation = 'query' | 'header' | 'path' | 'cookie';
@@ -209,7 +197,6 @@ export interface OpenAPIRequestBody {
   description?: string;
   required?: boolean;
   content: OpenAPIMediaTypes;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIMediaTypes {
@@ -225,19 +212,16 @@ export interface OpenAPIResponse {
   headers?: { [name: string]: OpenAPIHeader };
   content?: OpenAPIMediaTypes;
   links?: { [name: string]: OpenAPILink };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPILink {
   $ref?: string;
-  [key: string] : any; // For decoration
 }
 
 export type OpenAPIHeader = Omit<OpenAPIParameter, 'in' | 'name'>;
 
 export interface OpenAPICallback {
   $ref?: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIComponents {
@@ -250,7 +234,6 @@ export interface OpenAPIComponents {
   securitySchemes?: { [name: string]: OpenAPISecurityScheme };
   links?: { [name: string]: OpenAPILink };
   callbacks?: { [name: string]: OpenAPICallback };
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPISecurityRequirement {
@@ -264,55 +247,50 @@ export interface OpenAPISecurityScheme {
   in?: 'query' | 'header' | 'cookie';
   scheme?: string;
   bearerFormat: string;
-  flows: {
+  flows?: {
     implicit?: {
       refreshUrl?: string;
-      // scopes: Dict<string>;
+      scopes: Dict<string>;
       authorizationUrl: string;
     };
     password?: {
       refreshUrl?: string;
-      // scopes: Dict<string>;
+      scopes: Dict<string>;
       tokenUrl: string;
     };
     clientCredentials?: {
       refreshUrl?: string;
-      // scopes: Dict<string>;
+      scopes: Dict<string>;
       tokenUrl: string;
     };
     authorizationCode?: {
       refreshUrl?: string;
       authorizationUrl: string;
-      // scopes: Dict<string>;
+      scopes: Dict<string>;
       tokenUrl: string;
     };
   };
   openIdConnectUrl?: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPITag {
   name: string;
   description?: string;
   externalDocs?: OpenAPIExternalDocumentation;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIExternalDocumentation {
   description?: string;
   url: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPIContact {
   name?: string;
   url?: string;
   email?: string;
-  [key: string] : any; // For decoration
 }
 
 export interface OpenAPILicense {
   name: string;
   url?: string;
-  [key: string] : any; // For decoration
 }
