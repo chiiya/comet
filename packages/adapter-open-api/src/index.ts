@@ -2,8 +2,8 @@ import {
   AdapterInterface,
   ApiModel, Authentication, AuthType,
   CommandConfig, Dict,
-  Information,
-  LoggerInterface, Parameter, Resource,
+  Information, JsonSchema,
+  LoggerInterface, Parameter, Resource, Server,
 } from '@comet-cli/types';
 import { OpenApiSpec, OpenAPIServer, OpenAPIParameter } from '../types/open-api';
 import Transformer from './Transformer';
@@ -84,13 +84,11 @@ export default class OpenApiAdapter implements AdapterInterface {
       description = `${links}\n\n${description}`;
     }
 
-    const host = this.getHostUrl(this.spec.servers);
-
     return {
       name,
       description,
       version,
-      host,
+      servers: this.spec.servers ? this.getServers() : [],
     };
   }
 
@@ -177,21 +175,29 @@ export default class OpenApiAdapter implements AdapterInterface {
   }
 
   /**
-   * Parse the host URL.
-   * @param servers
+   * Parse the server urls and variables.
    */
-  protected getHostUrl(servers: OpenAPIServer[]): string {
-    const server = servers[0];
-    return server.url;
-    // Replace variables with their default value
-    // let url = server.url;
-    // const regex = new RegExp('\{(\w+\)}', 'g');
-    // let result;
-    // while ((result = regex.exec(server.url)) !== null) {
-    //   const variable = result[1];
-    //   url = url.replace(`{${variable}}`, server.variables[variable].default);
-    // }
+  protected getServers(): Server[] {
+    const servers: Server[] = [];
+    for (const server of this.spec.servers) {
+      const variables: Dict<JsonSchema> = {};
+      if (server.variables) {
+        for (const name of Object.keys(server.variables)) {
+          variables[name] = {
+            $schema: 'http://json-schema.org/draft-04/schema#',
+            default: server.variables[name].default,
+            description: server.variables[name].description,
+            enum: server.variables[name].enum,
+          };
+        }
+      }
+      servers.push({
+        uri: server.url,
+        description: server.description || null,
+        variables: server.variables ? variables : null,
+      });
+    }
 
-    // return url;
+    return servers;
   }
 }
