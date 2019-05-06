@@ -19,7 +19,7 @@ import {
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
-import { readFile } from 'fs-extra';
+import { readFile, writeFile } from 'fs-extra';
 import ParsingException from './ParsingException';
 import {
   ApiBlueprintAction,
@@ -61,7 +61,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       this.auth = this.parseAuthentication(metadata);
       return {
         info: this.parseInformation(metadata),
-        auth: { Default: this.auth },
+        auth: { default: this.auth },
         groups: this.parseGroups(),
         resources: this.parseDefaultGroupedResources(),
       };
@@ -134,13 +134,17 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       );
     }
 
-    const flows = {};
-    flows[flowType] = {
-      refreshUri,
-      authorizationUri,
-      tokenUri,
-      scopes: [],
-    };
+    let flows = null;
+
+    if (flowType) {
+      flows = {};
+      flows[flowType] = {
+        refreshUri,
+        authorizationUri,
+        tokenUri,
+        scopes: [],
+      };
+    }
 
     return {
       type,
@@ -162,10 +166,11 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     // we will ungroup the `Root` resource group, if present.
     const astGroups = this.ast.content.filter((item) => {
       const isGroup = item.content.length > 0
-        && item.content[0].element === 'resource'
+        && item.content.find(item => item.element === 'resource') !== undefined
         && item.hasOwnProperty('attributes')
         && item.attributes.name !== '';
-      return this.config.ungroupRoot === true ? isGroup && item.attributes.name !== 'Root' : isGroup;
+
+      return this.config.ungroupRoot === true ? (isGroup && item.attributes.name !== 'Root') : isGroup;
     });
     for (const group of astGroups) {
       const description = <ApiBlueprintCopy>group.content.find((item) => {
@@ -188,12 +193,12 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
     const defaultGroup = this.ast.content.find((item) => {
       return item.content.length > 0
-        && item.content[0].element === 'resource'
+        && item.content.find(item => item.element === 'resource') !== undefined
         && item.hasOwnProperty('attributes') === false;
     });
     const rootGroup = this.ast.content.find((item) => {
       return item.content.length > 0
-        && item.content[0].element === 'resource'
+        && item.content.find(item => item.element === 'resource') !== undefined
         && item.hasOwnProperty('attributes')
         && item.attributes.name === 'Root';
     });
@@ -330,7 +335,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     }
     // Handle case where auth key / token is passed via query parameter
     if (this.auth.location === 'query') {
-      return parameters.find(item => item.name === this.auth.name) !== undefined ? { Default: [] } : undefined;
+      return parameters.find(item => item.name === this.auth.name) !== undefined ? { default: [] } : undefined;
     }
     // Handle case where auth key / token is passed via HTTP header
     let header;
@@ -345,7 +350,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         header = this.auth.name;
         break;
     }
-    return headers.find(item => item.key === header) !== undefined ? { Default: [] } : undefined;
+    return headers.find(item => item.key === header) !== undefined ? { default: [] } : undefined;
   }
 
   /**
@@ -381,7 +386,9 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       }
       const contentType = headers.find(header => header.key === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
-      if (mediaType !== null && request.body[mediaType]) {
+      if (mediaType === null) {
+        request.body = null;
+      } else if (request.body[mediaType]) {
         request.body[mediaType].examples.push(exampleRequest.body);
       } else {
         request.body[mediaType] = {
@@ -424,6 +431,9 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
           body: {},
           description: exampleResponse.description || null,
         };
+      }
+      if (foundHeaders[statusCode] === undefined) {
+        foundHeaders[statusCode] = {};
       }
       const headers = this.parseHeaders(exampleResponse.headers);
       for (const header of headers) {
