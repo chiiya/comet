@@ -32,6 +32,21 @@ export interface JsonSchema {
   maxProperties?: number;
   minProperties?: number;
   enum?: any[];
+  discriminator?: Discriminator;
+  xml?: XmlDeclaration;
+}
+
+export interface Discriminator {
+  propertyName: string;
+  mapping?: { [name: string]: string };
+}
+
+export interface XmlDeclaration {
+  name?: string;
+  namespace?: string;
+  prefix?: string;
+  attribute?: boolean;
+  wrapped?: boolean;
 }
 
 export interface ApiModel {
@@ -40,15 +55,22 @@ export interface ApiModel {
   groups: ResourceGroup[];
   resources: Resource[];
   securedBy?: Dict<string[]>;
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
 
 export interface Information {
   name: string;
   description?: string;
-  host: string;
   version?: string;
-  [key: string] : any; // For decoration
+  servers: Server[];
+  [key: string]: any; // For decoration
+}
+
+export interface Server {
+  uri: string;
+  description?: string;
+  variables?: Dict<JsonSchema>;
+  [key: string]: any; // For decoration
 }
 
 export interface Resource {
@@ -57,14 +79,14 @@ export interface Resource {
   description?: string;
   parameters?: Parameter[];
   operations?: Operation[];
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
 
 export interface ResourceGroup {
   name: string;
   description?: string;
   resources: Resource[];
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
 
 export interface Authentication {
@@ -95,7 +117,7 @@ export interface Authentication {
       tokenUri: string;
     };
   };
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
 
 export type AuthType = 'basic' | 'digest' | 'jwt' | 'key' | 'oauth2';
@@ -108,29 +130,37 @@ export interface Operation {
   description?: string;
   parameters: Parameter[];
   request?: Request;
-  responses?: Response[];
+  responses?: Responses;
   deprecated?: boolean;
   securedBy?: Dict<string[]>;
-  [key: string] : any; // For decoration
+  tags?: string[];
+  [key: string]: any; // For decoration
+}
+
+export interface Responses {
+  [code: string]: Response;
 }
 
 export interface Request {
   description?: string;
-  mediaType?: string;
-  schema?: JsonSchema;
   headers?: Header[];
-  example?: string;
-  [key: string] : any; // For decoration
+  body?: Dict<Body>;
+  [key: string]: any; // For decoration
+}
+
+export interface Body {
+  schema?: JsonSchema;
+  mediaType?: string;
+  examples?: any[];
+  [key: string]: any; // For decoration
 }
 
 export interface Response {
   description?: string;
-  mediaType?: string;
-  statusCode?: number;
-  schema?: JsonSchema;
+  statusCode: number;
   headers?: Header[];
-  example?: string;
-  [key: string] : any; // For decoration
+  body?: Dict<Body>;
+  [key: string]: any; // For decoration
 }
 
 export interface Header {
@@ -139,7 +169,7 @@ export interface Header {
   schema?: JsonSchema;
   example?: any;
   deprecated?: boolean;
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
 
 export interface Parameter {
@@ -150,5 +180,5 @@ export interface Parameter {
   schema: JsonSchema;
   example?: any;
   deprecated?: boolean;
-  [key: string] : any; // For decoration
+  [key: string]: any; // For decoration
 }
