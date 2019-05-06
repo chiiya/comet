@@ -10,8 +10,10 @@ import {
   OpenApiSpec,
   AdapterInterface,
 } from '@comet-cli/types';
+import { identify } from '@comet-cli/identify';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
+import { readFile } from 'fs-extra';
 const chalk = require('chalk');
 
 export default abstract class BaseCommand extends Command {
@@ -53,12 +55,23 @@ export default abstract class BaseCommand extends Command {
   /**
    * Resolve adapter, decorator and factory instances for a command.
    */
-  protected async resolve() {
+  protected async resolve(file: File) {
     if (this.signature == null) {
       return;
     }
     const resolver = new Resolver(this.configRepository, this.signature);
-    this.adapter = await resolver.resolveAdapter();
+    const source = await readFile(file.path(), 'utf8');
+    const mediaType = identify(source);
+    let detected = null;
+    switch (mediaType) {
+      case 'text/vnd.apiblueprint':
+        detected = '@comet-cli/adapter-api-blueprint';
+        break;
+      case 'application/vnd.oai.openapi':
+      case 'application/vnd.oai.openapi+json':
+        detected = '@comet-cli/adapter-open-api';
+    }
+    this.adapter = await resolver.resolveAdapter(detected);
     this.decorators = await resolver.resolveDecorators();
     this.factories = await resolver.resolveFactories();
   }
@@ -87,7 +100,7 @@ export default abstract class BaseCommand extends Command {
     let spec;
 
     try {
-      await this.resolve();
+      await this.resolve(file);
       spec = await this.adapter.execute(
         file.path(),
         this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,

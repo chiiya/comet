@@ -25,10 +25,10 @@ export default class Resolver {
   /**
    * Resolve the configured adapter for a command and return an instance of it.
    */
-  public async resolveAdapter(): Promise<AdapterInterface> {
+  public async resolveAdapter(detected: string): Promise<AdapterInterface> {
     // Fetch configured adapter from config
     const configuredAdapter = this.config.get(`commands.${this.signature}.adapter`);
-    if (configuredAdapter == null) {
+    if (configuredAdapter == null && detected === null) {
       throw new Error(`ConfigError:
       No adapter configuration could be found for \`${this.command}\`.
       Please check your configuration file, and make sure that a value has been
@@ -36,14 +36,16 @@ export default class Resolver {
       `);
     }
 
+    const adapter = configuredAdapter || detected;
+
     // Try to import the configured adapter
     let adapterClass;
     try {
-      adapterClass = await import(String(configuredAdapter));
+      adapterClass = await import(String(adapter));
       adapterClass = adapterClass.default;
     } catch (error) {
       error.message =
-        `Could not find module \`${configuredAdapter}\`. Run \`npm install ${configuredAdapter}\` to install`;
+        `Could not find module \`${adapter}\`. Run \`npm install ${adapter}\` to install`;
       throw error;
     }
 

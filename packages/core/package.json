@@ -61,6 +61,7 @@
     "@comet-cli/decorator-tests": "^0.1.2",
     "@comet-cli/factory-json-schemas": "^0.1.2",
     "@comet-cli/factory-tests-laravel": "^0.1.5",
+    "@comet-cli/identify": "^0.1.5",
     "@comet-cli/utils": "^0.1.1",
     "@iarna/toml": "^2.2.1",
     "@oclif/command": "^1",
