@@ -1,0 +1,38 @@
+{
+  "name": "@comet-cli/identify",
+  "version": "0.1.5",
+  "description": "Identify media type of API description files",
+  "keywords": [
+    "comet",
+    "api",
+    "api-blueprint",
+    "open-api",
+    "swagger",
+    "raml"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/identify#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  }
+}
