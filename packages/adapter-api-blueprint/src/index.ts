@@ -15,7 +15,7 @@ import {
   Request,
   Resource,
   ResourceGroup,
-  Response,
+  Responses,
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
@@ -27,8 +27,8 @@ import {
   ApiBlueprintCopy,
   ApiBlueprintExample,
   ApiBlueprintHeader,
-  ApiBlueprintParameter,
-  ApiBlueprintResource,
+  ApiBlueprintParameter, ApiBlueprintRequest,
+  ApiBlueprintResource, ApiBlueprintResponse,
   ApiBlueprintSpec,
 } from '../types/blueprint';
 
@@ -93,11 +93,15 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       throw new ParsingException('No host url specified');
     }
 
+    const server = {
+      uri: host,
+    };
+
     return {
-      host,
       version,
       name,
       description: get(this.ast, 'description', null),
+      servers: [server],
     };
   }
 
@@ -349,47 +353,98 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param examples
    */
   protected parseRequest(examples: ApiBlueprintExample[]): Request {
-    if (examples.length === 0 || examples[0].requests.length === 0) {
+    if (examples.length === 0) {
       return null;
     }
 
-    const request = examples[0].requests[0];
-    const headers = this.parseHeaders(request.headers);
-    const contentType = headers.find(header => header.key === 'Content-Type');
-    const schema = request.schema;
-    return {
-      headers,
-      description: request.description || null,
-      schema: schema !== '' ? JSON.parse(schema) : null,
-      example: request.body || null,
-      mediaType: contentType !== undefined ? contentType.example : null,
+    // First, get an array of all example requests.
+    const exampleRequests: ApiBlueprintRequest[] = [];
+    for (const example of examples) {
+      if (example.requests && example.requests.length > 0) {
+        exampleRequests.push(...example.requests);
+      }
+    }
+    // Then, iterate over the requests, group them by media-type and extract all the headers
+    const request: Request = {
+      headers: [],
+      body: {},
     };
+    const foundHeaders = {};
+    for (const exampleRequest of exampleRequests) {
+      const headers = this.parseHeaders(exampleRequest.headers);
+      for (const header of headers) {
+        if (header.key === 'Content-Type' || foundHeaders[header.key]) {
+          continue;
+        }
+        foundHeaders[header.key] = true;
+        request.headers.push(header);
+      }
+      const contentType = headers.find(header => header.key === 'Content-Type');
+      const mediaType = contentType !== undefined ? contentType.example : null;
+      if (mediaType !== null && request.body[mediaType]) {
+        request.body[mediaType].examples.push(exampleRequest.body);
+      } else {
+        request.body[mediaType] = {
+          mediaType,
+          schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : null,
+          examples: exampleRequest.body ? [exampleRequest.body] : [],
+        };
+      }
+    }
+
+    return request;
   }
 
   /**
    * Parse AST responses.
    * @param examples
    */
-  protected parseResponses(examples: ApiBlueprintExample[]): Response[] {
-    if (examples.length === 0 || examples[0].responses.length === 0) {
-      return [];
+  protected parseResponses(examples: ApiBlueprintExample[]): Responses {
+    if (examples.length === 0) {
+      return {};
     }
 
-    const responses: Response[] = [];
-    const astResponses = examples[0].responses;
+    // First, get an array of all example responses.
+    const exampleResponses: ApiBlueprintResponse[] = [];
+    for (const example of examples) {
+      if (example.responses && example.responses.length > 0) {
+        exampleResponses.push(...example.responses);
+      }
+    }
+    // Then, iterate over the responses, group them by status code and media-type and extract all the headers
+    const responses: Responses = {};
+    const foundHeaders: { [code: string]: any } = {};
+    for (const exampleResponse of exampleResponses) {
+      const statusCode = exampleResponse.name;
+      // Create response if it does not exist yet
+      if (responses[statusCode] === undefined) {
+        responses[statusCode] = {
+          statusCode: Number(statusCode),
+          headers: [],
+          body: {},
+          description: exampleResponse.description || null,
+        };
+      }
+      const headers = this.parseHeaders(exampleResponse.headers);
+      for (const header of headers) {
+        if (header.key === 'Content-Type' || foundHeaders[statusCode][header.key]) {
+          continue;
+        }
+        foundHeaders[statusCode][header.key] = true;
+        responses[statusCode].headers.push(header);
+      }
 
-    for (const response of astResponses) {
-      const headers = this.parseHeaders(response.headers);
       const contentType = headers.find(header => header.key === 'Content-Type');
-      const schema = response.schema;
-      responses.push({
-        headers,
-        description: response.description || null,
-        schema: schema !== '' ? JSON.parse(schema) : null,
-        example: response.body || null,
-        mediaType: contentType !== undefined ? contentType.example : null,
-        statusCode: Number(response.name),
-      });
+      const mediaType = contentType !== undefined ? contentType.example : null;
+      if (mediaType !== null && responses[statusCode].body[mediaType]) {
+        responses[statusCode].body[mediaType].examples.push(exampleResponse.body);
+      } else {
+        responses[statusCode].body[mediaType] = {
+          mediaType,
+          schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : null,
+          examples: exampleResponse.body ? [exampleResponse.body] : [],
+        };
+      }
     }
 
     return responses;
