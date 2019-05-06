@@ -3,10 +3,11 @@ import {
   ApiModel, Authentication, AuthType,
   CommandConfig, Dict,
   Information,
-  LoggerInterface,
+  LoggerInterface, Parameter, Resource,
 } from '@comet-cli/types';
-import { OpenApiSpec, OpenAPIServer } from '../types/open-api';
-import * as get from 'lodash/get';
+import { OpenApiSpec, OpenAPIServer, OpenAPIParameter } from '../types/open-api';
+import Transformer from './Transformer';
+import ParameterResolver from './ParameterResolver';
 const parser = require('swagger-parser');
 
 export default class OpenApiAdapter implements AdapterInterface {
@@ -25,7 +26,7 @@ export default class OpenApiAdapter implements AdapterInterface {
         info: this.parseInformation(),
         auth: this.parseAuth(),
         groups: [],
-        resources: [],
+        resources: this.parseResources(),
       };
     } catch (error) {
       // Provide a more helpful error message
@@ -80,7 +81,7 @@ export default class OpenApiAdapter implements AdapterInterface {
     }
 
     if (links !== '') {
-      description = `${links}\n${description}`;
+      description = `${links}\n\n${description}`;
     }
 
     const host = this.getHostUrl(this.spec.servers);
@@ -122,7 +123,7 @@ export default class OpenApiAdapter implements AdapterInterface {
           const flow = scheme.flows[flowType];
           flows[flowType] = {
             refreshUri: flow.refreshUrl,
-            authorizationUri: flow.authorizationUri,
+            authorizationUri: flow.authorizationUrl,
             tokenUri: flow.tokenUrl,
             scopes: flow.scopes,
           };
@@ -136,6 +137,43 @@ export default class OpenApiAdapter implements AdapterInterface {
         location: scheme.in,
       };
     }
+
+    return auth;
+  }
+
+  protected parseResources(): Resource[] {
+    const resources: Resource[] = [];
+    for (const path of Object.keys(this.spec.paths)) {
+      const openApiResource = this.spec.paths[path];
+      const params = openApiResource.parameters || [];
+      resources.push({
+        path,
+        name: openApiResource.summary,
+        description: openApiResource.description,
+        operations: [],
+        parameters: this.parseParameters(params),
+      });
+    }
+
+    return resources;
+  }
+
+  protected parseParameters(params: OpenAPIParameter[]): Parameter[] {
+    const parameters: Parameter[] = [];
+    for (const param of params) {
+      if (param.in !== 'header') {
+        parameters.push({
+          name: param.name,
+          description: param.description,
+          deprecated: param.deprecated || false,
+          location: param.in,
+          required: param.required,
+          schema: Transformer.execute(param.schema),
+          example: ParameterResolver.inferValue(param),
+        });
+      }
+    }
+    return parameters;
   }
 
   /**

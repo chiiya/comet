@@ -1,24 +1,7 @@
 import { OpenAPIParameter } from '@comet-cli/types';
-import { Parameter as IParameter } from '../types/tests';
-import Parameter from './Parameter';
-import UnresolvableParameterError from './UnresolvableParameterError';
 import SchemaValueResolver from './SchemaValueResolver';
 
-export default class ParameterResolver {
-  /**
-   * Create a parameter and infer its value.
-   * @param apiParameter
-   * @throws Error
-   */
-  public static execute(apiParameter: OpenAPIParameter): IParameter {
-    const parameter = new Parameter();
-    parameter.name = apiParameter.name;
-    parameter.location = apiParameter.in;
-    parameter.required = apiParameter.required || parameter.location === 'path';
-    parameter.value = this.inferValue(apiParameter);
-    return parameter;
-  }
-
+export default class ParameterValueResolver {
   /**
    * Infer a parameter's value according to 3 heuristics:
    * 1 - Take example, default or enum value from specification.
@@ -27,7 +10,7 @@ export default class ParameterResolver {
    * a schema definition containing a parameter of the same name, take that value.
    * @param apiParameter
    */
-  protected static inferValue(apiParameter: OpenAPIParameter): any {
+  public static inferValue(apiParameter: OpenAPIParameter): any {
     let value;
 
     value = this.inferExampleValue(apiParameter);
@@ -45,10 +28,7 @@ export default class ParameterResolver {
       return value;
     }
 
-    throw new UnresolvableParameterError(
-      `Could not infer a value for parameter ${apiParameter.name}`,
-      apiParameter.name,
-    );
+    return undefined;
   }
 
   /**
