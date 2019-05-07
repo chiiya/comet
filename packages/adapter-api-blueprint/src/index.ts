@@ -399,9 +399,14 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
   protected parseRequest(requests: ApiBlueprintRequest[]): Request {
     // Iterate over the requests, group them by media-type and extract all the headers
     const request: Request = {
+      description: null,
       headers: [],
       body: {},
     };
+    // If there is only one example request and it has a description, take that one.
+    if (requests.length === 1 && requests[0].description) {
+      request.description = requests[0].description;
+    }
     const foundHeaders = {};
     for (const exampleRequest of requests) {
       const headers = this.parseHeaders(exampleRequest.headers);
