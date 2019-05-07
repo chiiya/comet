@@ -15,7 +15,7 @@ import {
   Request,
   Resource,
   ResourceGroup,
-  Responses,
+  Responses, Transaction,
 } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 import * as get from 'lodash/get';
@@ -312,23 +312,22 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    */
   protected parseOperation(resourceUri: string, action: ApiBlueprintAction): Operation {
     const uri = get(action, 'attributes.uriTemplate', resourceUri);
-    const parsedRequest = this.parseRequest(action.examples);
+    const parsedTransactions = this.parseTransactions(action.examples);
     const parsedParameters = this.parseParameters(uri, action.parameters);
-    const securedBy = this.getSecuredByFromRequestHeadersOrParameters(parsedRequest.headers, parsedParameters);
+    const securedBy = this.getSecuredByFromRequestHeadersOrParameters(parsedTransactions, parsedParameters);
     return {
       name: action.name,
       method: action.method,
       description: action.description || null,
       parameters: parsedParameters,
-      request: parsedRequest,
-      responses: this.parseResponses(action.examples),
+      transactions: parsedTransactions,
       deprecated: false,
       securedBy: securedBy !== undefined ? [securedBy] : null,
     };
   }
 
   protected getSecuredByFromRequestHeadersOrParameters(
-    headers: Header[],
+    transactions: Transaction[],
     parameters: Parameter[],
   ): Dict<string[]> {
     if (this.auth.type === null) {
@@ -351,32 +350,60 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         header = this.auth.name;
         break;
     }
+    const headers = [];
+    for (const transaction of transactions) {
+      // Only check for auth headers when transaction has successful responses.
+      if (this.transactionHasSuccessfulResponse(transaction)) {
+        headers.push(...transaction.request.headers);
+      }
+    }
     return headers.find(item => item.key === header) !== undefined ? { default: [] } : undefined;
+  }
+
+  protected transactionHasSuccessfulResponse(transaction: Transaction): boolean {
+    for (const code of Object.keys(transaction.responses || {})) {
+      if (code.startsWith('1') || code.startsWith('2') || code.startsWith('3')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  protected parseTransactions(examples: ApiBlueprintExample[]): Transaction[] {
+    if (examples.length === 0) {
+      return null;
+    }
+    const transactions = [];
+    for (const example of examples) {
+      const transaction: Transaction = {
+        request: null,
+        responses: {},
+      };
+      if (example.requests && example.requests.length > 0) {
+        transaction.request = this.parseRequest(example.requests);
+      }
+      if (example.responses && example.responses.length > 0) {
+        transaction.responses = this.parseResponses(example.responses);
+      }
+      transactions.push(transaction);
+    }
+
+    return transactions;
   }
 
   /**
    * Parse AST requests.
-   * @param examples
+   * @param requests
    */
-  protected parseRequest(examples: ApiBlueprintExample[]): Request {
-    if (examples.length === 0) {
-      return null;
-    }
-
-    // First, get an array of all example requests.
-    const exampleRequests: ApiBlueprintRequest[] = [];
-    for (const example of examples) {
-      if (example.requests && example.requests.length > 0) {
-        exampleRequests.push(...example.requests);
-      }
-    }
-    // Then, iterate over the requests, group them by media-type and extract all the headers
+  protected parseRequest(requests: ApiBlueprintRequest[]): Request {
+    // Iterate over the requests, group them by media-type and extract all the headers
     const request: Request = {
       headers: [],
       body: {},
     };
     const foundHeaders = {};
-    for (const exampleRequest of exampleRequests) {
+    for (const exampleRequest of requests) {
       const headers = this.parseHeaders(exampleRequest.headers);
       for (const header of headers) {
         if (header.key === 'Content-Type' || foundHeaders[header.key]) {
@@ -387,16 +414,16 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       }
       const contentType = headers.find(header => header.key === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
-      if (mediaType === null) {
-        request.body = null;
-      } else if (request.body[mediaType]) {
-        request.body[mediaType].examples.push(exampleRequest.body);
-      } else {
-        request.body[mediaType] = {
-          mediaType,
-          schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : null,
-          examples: exampleRequest.body ? [exampleRequest.body] : [],
-        };
+      if (mediaType !== null) {
+        if (request.body[mediaType]) {
+          request.body[mediaType].examples.push(exampleRequest.body);
+        } else {
+          request.body[mediaType] = {
+            mediaType,
+            schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : null,
+            examples: exampleRequest.body ? [exampleRequest.body] : [],
+          };
+        }
       }
     }
 
@@ -405,21 +432,10 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
   /**
    * Parse AST responses.
-   * @param examples
+   * @param exampleResponses
    */
-  protected parseResponses(examples: ApiBlueprintExample[]): Responses {
-    if (examples.length === 0) {
-      return {};
-    }
-
-    // First, get an array of all example responses.
-    const exampleResponses: ApiBlueprintResponse[] = [];
-    for (const example of examples) {
-      if (example.responses && example.responses.length > 0) {
-        exampleResponses.push(...example.responses);
-      }
-    }
-    // Then, iterate over the responses, group them by status code and media-type and extract all the headers
+  protected parseResponses(exampleResponses: ApiBlueprintResponse[]): Responses {
+    // Iterate over the responses, group them by status code and media-type and extract all the headers
     const responses: Responses = {};
     const foundHeaders: { [code: string]: any } = {};
     for (const exampleResponse of exampleResponses) {
@@ -447,14 +463,16 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
       const contentType = headers.find(header => header.key === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
-      if (mediaType !== null && responses[statusCode].body[mediaType]) {
-        responses[statusCode].body[mediaType].examples.push(exampleResponse.body);
-      } else {
-        responses[statusCode].body[mediaType] = {
-          mediaType,
-          schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : null,
-          examples: exampleResponse.body ? [exampleResponse.body] : [],
-        };
+      if (mediaType !== null) {
+        if (responses[statusCode].body[mediaType]) {
+          responses[statusCode].body[mediaType].examples.push(exampleResponse.body);
+        } else {
+          responses[statusCode].body[mediaType] = {
+            mediaType,
+            schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : null,
+            examples: exampleResponse.body ? [exampleResponse.body] : [],
+          };
+        }
       }
     }
 
