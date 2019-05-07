@@ -1,5 +1,6 @@
 import { OpenAPIParameter } from '@comet-cli/types';
 import SchemaValueResolver from './SchemaValueResolver';
+import { OpenAPIHeader } from '../types/open-api';
 
 export default class ParameterValueResolver {
   /**
@@ -10,7 +11,7 @@ export default class ParameterValueResolver {
    * a schema definition containing a parameter of the same name, take that value.
    * @param apiParameter
    */
-  public static inferValue(apiParameter: OpenAPIParameter): any {
+  public static inferValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     let value;
 
     value = this.inferExampleValue(apiParameter);
@@ -37,7 +38,7 @@ export default class ParameterValueResolver {
    * @param apiParameter
    * @throws Error
    */
-  protected static inferExampleValue(apiParameter: OpenAPIParameter): any {
+  protected static inferExampleValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.hasOwnProperty('example')) {
       return apiParameter.example;
     }
@@ -79,7 +80,7 @@ export default class ParameterValueResolver {
    * Infer a parameter's value from defined default values.
    * @param apiParameter
    */
-  protected static inferDefaultValue(apiParameter: OpenAPIParameter): any {
+  protected static inferDefaultValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.schema) {
       const result = SchemaValueResolver.resolveDefaultValue(apiParameter.schema);
       if (result !== undefined) {
@@ -104,7 +105,7 @@ export default class ParameterValueResolver {
    * Infer a parameter's value from defined enum values (take random).
    * @param apiParameter
    */
-  protected static inferEnumValue(apiParameter: OpenAPIParameter): any {
+  protected static inferEnumValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.schema) {
       const result = SchemaValueResolver.resolveEnumValue(apiParameter.schema);
       if (result !== undefined) {

@@ -314,6 +314,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     const uri = get(action, 'attributes.uriTemplate', resourceUri);
     const parsedRequest = this.parseRequest(action.examples);
     const parsedParameters = this.parseParameters(uri, action.parameters);
+    const securedBy = this.getSecuredByFromRequestHeadersOrParameters(parsedRequest.headers, parsedParameters);
     return {
       name: action.name,
       method: action.method,
@@ -322,7 +323,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       request: parsedRequest,
       responses: this.parseResponses(action.examples),
       deprecated: false,
-      securedBy: this.getSecuredByFromRequestHeadersOrParameters(parsedRequest.headers, parsedParameters),
+      securedBy: securedBy !== undefined ? [securedBy] : null,
     };
   }
 
@@ -473,6 +474,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
         example: header.value,
         schema: this.inferSchemaFromPrimitive(header.value),
         deprecated: false,
+        required: false,
       });
     }
     return headers;

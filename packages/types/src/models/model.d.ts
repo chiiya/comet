@@ -32,13 +32,8 @@ export interface JsonSchema {
   maxProperties?: number;
   minProperties?: number;
   enum?: any[];
-  discriminator?: Discriminator;
+  discriminator?: string;
   xml?: XmlDeclaration;
-}
-
-export interface Discriminator {
-  propertyName: string;
-  mapping?: { [name: string]: string };
 }
 
 export interface XmlDeclaration {
@@ -54,8 +49,12 @@ export interface ApiModel {
   auth?: Dict<Authentication>;
   groups: ResourceGroup[];
   resources: Resource[];
-  securedBy?: Dict<string[]>;
+  securedBy?: SecurityRequirement[];
   [key: string]: any; // For decoration
+}
+
+export interface SecurityRequirement {
+  [name: string]: string[];
 }
 
 export interface Information {
@@ -132,7 +131,7 @@ export interface Operation {
   request?: Request;
   responses?: Responses;
   deprecated?: boolean;
-  securedBy?: Dict<string[]>;
+  securedBy?: SecurityRequirement[];
   tags?: string[];
   [key: string]: any; // For decoration
 }
@@ -144,8 +143,20 @@ export interface Responses {
 export interface Request {
   description?: string;
   headers?: Header[];
-  body?: Dict<Body>;
+  body?: Bodies;
   [key: string]: any; // For decoration
+}
+
+export interface Response {
+  description?: string;
+  statusCode: number | string;
+  headers?: Header[];
+  body?: Bodies;
+  [key: string]: any; // For decoration
+}
+
+export interface Bodies {
+  [mime: string]: Body;
 }
 
 export interface Body {
@@ -155,20 +166,13 @@ export interface Body {
   [key: string]: any; // For decoration
 }
 
-export interface Response {
-  description?: string;
-  statusCode: number;
-  headers?: Header[];
-  body?: Dict<Body>;
-  [key: string]: any; // For decoration
-}
-
 export interface Header {
   description?: string;
   key: string;
   schema?: JsonSchema;
   example?: any;
   deprecated?: boolean;
+  required: boolean;
   [key: string]: any; // For decoration
 }
 

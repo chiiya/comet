@@ -44,6 +44,9 @@ export default class SchemaValueResolver {
   }
 
   public static resolveObjectValue(schema: OpenAPISchema): any {
+    if (schema.properties === undefined) {
+      return undefined;
+    }
     const value = {};
     Object.keys(schema.properties).forEach((property: string) => {
       const result = this.execute(schema.properties[property]);

@@ -177,7 +177,7 @@ export interface OpenAPIMediaType {
 
 export interface OpenAPIEncoding {
   contentType: string;
-  headers?: { [name: string]: OpenAPIHeader };
+  headers?: OpenApiHeaders;
   style: OpenAPIParameterStyle;
   explode: boolean;
   allowReserved: boolean;
@@ -209,13 +209,17 @@ export interface OpenAPIResponses {
 
 export interface OpenAPIResponse {
   description?: string;
-  headers?: { [name: string]: OpenAPIHeader };
+  headers?: OpenApiHeaders;
   content?: OpenAPIMediaTypes;
   links?: { [name: string]: OpenAPILink };
 }
 
 export interface OpenAPILink {
   $ref?: string;
+}
+
+export interface OpenApiHeaders {
+  [name: string]: OpenAPIHeader;
 }
 
 export type OpenAPIHeader = Omit<OpenAPIParameter, 'in' | 'name'>;
@@ -230,7 +234,7 @@ export interface OpenAPIComponents {
   parameters?: { [name: string]: OpenAPIParameter };
   examples?: { [name: string]: OpenAPIExample };
   requestBodies?: { [name: string]: OpenAPIRequestBody };
-  headers?: { [name: string]: OpenAPIHeader };
+  headers?: OpenApiHeaders;
   securitySchemes?: { [name: string]: OpenAPISecurityScheme };
   links?: { [name: string]: OpenAPILink };
   callbacks?: { [name: string]: OpenAPICallback };

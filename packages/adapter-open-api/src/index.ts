@@ -1,13 +1,20 @@
 import {
   AdapterInterface,
   ApiModel, Authentication, AuthType,
-  CommandConfig, Dict,
+  CommandConfig, Dict, Header,
   Information, JsonSchema,
-  LoggerInterface, Parameter, Resource, Server,
+  LoggerInterface, Operation, Parameter, Request, Resource, Responses, Server,
 } from '@comet-cli/types';
-import { OpenApiSpec, OpenAPIServer, OpenAPIParameter } from '../types/open-api';
+import {
+  OpenApiSpec,
+  OpenAPIParameter,
+  OpenAPIOperation,
+  OpenAPIRequestBody, OpenAPIResponses, OpenApiHeaders,
+} from '../types/open-api';
 import Transformer from './Transformer';
 import ParameterResolver from './ParameterResolver';
+import { Method } from '../types/helpers';
+import BodyResolver from './BodyResolver';
 const parser = require('swagger-parser');
 
 export default class OpenApiAdapter implements AdapterInterface {
@@ -21,12 +28,15 @@ export default class OpenApiAdapter implements AdapterInterface {
 
     // Parse input file
     try {
-      this.spec = await parser.dereference(path, { circular: 'ignore' });
+      this.spec = await parser.dereference(path, {
+        dereference: { circular: 'ignore' },
+      });
       return {
         info: this.parseInformation(),
         auth: this.parseAuth(),
         groups: [],
         resources: this.parseResources(),
+        securedBy: this.spec.security || null,
       };
     } catch (error) {
       // Provide a more helpful error message
@@ -144,11 +154,23 @@ export default class OpenApiAdapter implements AdapterInterface {
     for (const path of Object.keys(this.spec.paths)) {
       const openApiResource = this.spec.paths[path];
       const params = openApiResource.parameters || [];
+      const resourceHeaders = this.parseHeadersFromParameters(params);
+      const methods = ['get', 'put', 'post', 'patch', 'delete', 'options', 'head', 'trace'];
+      const operations: Operation[] = [];
+      for (const key of Object.keys(openApiResource)) {
+        if (methods.includes(key) === false) {
+          continue;
+        }
+        const operation = openApiResource[key];
+        if (operation) {
+          operations.push(this.parseOperation(operation, <Method>key, resourceHeaders));
+        }
+      }
       resources.push({
         path,
+        operations,
         name: openApiResource.summary,
         description: openApiResource.description,
-        operations: [],
         parameters: this.parseParameters(params),
       });
     }
@@ -162,7 +184,7 @@ export default class OpenApiAdapter implements AdapterInterface {
       if (param.in !== 'header') {
         parameters.push({
           name: param.name,
-          description: param.description,
+          description: param.description || null,
           deprecated: param.deprecated || false,
           location: param.in,
           required: param.required,
@@ -171,7 +193,114 @@ export default class OpenApiAdapter implements AdapterInterface {
         });
       }
     }
+
     return parameters;
+  }
+
+  protected parseHeadersFromParameters(params: OpenAPIParameter[]): Header[] {
+    const headers: Header[] = [];
+    const headerParams = params.filter(param => param.in === 'header');
+    for (const param of headerParams) {
+      const schema = param.schema;
+      headers.push({
+        key: param.name,
+        description: param.description || null,
+        deprecated: param.deprecated || false,
+        example: ParameterResolver.inferValue(param),
+        schema: schema ? Transformer.execute(param.schema) : null,
+        required: param.required || false,
+      });
+    }
+
+    return headers;
+  }
+
+  protected parseHeadersFromOpenApiHeaders(openApiHeaders: OpenApiHeaders): Header[] {
+    const headers: Header[] = [];
+    for (const name of Object.keys(openApiHeaders)) {
+      const header = openApiHeaders[name];
+      const schema = header.schema;
+      headers.push({
+        key: name,
+        description: header.description || null,
+        deprecated: header.deprecated || false,
+        example: ParameterResolver.inferValue(header),
+        schema: schema ? Transformer.execute(header.schema) : null,
+        required: header.required || false,
+      });
+    }
+
+    return headers;
+  }
+
+  protected parseOperation(operation: OpenAPIOperation, method: Method, resourceHeaders: Header[]): Operation {
+    const params = operation.parameters || [];
+    // Overwrite resource headers with operation headers.
+    const operationHeaders = this.parseHeadersFromParameters(params);
+    const headers = this.mergeHeaders(resourceHeaders, operationHeaders);
+
+    let description = operation.description || operation.summary || '';
+    if (operation.externalDocs) {
+      description = `[${operation.externalDocs.description}](${operation.externalDocs.url})\n\n${description}`;
+    }
+    return {
+      method,
+      name: operation.operationId || null,
+      description: description || null,
+      deprecated: operation.deprecated || false,
+      tags: operation.tags,
+      parameters: this.parseParameters(params),
+      securedBy: operation.security,
+      request: this.parseRequest(operation.requestBody, headers),
+      responses: this.parseResponses(operation.responses),
+    };
+  }
+
+  protected parseRequest(requestBody: OpenAPIRequestBody, headers: Header[]): Request {
+    const request: Request = {
+      headers,
+      description: null,
+      body: null,
+    };
+    if (requestBody) {
+      request.description = requestBody.description || null;
+      request.body = BodyResolver.execute(requestBody.content, 'request');
+    }
+
+    return request;
+  }
+
+  protected parseResponses(specResponses: OpenAPIResponses): Responses {
+    const responses: Responses = {};
+
+    for (const code of Object.keys(specResponses)) {
+      const response = specResponses[code];
+      const headers = response.headers || null;
+      responses[code] = {
+        statusCode: code === 'default' ? code : Number(code),
+        description: response.description || null,
+        headers: headers ? this.parseHeadersFromOpenApiHeaders(headers) : null,
+        body: BodyResolver.execute(response.content, 'response'),
+      };
+    }
+
+    return responses;
+  }
+
+  protected mergeHeaders(resourceHeaders: Header[], operationHeaders: Header[]): Header[] {
+    const mergedHeaders = {};
+    for (const header of resourceHeaders) {
+      mergedHeaders[header.key] = header;
+    }
+    for (const header of operationHeaders) {
+      mergedHeaders[header.key] = header;
+    }
+    const headers = [];
+    for (const header of Object.keys(mergedHeaders)) {
+      headers.push(mergedHeaders[header]);
+    }
+
+    return headers;
   }
 
   /**
