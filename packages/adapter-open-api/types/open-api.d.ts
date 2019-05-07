@@ -27,12 +27,7 @@
 
  */
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-declare global {
-  type Dict<T> = {
-    [key: string]: T;
-  };
-}
+import { Dict, Omit } from '@comet-cli/types';
 
 export interface OpenApiSpec {
   openapi: string;
@@ -43,7 +38,6 @@ export interface OpenApiSpec {
   security?: OpenAPISecurityRequirement[];
   tags?: OpenAPITag[];
   externalDocs?: OpenAPIExternalDocumentation;
-  decorated: any;
 }
 
 export interface OpenAPIInfo {
@@ -71,6 +65,12 @@ export interface OpenAPIPaths {
   [path: string]: OpenAPIPath;
 }
 
+export interface OpenAPIRef {
+  $ref: string;
+}
+
+export type Referenced<T> = OpenAPIRef | T;
+
 export interface OpenAPIPath {
   summary?: string;
   description?: string;
@@ -83,7 +83,7 @@ export interface OpenAPIPath {
   patch?: OpenAPIOperation;
   trace?: OpenAPIOperation;
   servers?: OpenAPIServer[];
-  parameters?: OpenAPIParameter[];
+  parameters?: Referenced<OpenAPIParameter>[];
 }
 
 export interface OpenAPIOperation {
@@ -92,10 +92,10 @@ export interface OpenAPIOperation {
   description?: string;
   externalDocs?: OpenAPIExternalDocumentation;
   operationId?: string;
-  parameters?: OpenAPIParameter[];
-  requestBody?: OpenAPIRequestBody;
+  parameters?: Referenced<OpenAPIParameter>[];
+  requestBody?: Referenced<OpenAPIRequestBody>;
   responses: OpenAPIResponses;
-  callbacks?: { [name: string]: OpenAPICallback };
+  callbacks?: { [name: string]: Referenced<OpenAPICallback> };
   deprecated?: boolean;
   security?: OpenAPISecurityRequirement[];
   servers?: OpenAPIServer[];
@@ -111,9 +111,9 @@ export interface OpenAPIParameter {
   style?: OpenAPIParameterStyle;
   explode?: boolean;
   allowReserved?: boolean;
-  schema?: OpenAPISchema;
+  schema?: Referenced<OpenAPISchema>;
   example?: any;
-  examples?: { [media: string]: OpenAPIExample };
+  examples?: { [media: string]: Referenced<OpenAPIExample> };
   content?: { [media: string]: OpenAPIMediaType };
 }
 
@@ -161,6 +161,15 @@ export interface OpenAPISchema {
   minProperties?: number;
   enum?: any[];
   example?: any;
+  xml?: XmlDeclaration;
+}
+
+export interface XmlDeclaration {
+  name?: string;
+  namespace?: string;
+  prefix?: string;
+  attribute?: boolean;
+  wrapped?: boolean;
 }
 
 export interface OpenAPIDiscriminator {
@@ -169,9 +178,9 @@ export interface OpenAPIDiscriminator {
 }
 
 export interface OpenAPIMediaType {
-  schema?: OpenAPISchema;
+  schema?: Referenced<OpenAPISchema>;
   example?: any;
-  examples?: { [name: string]: OpenAPIExample };
+  examples?: { [name: string]: Referenced<OpenAPIExample> };
   encoding?: { [field: string]: OpenAPIEncoding };
 }
 
@@ -211,7 +220,7 @@ export interface OpenAPIResponse {
   description?: string;
   headers?: OpenApiHeaders;
   content?: OpenAPIMediaTypes;
-  links?: { [name: string]: OpenAPILink };
+  links?: { [name: string]: Referenced<OpenAPILink> };
 }
 
 export interface OpenAPILink {
@@ -219,7 +228,7 @@ export interface OpenAPILink {
 }
 
 export interface OpenApiHeaders {
-  [name: string]: OpenAPIHeader;
+  [name: string]: Referenced<OpenAPIHeader>;
 }
 
 export type OpenAPIHeader = Omit<OpenAPIParameter, 'in' | 'name'>;
@@ -229,15 +238,15 @@ export interface OpenAPICallback {
 }
 
 export interface OpenAPIComponents {
-  schemas?: { [name: string]: OpenAPISchema };
-  responses?: { [name: string]: OpenAPIResponse };
-  parameters?: { [name: string]: OpenAPIParameter };
-  examples?: { [name: string]: OpenAPIExample };
-  requestBodies?: { [name: string]: OpenAPIRequestBody };
+  schemas?: { [name: string]: Referenced<OpenAPISchema> };
+  responses?: { [name: string]: Referenced<OpenAPIResponse> };
+  parameters?: { [name: string]: Referenced<OpenAPIParameter> };
+  examples?: { [name: string]: Referenced<OpenAPIExample> };
+  requestBodies?: { [name: string]: Referenced<OpenAPIRequestBody> };
   headers?: OpenApiHeaders;
-  securitySchemes?: { [name: string]: OpenAPISecurityScheme };
-  links?: { [name: string]: OpenAPILink };
-  callbacks?: { [name: string]: OpenAPICallback };
+  securitySchemes?: { [name: string]: Referenced<OpenAPISecurityScheme> };
+  links?: { [name: string]: Referenced<OpenAPILink> };
+  callbacks?: { [name: string]: Referenced<OpenAPICallback> };
 }
 
 export interface OpenAPISecurityRequirement {

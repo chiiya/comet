@@ -15,7 +15,7 @@ import Transformer from './Transformer';
 import ParameterResolver from './ParameterResolver';
 import { Method } from '../types/helpers';
 import BodyResolver from './BodyResolver';
-const parser = require('swagger-parser');
+import Parser from './Parser';
 
 export default class OpenApiAdapter implements AdapterInterface {
   protected config: CommandConfig;
@@ -28,9 +28,7 @@ export default class OpenApiAdapter implements AdapterInterface {
 
     // Parse input file
     try {
-      this.spec = await parser.dereference(path, {
-        dereference: { circular: 'ignore' },
-      });
+      this.spec = await Parser.load(path);
       return {
         info: this.parseInformation(),
         auth: this.parseAuth(),

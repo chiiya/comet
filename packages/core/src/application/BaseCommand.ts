@@ -69,6 +69,8 @@ export default abstract class BaseCommand extends Command {
         break;
       case 'application/vnd.oai.openapi':
       case 'application/vnd.oai.openapi+json':
+      case 'application/swagger+yaml':
+      case 'application/swagger+json':
         detected = '@comet-cli/adapter-open-api';
     }
     this.adapter = await resolver.resolveAdapter(detected);
