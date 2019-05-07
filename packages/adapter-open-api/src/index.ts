@@ -243,6 +243,10 @@ export default class OpenApiAdapter implements AdapterInterface {
     if (operation.externalDocs) {
       description = `[${operation.externalDocs.description}](${operation.externalDocs.url})\n\n${description}`;
     }
+    const transaction = {
+      request: this.parseRequest(operation.requestBody, headers),
+      responses: this.parseResponses(operation.responses),
+    };
     return {
       method,
       name: operation.operationId || null,
@@ -251,8 +255,7 @@ export default class OpenApiAdapter implements AdapterInterface {
       tags: operation.tags,
       parameters: this.parseParameters(params),
       securedBy: operation.security,
-      request: this.parseRequest(operation.requestBody, headers),
-      responses: this.parseResponses(operation.responses),
+      transactions: [transaction],
     };
   }
 
