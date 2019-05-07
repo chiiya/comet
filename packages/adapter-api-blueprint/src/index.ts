@@ -31,9 +31,7 @@ import {
   ApiBlueprintResource, ApiBlueprintResponse,
   ApiBlueprintSpec,
 } from '../types/blueprint';
-
-const { promisify } = require('util');
-const drafter = require('drafter');
+import Parser from './Parser';
 
 export default class ApiBlueprintAdapter implements AdapterInterface {
   protected config: CommandConfig;
@@ -53,18 +51,18 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
 
     // Parse input file
     try {
-      const source = await readFile(path, 'utf8');
-      const parse = promisify(drafter.parse);
-      const result: ApiBlueprintSpec = await parse(source, { type: 'ast' });
+      const result = await Parser.load(path, logger);
       this.ast = result.ast;
       const metadata = this.parseMetadata();
       this.auth = this.parseAuthentication(metadata);
-      return {
+      const spec = {
         info: this.parseInformation(metadata),
         auth: { default: this.auth },
         groups: this.parseGroups(),
         resources: this.parseDefaultGroupedResources(),
       };
+      logger.succeed('API Blueprint model transformed');
+      return spec;
     } catch (error) {
       // Provide a more helpful error message
       if (error.code === 'ENOENT') {

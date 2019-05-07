@@ -74,6 +74,10 @@ export const camelize = (text: string, separator: string = '-'): string => {
   return result.join('');
 };
 
+export const ucfirst = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 /**
  * Check whether a value (string) is a number.
  * @param str

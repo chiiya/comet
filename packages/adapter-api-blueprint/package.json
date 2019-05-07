@@ -37,7 +37,8 @@
   "dependencies": {
     "drafter": "^1.2.0",
     "fs-extra": "^7.0.1",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "tty-table": "^2.7.0"
   },
   "devDependencies": {
     "@comet-cli/types": "^0.1.1",

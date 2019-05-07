@@ -1,5 +1,6 @@
 import { Signale } from 'signale';
 import * as Ora from 'ora';
+import * as Table from 'tty-table';
 import { LoggerInterface } from '@comet-cli/types';
 
 // Signale options
@@ -79,6 +80,80 @@ export default class Logger implements LoggerInterface {
    * @param message
    */
   warn(message: string): void {
-    this.console.warn(message);
+    if (this.spinner.isSpinning === true) {
+      this.spinner.warn(message);
+    }
+  }
+
+  /**
+   * Pretty print warning messages to the console.
+   * Pass an array of warnings, each warning itself an array with the following elements:
+   * [line, message, code]
+   * @param warnings
+   */
+  printWarnings(warnings: any[][]): void {
+    const table = Table(
+      [
+        {
+          value: 'Line',
+          width: 10,
+        },
+        {
+          value: 'Message',
+          width: 60,
+          color: 'yellow',
+        },
+        {
+          value: 'Code',
+          width: 10,
+        },
+      ],
+      warnings,
+      {
+        borderStyle : 1,
+        paddingBottom : 0,
+        headerColor: 'yellow',
+        headerAlign: 'left',
+        color: 'white',
+        align: 'left',
+      },
+    );
+    console.log(table.render());
+  }
+
+  /**
+   * Pretty print error messages to the console.
+   * Pass an array of errors, each error itself an array with the following elements:
+   * [line, message, code]
+   * @param errors
+   */
+  printErrors(errors: any[][]): void {
+    const table = Table(
+      [
+        {
+          value: 'Line',
+          width: 10,
+        },
+        {
+          value: 'Message',
+          width: 60,
+          color: 'red',
+        },
+        {
+          value: 'Code',
+          width: 10,
+        },
+      ],
+      errors,
+      {
+        borderStyle : 1,
+        paddingBottom : 0,
+        headerColor: 'red',
+        headerAlign: 'left',
+        color: 'white',
+        align: 'left',
+      },
+    );
+    console.log(table.render());
   }
 }
