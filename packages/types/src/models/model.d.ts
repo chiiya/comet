@@ -128,12 +128,17 @@ export interface Operation {
   name?: string;
   description?: string;
   parameters: Parameter[];
-  request?: Request;
-  responses?: Responses;
+  transactions?: Transaction[];
   deprecated?: boolean;
   securedBy?: SecurityRequirement[];
   tags?: string[];
   [key: string]: any; // For decoration
+}
+
+export interface Transaction {
+  description?: string;
+  request?: Request;
+  responses?: Responses;
 }
 
 export interface Responses {
