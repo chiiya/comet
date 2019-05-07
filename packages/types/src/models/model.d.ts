@@ -2,6 +2,8 @@ export type Dict<T> = {
   [key: string]: T;
 };
 
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
 export interface JsonSchema {
   $schema: string;
   $ref?: string;
