@@ -37,6 +37,7 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
+    "json-pointer": "^0.6.0",
     "lodash": "^4.17.11",
     "swagger-parser": "^6.0.5",
     "swagger2openapi": "^5.3.0"

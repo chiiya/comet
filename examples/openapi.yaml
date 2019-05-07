@@ -74,6 +74,7 @@ x-tagGroups:
 paths:
   /pet:
     parameters:
+      - $ref: '#/components/parameters/skipParam'
       - name: cookieParam
         in: cookie
         description: Some cookie
@@ -773,6 +774,7 @@ components:
             description: "Find more info here"
             url: "https://example.com"
           description: Pet ID
+          readOnly: true
           allOf:
             - $ref: '#/components/schemas/Id'
         category:
@@ -880,6 +882,16 @@ components:
           format: int32
       xml:
         name: User
+  parameters:
+    skipParam:
+      name: skip
+      in: query
+      description: number of items to skip
+      required: true
+      schema:
+        type: integer
+        format: int32
+        example: 16
   requestBodies:
     Pet:
       content:

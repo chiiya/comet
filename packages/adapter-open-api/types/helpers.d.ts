@@ -1,4 +1,4 @@
-export type ParameterType = 'request' | 'response' | 'other';
+export type SchemaType = 'request' | 'response' | 'other';
 
 export type Method =
   | 'get'

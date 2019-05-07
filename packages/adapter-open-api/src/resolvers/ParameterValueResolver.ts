@@ -1,6 +1,6 @@
-import { OpenAPIParameter } from '@comet-cli/types';
 import SchemaValueResolver from './SchemaValueResolver';
-import { OpenAPIHeader } from '../types/open-api';
+import { OpenAPIHeader, OpenAPIParameter } from '../../types/open-api';
+import Specification from '../Specification';
 
 export default class ParameterValueResolver {
   /**
@@ -9,22 +9,25 @@ export default class ParameterValueResolver {
    * 2 - If an API request with a random value for the parameter is successful, take that value.
    * 3 - If the specification contains another operation for the same resource, that has
    * a schema definition containing a parameter of the same name, take that value.
+   * @param spec
    * @param apiParameter
    */
-  public static inferValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
+  public static inferValue(spec: Specification, apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     let value;
+    const parameter = spec.deref(apiParameter);
+    spec.exitRef(apiParameter);
 
-    value = this.inferExampleValue(apiParameter);
+    value = this.inferExampleValue(parameter);
     if (value !== undefined) {
       return value;
     }
 
-    value = this.inferDefaultValue(apiParameter);
+    value = this.inferDefaultValue(parameter);
     if (value !== undefined) {
       return value;
     }
 
-    value = this.inferEnumValue(apiParameter);
+    value = this.inferEnumValue(parameter);
     if (value !== undefined) {
       return value;
     }
@@ -43,9 +46,9 @@ export default class ParameterValueResolver {
       return apiParameter.example;
     }
 
-    // Just take the first value
-    if (apiParameter.hasOwnProperty('examples')) {
-      return apiParameter.examples[Object.keys(apiParameter.examples)[0]].value;
+    // Take a random value from examples
+    if (apiParameter.hasOwnProperty('examples') && apiParameter.examples) {
+      // return apiParameter.examples[Object.keys(apiParameter.examples)[0]].value;
     }
 
     if (apiParameter.schema) {
@@ -62,7 +65,7 @@ export default class ParameterValueResolver {
       }
 
       if (content.hasOwnProperty('examples')) {
-        return content.examples[Object.keys(content.examples)[0]].value;
+        // return content.examples[Object.keys(content.examples)[0]].value;
       }
 
       if (content.schema) {
