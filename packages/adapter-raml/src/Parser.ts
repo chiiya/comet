@@ -1,6 +1,7 @@
 import { RamlParserError } from 'raml-1-parser/dist/parser/highLevelAST';
 import { LoggerInterface } from '@comet-cli/types';
 import { Api } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
+import ParsingException from './ParsingException';
 
 const raml = require('raml-1-parser');
 
@@ -11,9 +12,9 @@ export default class Parser {
    * @param logger
    */
   public static async load(pathOrObject: string, logger: LoggerInterface): Promise<Api> {
+    let result: Api;
     try {
-      const spec = await raml.loadApi(pathOrObject, { rejectOnErrors: true });
-      return spec;
+      result = await raml.loadApi(pathOrObject, { rejectOnErrors: true });
     } catch (error) {
       if (error.name === 'ApiLoadingError') {
         const issues: RamlParserError[] = error.parserErrors;
@@ -22,6 +23,11 @@ export default class Parser {
         throw error;
       }
     }
+
+    if (result.RAMLVersion() === 'RAML08') {
+      throw new ParsingException('Input specification is RAMLv0.8. The minimum RAML version supported is 1.0');
+    }
+    return result;
   }
 
   /**

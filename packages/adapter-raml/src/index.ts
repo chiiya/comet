@@ -1,6 +1,7 @@
 import { AdapterInterface, ApiModel, CommandConfig, LoggerInterface } from '@comet-cli/types';
 import Parser from './Parser';
 import InformationTransformer from './transformers/InformationTransformer';
+import { writeFile } from 'fs-extra';
 
 export default class RamlAdapter implements AdapterInterface {
   protected config: CommandConfig;
@@ -10,6 +11,7 @@ export default class RamlAdapter implements AdapterInterface {
     // Parse input file
     try {
       const result = await Parser.load(path, logger);
+      await writeFile('./result-parsed.json', JSON.stringify(result, null, 2));
       // const specification = new Specification(result);
       return {
         info: InformationTransformer.execute(result),

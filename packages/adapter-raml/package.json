@@ -34,6 +34,8 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "raml-1-parser": "^1.1.52"
+    "fs-extra": "^7.0.1",
+    "raml-1-parser": "^1.1.52",
+    "ramldt2jsonschema": "^0.3.1"
   }
 }
