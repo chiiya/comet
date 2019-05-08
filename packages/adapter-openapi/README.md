@@ -5,7 +5,7 @@ This package contains the implementation of an OpenAPI v3 adapter.
 ### Usage
 
 ```typescript
-import OpenApiAdapter from '@comet-cli/adapter-open-api';
+import OpenApiAdapter from adapter-openapi;
 
 async function main() {
   const adapter = new OpenApiAdapter();

@@ -1,5 +1,5 @@
 {
-  "name": "@comet-cli/adapter-open-api",
+  "name": "@comet-cli/adapter-openapi",
   "version": "0.1.5",
   "description": "Adapter for the OpenAPI description language",
   "keywords": [
@@ -12,7 +12,7 @@
     "restful"
   ],
   "author": "Elisha Witte <elishawitte@gmail.com>",
-  "homepage": "https://github.com/chiiya/comet/tree/master/packages/adapter-open-api#readme",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/adapter-openapi#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
