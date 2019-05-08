@@ -1,5 +1,5 @@
 import { ApiBlueprintHeader } from '../../types/blueprint';
-import { Header, JsonSchema } from '@comet-cli/types';
+import { Header, Schema } from '@comet-cli/types';
 import { isNumber } from '@comet-cli/utils';
 
 export default class HeaderTransformer {
@@ -26,9 +26,8 @@ export default class HeaderTransformer {
    * Infer a valid JSON schema from a primitive (string/number).
    * @param value
    */
-  protected static inferSchemaFromPrimitive(value: any): JsonSchema {
+  protected static inferSchemaFromPrimitive(value: any): Schema {
     return {
-      $schema: 'http://json-schema.org/draft-04/schema#',
       type: isNumber(value) ? 'number' : 'string',
     };
   }

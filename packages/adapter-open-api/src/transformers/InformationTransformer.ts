@@ -1,4 +1,4 @@
-import { Dict, Information, JsonSchema, Server } from '@comet-cli/types';
+import { Dict, Information, Schema, Server } from '@comet-cli/types';
 import Specification from '../Specification';
 
 export default class InformationTransformer {
@@ -61,11 +61,10 @@ export default class InformationTransformer {
   protected static getServers(spec: Specification): Server[] {
     const servers: Server[] = [];
     for (const server of spec.entity.servers) {
-      const variables: Dict<JsonSchema> = {};
+      const variables: Dict<Schema> = {};
       if (server.variables) {
         for (const name of Object.keys(server.variables)) {
           variables[name] = {
-            $schema: 'http://json-schema.org/draft-04/schema#',
             default: server.variables[name].default,
             description: server.variables[name].description,
             enum: server.variables[name].enum,

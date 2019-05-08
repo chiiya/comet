@@ -1,14 +1,16 @@
 import Specification from '../Specification';
 import { OpenAPISchema, Referenced } from '../../types/open-api';
-import { JsonSchema } from '@comet-cli/types';
+import { Schema } from '@comet-cli/types';
 import { SchemaType } from '../../types/helpers';
 
+export type MergedOpenAPISchema = OpenAPISchema & { parentRefs?: string[] };
+
 export default class SchemaTransformer {
-  public static execute(spec: Specification, ref: Referenced<OpenAPISchema>, type: SchemaType = 'other'): JsonSchema {
-    const rawSchema = spec.deref(ref);
-    const schema: JsonSchema = {
-      $schema: 'http://json-schema.org/draft-04/schema#',
-    };
+  public static execute(spec: Specification, ref: Referenced<OpenAPISchema>, type: SchemaType = 'other'): Schema {
+    const $ref = ref.$ref;
+    let rawSchema = spec.deref(ref);
+    rawSchema = this.mergeAllOf(spec, rawSchema, $ref);
+    const schema: Schema = {};
     const isCircular = !!rawSchema['x-circular-ref'];
 
     if (isCircular === true) {
@@ -65,6 +67,7 @@ export default class SchemaTransformer {
     }
 
     spec.exitRef(ref);
+    spec.exitParents(rawSchema);
 
     return schema;
   }
@@ -119,6 +122,90 @@ export default class SchemaTransformer {
         return type;
       }
     }
+  }
+
+  /**
+   * Merge and remove allOf sub-schema definitions.
+   * @param spec
+   * @param schema
+   * @param $ref
+   */
+  protected static mergeAllOf(spec: Specification, schema: OpenAPISchema, $ref: string): MergedOpenAPISchema {
+    const allOf = schema.allOf;
+
+    if (allOf === undefined) {
+      return schema;
+    }
+
+    let merged: MergedOpenAPISchema = {
+      ...schema,
+      allOf: undefined,
+      parentRefs: [],
+    };
+
+    const allOfSchemas = schema.allOf.map((subSchema) => {
+      const resolved = spec.deref(subSchema);
+      const subRef = subSchema.$ref || undefined;
+      const subMerged = this.mergeAllOf(spec, resolved, subRef);
+      merged.parentRefs!.push(...(subMerged.parentRefs || []));
+      return {
+        $ref: subRef,
+        schema: subMerged,
+      };
+    });
+
+    for (const { $ref: subSchemaRef, schema: subSchema } of allOfSchemas) {
+      if (
+        merged.type !== subSchema.type
+        && merged.type !== undefined
+        && subSchema.type !== undefined
+      ) {
+        throw new Error(`Incompatible types in allOf at "${$ref}"`);
+      }
+
+      if (subSchema.type !== undefined) {
+        merged.type = subSchema.type;
+      }
+
+      if (subSchema.properties !== undefined) {
+        merged.properties = merged.properties || {};
+        for (const prop in subSchema.properties) {
+          if (!merged.properties[prop]) {
+            merged.properties[prop] = subSchema.properties[prop];
+          } else {
+            // merge inner properties
+            merged.properties[prop] = this.mergeAllOf(
+              spec,
+              { allOf: [merged.properties[prop], subSchema.properties[prop]] },
+              `${$ref}/properties/${prop}`,
+            );
+          }
+        }
+      }
+
+      if (subSchema.items !== undefined) {
+        merged.items = merged.items || {};
+        // merge inner properties
+        merged.items = this.mergeAllOf(
+          spec,
+          { allOf: [merged.items, subSchema.items] },
+          `${$ref}/items`,
+        );
+      }
+
+      if (subSchema.required !== undefined) {
+        merged.required = [...new Set((merged.required || []).concat(subSchema.required))];
+      }
+
+      // merge rest of constraints
+      merged = { ...subSchema, ...merged };
+
+      if (subSchemaRef) {
+        merged.parentRefs!.push(subSchemaRef);
+      }
+    }
+
+    return merged;
   }
 
   /**

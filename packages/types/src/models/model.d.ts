@@ -4,21 +4,21 @@ export type Dict<T> = {
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export interface JsonSchema {
-  $schema: string;
+export interface Schema {
+  $schema?: string;
   $ref?: string;
   type?: string | string[];
-  properties?: { [name: string]: JsonSchema };
-  additionalProperties?: boolean | JsonSchema;
+  properties?: { [name: string]: Schema };
+  additionalProperties?: boolean | Schema;
   description?: string;
   default?: any;
-  items?: JsonSchema;
+  items?: Schema;
   required?: string[];
   format?: string;
-  oneOf?: JsonSchema[];
-  anyOf?: JsonSchema[];
-  allOf?: JsonSchema[];
-  not?: JsonSchema;
+  oneOf?: Schema[];
+  anyOf?: Schema[];
+  allOf?: Schema[];
+  not?: Schema;
   title?: string;
   multipleOf?: number;
   maximum?: number;
@@ -70,7 +70,7 @@ export interface Information {
 export interface Server {
   uri: string;
   description?: string;
-  variables?: Dict<JsonSchema>;
+  variables?: Dict<Schema>;
   [key: string]: any; // For decoration
 }
 
@@ -167,7 +167,7 @@ export interface Bodies {
 }
 
 export interface Body {
-  schema?: JsonSchema;
+  schema?: Schema;
   mediaType?: string;
   examples?: any[];
   [key: string]: any; // For decoration
@@ -176,7 +176,7 @@ export interface Body {
 export interface Header {
   description?: string;
   key: string;
-  schema?: JsonSchema;
+  schema?: Schema;
   example?: any;
   deprecated?: boolean;
   required: boolean;
@@ -188,7 +188,7 @@ export interface Parameter {
   description?: string;
   required: boolean;
   location: ParameterLocation;
-  schema: JsonSchema;
+  schema: Schema;
   example?: any;
   deprecated?: boolean;
   [key: string]: any; // For decoration

@@ -27,6 +27,7 @@
 
 import { OpenAPIRef, OpenApiSpec, Referenced } from '../types/open-api';
 import JsonPointer from './utils/JsonPointer';
+import { MergedOpenAPISchema } from './transformers/SchemaTransformer';
 
 /**
  * Helper class to keep track of visited references to avoid
@@ -130,6 +131,12 @@ export default class Specification {
       return;
     }
     this.refCounter.exit(ref.$ref);
+  }
+
+  exitParents(schema: MergedOpenAPISchema) {
+    for (const parent$ref of schema.parentRefs || []) {
+      this.exitRef({ $ref: parent$ref });
+    }
   }
 
   shallowDeref<T extends object>(obj: OpenAPIRef | T): T {

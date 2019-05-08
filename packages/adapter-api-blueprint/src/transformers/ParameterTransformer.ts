@@ -1,5 +1,5 @@
 import { ApiBlueprintParameter } from '../../types/blueprint';
-import { JsonSchema, Parameter } from '@comet-cli/types';
+import { Schema, Parameter } from '@comet-cli/types';
 import ParsingException from '../ParsingException';
 
 export default class ParameterTransformer {
@@ -38,15 +38,14 @@ export default class ParameterTransformer {
    * Transform an MSON parameter type definition to a valid JSON schema definition.
    * @param data
    */
-  protected static transformToJsonSchema(data: ApiBlueprintParameter): JsonSchema {
+  protected static transformToJsonSchema(data: ApiBlueprintParameter): Schema {
     const isNestedArrayType = this.isNestedArrayType(data.type);
 
     if (this.isValidType(data.type) === false && isNestedArrayType === false) {
       throw new ParsingException(`Invalid type definition: ${data.type}`);
     }
 
-    const schema: JsonSchema = {
-      $schema: 'http://json-schema.org/draft-04/schema#',
+    const schema: Schema = {
       type: data.type,
     };
 
@@ -59,7 +58,6 @@ export default class ParameterTransformer {
       const values = data.values ? data.values.map(item => item.value) : [];
       schema.type = 'array';
       schema.items = {
-        $schema: 'http://json-schema.org/draft-04/schema#',
         type: data.type,
         enum: values,
       };
@@ -71,7 +69,6 @@ export default class ParameterTransformer {
       schema.type = 'array';
       if (this.isValidType(nestedType)) {
         schema.items = {
-          $schema: 'http://json-schema.org/draft-04/schema#',
           type: nestedType,
         };
       }
