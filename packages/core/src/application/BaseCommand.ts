@@ -72,6 +72,9 @@ export default abstract class BaseCommand extends Command {
       case 'application/swagger+yaml':
       case 'application/swagger+json':
         detected = '@comet-cli/adapter-openapi';
+        break;
+      case 'application/raml+yaml':
+        detected = '@comet-cli/adapter-raml';
     }
     this.adapter = await resolver.resolveAdapter(detected);
     this.decorators = await resolver.resolveDecorators();

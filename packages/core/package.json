@@ -56,7 +56,8 @@
   },
   "dependencies": {
     "@comet-cli/adapter-api-blueprint": "^0.1.5",
-    "@comet-cli/adapter-open-api": "^0.1.5",
+    "@comet-cli/adapter-openapi": "^0.1.5",
+    "@comet-cli/adapter-raml": "^0.1.5",
     "@comet-cli/decorator-json-schemas": "^0.1.2",
     "@comet-cli/decorator-tests": "^0.1.2",
     "@comet-cli/factory-json-schemas": "^0.1.2",
