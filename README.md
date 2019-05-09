@@ -2,6 +2,11 @@
 <p align="center"><strong>Automated testing and documentation for RESTful APIs.</strong></p>
 
 **Notice:** This package is still in early development and not intended for usage.
+To test parser functionality, call:
+```bash
+comet make:documentation examples/(blueprint.apib)|(openapi.yml)|(raml/api.raml)
+```
+This will create a `result.json` file with the resulting model tree.
 
 ## Index
 <pre>
