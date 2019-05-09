@@ -1,6 +1,6 @@
 import { Api } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import { Dict, Information, Schema, Server } from '@comet-cli/types';
-import SchemaTransformer, { MergedTypeDeclaration } from './SchemaTransformer';
+import SchemaTransformer from './SchemaTransformer';
 
 export default class InformationTransformer {
   public static execute(spec: Api): Information {
@@ -21,7 +21,7 @@ export default class InformationTransformer {
     const variables: Dict<Schema> = {};
     const baseUriParameters = spec.baseUriParameters();
     for (const parameter of baseUriParameters) {
-      variables[parameter.name()] = SchemaTransformer.execute(<MergedTypeDeclaration>parameter);
+      variables[parameter.name()] = SchemaTransformer.execute(parameter);
     }
     const server: Server = {
       variables,

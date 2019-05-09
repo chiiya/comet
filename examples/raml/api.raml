@@ -3,7 +3,15 @@
 title: ACME Banking HTTP API
 version: 1.0
 mediaType: application/json
-baseUri: http://api.{customer}.test.com/{version}/
+baseUri: http://api.{userIds}.test.com/{version}/
+baseUriParameters:
+  userIds:
+    description: A list of userIds
+    type: array
+    items:
+      type: string
+      minLength: 1
+    uniqueItems: true
 
 uses:
   shapes: ./dataTypes/shapes.raml
