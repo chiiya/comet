@@ -36,6 +36,9 @@ COMMANDS
 # Create tests:
 $ comet make:tests api.yaml
 
+# Create documentation
+$ comet make:documentation api.yaml
+
 # Create valid JSON Schemas:
 $ comet make:schemas api.yaml
 $ comet make:schemas api.yaml -o=schemas/
