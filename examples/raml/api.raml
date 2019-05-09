@@ -48,8 +48,20 @@ types:
 
 securitySchemes:
   oauth2_0: !include securitySchemes/oauth2_0.raml
+  key:
+    type: Pass Through
+    description: API Key
+    describedBy:
+      headers:
+        X-Authorization:
+          type: string
+      queryParameters:
+        api_key:
+          type: string
   
-securedBy: oauth2_0
+securedBy:
+  - oauth2_0: { scopes: [ADMINISTRATOR] }
+  - key
 
 /customers:
   displayName: Customer Resource

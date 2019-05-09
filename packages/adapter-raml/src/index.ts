@@ -3,6 +3,8 @@ import Parser from './Parser';
 import InformationTransformer from './transformers/InformationTransformer';
 import { writeFile } from 'fs-extra';
 import Specification from './Specification';
+import AuthenticationTransformer from './transformers/AuthenticationTransformer';
+import SecuredByTransformer from './transformers/SecuredByTransformer';
 
 export default class RamlAdapter implements AdapterInterface {
   protected config: CommandConfig;
@@ -14,12 +16,13 @@ export default class RamlAdapter implements AdapterInterface {
       const result = await Parser.load(path, logger);
       await writeFile('./result-parsed.json', JSON.stringify(result, null, 2));
       const specification = new Specification(result);
+      const authentication = AuthenticationTransformer.execute(specification);
       return {
         info: InformationTransformer.execute(specification),
-        auth: null,
+        auth: authentication,
         groups: [],
         resources: [],
-        securedBy: null,
+        securedBy: SecuredByTransformer.execute(specification, authentication),
       };
     } catch (error) {
       // Provide a more helpful error message

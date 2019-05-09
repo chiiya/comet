@@ -71,6 +71,10 @@ x-tagGroups:
   - name: User Management
     tags:
       - user
+security:
+  - petstore_auth:
+    - 'write:pets'
+    - 'read:pets'
 paths:
   /pet:
     parameters:
