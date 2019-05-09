@@ -1,5 +1,5 @@
 import {
-  ArrayTypeDeclaration,
+  ArrayTypeDeclaration, isUnionTypeDeclaration,
   ObjectTypeDeclaration,
   TypeDeclaration,
 } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
@@ -11,9 +11,8 @@ import { ITypeDefinition } from 'raml-1-parser/dist/parser/highLevelAST';
 export default class SchemaTransformer {
   public static execute(spec: Specification, declaration: TypeDeclaration): Schema {
     const schema: Schema = {};
-    schema.type = this.transformType(schema, declaration);
+    this.transformType(schema, declaration);
     this.transformFacets(schema, declaration);
-    this.transformCommonProperties(schema, declaration);
     switch (declaration.kind()) {
       case 'ArrayTypeDeclaration':
         this.transformArrayProperties(spec, schema, <ArrayTypeDeclaration>declaration);
@@ -22,6 +21,7 @@ export default class SchemaTransformer {
         this.transformObjectProperties(spec, schema, <ObjectTypeDeclaration>declaration);
         break;
     }
+    this.transformXmlProperties(schema, declaration);
     return schema;
   }
 
@@ -32,10 +32,7 @@ export default class SchemaTransformer {
     return { ...this.getFacets(declaration.superTypes()[0]), ...declaration.fixedBuiltInFacets() };
   }
 
-  protected static transformCommonProperties(schema: Schema, declaration: TypeDeclaration): void {
-    schema.title = declaration.displayName() || undefined;
-    // schema.default = declaration.default() || undefined;
-    // schema.description = declaration.description() ? declaration.description().value() : undefined;
+  protected static transformXmlProperties(schema: Schema, declaration: TypeDeclaration): void {
     if (declaration.xml()) {
       schema.xml = {
         attribute: declaration.xml().attribute() || false,
@@ -57,34 +54,30 @@ export default class SchemaTransformer {
     const component = declaration.findComponentTypeDeclaration();
     if (component !== null) {
       schema.items = this.execute(spec, component);
+      return;
+    }
+    if (items !== null && items.length > 0) {
+      // Simple, non-user defined item types.
+      const { type, pattern } = this.guessTypeFromNameAndFormat(items);
+      schema.items = { pattern, type: type || 'string' };
+      return;
     }
     if (structuredItems !== null) {
-      console.log(`Scalar: ${structuredItems.isScalar()} | Array: ${structuredItems.isArray()}`);
       // Simple type definition (just the type)
       if (structuredItems.isScalar() && structuredItems.value()) {
         schema.items = { type: structuredItems.value() };
+        return;
       }
+      // Both the AST and the low-level runtime type are useless for resolving inline item definitions.
       if (structuredItems.properties() && structuredItems.properties().length > 0) {
-        for (const item of structuredItems.properties()) {
-          console.log(item.name(), item.value().value());
-        }
+        const runtimeType = declaration.runtimeType();
+        // @ TODO Resolve this. Most use cases are supported right now, but some inline
+        // declarations are not
+        // for (const item of structuredItems.properties()) {
+        //   console.log(item.name(), item.value().value());
+        // }
       }
     }
-    /**
-     * Inlined component type definition
-     **/
-    // structuredItems(): TypeInstance;
-    /**
-     * Anonymous type declaration defined by "items" keyword.
-     * If no "items" is defined explicitly, this one is null.
-     **/
-    // items(): string[];
-    /**
-     * Returns anonymous type defined by "items" keyword, or a component type if declaration can be found.
-     * Does not resolve type expressions. Only returns component type declaration if it is actually defined
-     * somewhere in AST.
-     **/
-    // findComponentTypeDeclaration(): TypeDeclaration;
   }
 
   protected static transformObjectProperties(
@@ -132,27 +125,32 @@ export default class SchemaTransformer {
         'maxLength', 'minimum', 'maximum', 'format', 'multipleOf'].includes(key)) {
         schema[key] = value;
       }
-      if (key === 'displayName') {
+      // All type definitions have a display name in RAML, by default it's just the property name,
+      // which is useless information. Only set it if it's different
+      if (key === 'displayName' && value !== declaration.name()) {
+        console.log(value, declaration.name());
         schema.title = <string>value;
       }
     }
   }
 
-  protected static transformType(schema: Schema, declaration: TypeDeclaration): string | string[] {
-    const type = declaration.type();
+  protected static transformType(schema: Schema, declaration: TypeDeclaration): void {
+    const types = declaration.type();
     const kind = declaration.kind();
 
     // @TODO: Deal with this
     if (kind === 'UnionTypeDeclaration') {
-      return undefined;
+      return;
     }
 
     // Set default types if no type definition is present
-    if (type === undefined) {
+    if (types === undefined) {
       if (declaration['properties']) {
-        return 'object';
+        schema.type = 'object';
+      } else {
+        schema.type = 'string';
       }
-      return 'string';
+      return;
     }
 
     let format = undefined;
@@ -161,30 +159,53 @@ export default class SchemaTransformer {
       format = declaration['format']();
     }
 
-    const transformed = [];
-    for (const item of type || []) {
-      switch (item) {
+    const { type, pattern } = this.guessTypeFromNameAndFormat(types, format);
+
+    if (type === undefined) {
+      schema.type = this.guessTypeFromKind(kind);
+    } else {
+      schema.type = type;
+    }
+
+    schema.pattern = pattern;
+  }
+
+  protected static guessTypeFromNameAndFormat(names: string[], format: string = undefined): any {
+    const types = [];
+    let pattern = undefined;
+
+    for (const name of names) {
+      switch (name) {
+        case 'string':
+        case 'boolean':
+        case 'number':
+        case 'integer':
+        case 'array':
+        case 'object':
+          types.push(name);
+          break;
         case 'date-only':
-          transformed.push('string');
-          schema.pattern = constants.dateOnlyPattern;
+          types.push('string');
+          pattern = constants.dateOnlyPattern;
           break;
         case 'time-only':
-          transformed.push('string');
-          schema.pattern = constants.timeOnlyPattern;
+          types.push('string');
+          pattern = constants.timeOnlyPattern;
           break;
         case 'datetime-only':
-          transformed.push('string');
-          schema.pattern = constants.dateTimeOnlyPattern;
+          types.push('string');
+          pattern = constants.dateTimeOnlyPattern;
           break;
         case 'datetime':
-          transformed.push('string');
+          types.push('string');
           if (format === undefined || format.toLowerCase() === constants.RFC3339) {
-            schema.pattern = constants.RFC3339DatetimePattern;
+            pattern = constants.RFC3339DatetimePattern;
           } else if (format.toLowerCase() === constants.RFC2616) {
-            schema.pattern = constants.RFC2616DatetimePattern;
+            pattern = constants.RFC2616DatetimePattern;
           }
           break;
         case 'union':
+          // @TODO Resolve union types
           // If union of arrays
           // if (Array.isArray(data.anyOf) && data.anyOf[0].type === 'array') {
           //   const items = data.anyOf.map(e => e.items);
@@ -195,29 +216,32 @@ export default class SchemaTransformer {
           // } else {
           //   data['type'] = 'object';
           // }
-          transformed.push('object');
+          types.push('object');
           break;
         case 'nil':
-          transformed.push('null');
+          types.push('null');
           break;
         case 'file':
-          transformed.push('string');
+          types.push('string');
           break;
-        default:
-          // We are dealing with a user-defined type, determine super-type
-          // Sets user-defined type names to 'object' (if their super-type is object)
-          transformed.push(this.guessTypeFromKind(kind));
       }
     }
-    // Apply the transformed types to the schema.
-    const unique = [...new Set(transformed)];
+
+    // Make sure we remove any duplicates
+    let type;
+    const unique = [...new Set(types)];
     if (unique.length === 0) {
-      return undefined;
+      type = undefined;
+    } else if (unique.length === 1) {
+      type = unique[0];
+    } else {
+      type = unique;
     }
-    if (unique.length === 1) {
-      return unique[0];
-    }
-    return unique;
+
+    return {
+      type,
+      pattern,
+    };
   }
 
   protected static guessTypeFromKind(kind: string): string {

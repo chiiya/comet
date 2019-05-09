@@ -2,7 +2,6 @@ import { RamlParserError } from 'raml-1-parser/dist/parser/highLevelAST';
 import { LoggerInterface } from '@comet-cli/types';
 import { Api } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import ParsingException from './ParsingException';
-
 const raml = require('raml-1-parser');
 
 export default class Parser {
@@ -11,7 +10,7 @@ export default class Parser {
    * @param pathOrObject
    * @param logger
    */
-  public static async load(pathOrObject: string, logger: LoggerInterface): Promise<Api> {
+  public static async load(pathOrObject: string, logger: LoggerInterface): Promise<any> {
     let result: Api;
     try {
       result = await raml.loadApi(pathOrObject);

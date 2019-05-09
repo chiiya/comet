@@ -14,11 +14,8 @@ baseUriParameters:
           host: string
           mail: string
   query:
-    type: array
-    maxItems: 4
-    items:
-      type: array
-      items: string
+    type: string | number
+
 uses:
   shapes: ./dataTypes/shapes.raml
 
