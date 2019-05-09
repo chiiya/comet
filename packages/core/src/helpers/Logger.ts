@@ -105,7 +105,7 @@ export default class Logger implements LoggerInterface {
         },
         {
           value: 'Code',
-          width: 10,
+          width: 20,
         },
       ],
       warnings,
@@ -141,7 +141,7 @@ export default class Logger implements LoggerInterface {
         },
         {
           value: 'Code',
-          width: 10,
+          width: 20,
         },
       ],
       errors,

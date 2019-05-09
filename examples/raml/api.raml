@@ -3,16 +3,22 @@
 title: ACME Banking HTTP API
 version: 1.0
 mediaType: application/json
-baseUri: http://api.{userIds}.test.com/{version}/
+baseUri: http://api.{ancient}.test.com/{version}/
 baseUriParameters:
-  userIds:
-    description: A list of userIds
+  ancient:
+    type: Ancient
+    properties:
+      email:
+        type: object
+        properties:
+          host: string
+          mail: string
+  query:
     type: array
+    maxItems: 4
     items:
-      type: string
-      minLength: 1
-    uniqueItems: true
-
+      type: array
+      items: string
 uses:
   shapes: ./dataTypes/shapes.raml
 
@@ -25,6 +31,23 @@ resourceTypes:
 
 types:
   CustomerMemberResponse: shapes.OrganizationData | shapes.PersonData
+  Person:
+    type: object
+    properties:
+      name:
+        type: string
+        minLength: 3
+      age:
+        type: number
+        maximum: 100
+  Ancient:
+    type: Person
+    properties:
+      name:
+        minLength: 10
+  Query:
+    type: array
+    items: Person
 
 securitySchemes:
   oauth2_0: !include securitySchemes/oauth2_0.raml

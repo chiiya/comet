@@ -14,7 +14,7 @@ export default class Parser {
   public static async load(pathOrObject: string, logger: LoggerInterface): Promise<Api> {
     let result: Api;
     try {
-      result = await raml.loadApi(pathOrObject, { rejectOnErrors: true });
+      result = await raml.loadApi(pathOrObject);
       result = result.expand();
     } catch (error) {
       if (error.name === 'ApiLoadingError') {
@@ -28,6 +28,12 @@ export default class Parser {
     if (result.RAMLVersion() === 'RAML08') {
       throw new ParsingException('Input specification is RAMLv0.8. The minimum RAML version supported is 1.0');
     }
+    if (result.errors().length > 0) {
+      this.logIssues(result.errors(), logger);
+    } else {
+      logger.succeed('Input file parsed');
+    }
+    logger.spin('Transforming RAML model');
     return result;
   }
 
@@ -48,8 +54,15 @@ export default class Parser {
       }
     }
 
-    this.printIssues(errors, logger);
-    this.printIssues(warnings, logger);
+    if (errors.length > 0) {
+      logger.fail('Could not parse input file. The following issues were encountered:');
+      this.printIssues(errors, logger);
+      process.exit(-1);
+    }
+    if (warnings.length > 0) {
+      logger.warn('Input file parsed. The following warnings were encountered:');
+      this.printIssues(warnings, logger);
+    }
   }
 
   /**
@@ -58,7 +71,6 @@ export default class Parser {
    * @param logger
    */
   protected static printIssues(issues: RamlParserError[], logger: LoggerInterface): void {
-    logger.fail('Could not parse input file. The following issues were encountered:');
     const rows = [];
     for (const issue of issues) {
       rows.push([issue.range.start.line, issue.message, issue.code]);
@@ -68,6 +80,5 @@ export default class Parser {
     } else {
       logger.printErrors(rows);
     }
-    process.exit(-1);
   }
 }
