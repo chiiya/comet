@@ -35,7 +35,8 @@ The default configuration (in `.cometrc.toml`) looks like the following:
 
 ```toml
 [default]
-parser = "@comet-cli/parser-open-api"
+# No default adapter configured. Instead, we will try to auto-detect the input format.
+# adapter = "@comet-cli/adapter-openapi"
 
 [commands.make.schemas]
 decorators = ["@comet-cli/decorator-json-schemas"]
@@ -47,11 +48,18 @@ decorators = ["@comet-cli/decorator-json-schemas", "@comet-cli/decorator-tests"]
 factories = ["@comet-cli/factory-tests-laravel"]
 output = "tests/Comet"
 base_url = "/api" # Base url to which the endpoints get appended.
+
+[commands.make.documentation]
+decorators = []
+factories = []
+output = "exports/documentation"
+ungroup_root = true # Will un-group resource groups in API Blueprint named `Root`
 ```
 
 ## Examples
-For an example laravel project check out [comet-demo](https://github.com/chiiya/comet-demo). You can find the generated
-test cases in the `tests/Comet` folder.
+Example specifications in OpenAPI, RAML and API Blueprint with instructions for compilation can be found under the 
+`examples` folder. For an example laravel project check out [comet-demo](https://github.com/chiiya/comet-demo). You can 
+find the generated test cases in the `tests/Comet` folder.
 
 ## Setup
 Comet is set up as a monorepo using lerna and yarn workspaces.
