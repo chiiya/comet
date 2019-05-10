@@ -1,30 +1,37 @@
 import Specification from '../Specification';
 import { Header, Request } from '@comet-cli/types';
-import { TypeDeclaration } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
+import { Method } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import SchemaTransformer from './SchemaTransformer';
+import { CanonicalType } from '../../types/raml';
+const tools = require('datatype-expansion');
 
 export default class RequestTransformer {
-  public static execute(spec: Specification, bodies: TypeDeclaration[], headers: Header[]): Request {
+  public static execute(spec: Specification, operation: Method, headers: Header[]): Request {
+    const object = operation.toJSON({ serializeMetadata: false });
+    const bodies = object.body || {};
     const request: Request = {
       headers,
       description: null,
-      body: null,
+      body: Object.keys(bodies).length > 0 ? {} : null,
     };
 
-    for (const body of bodies) {
-      const mediaType = body.name();
+    for (const mime of Object.keys(bodies)) {
+      const mediaType = mime;
+      const bodyItem = bodies[mime];
       const examples = [];
-      if (body.example()) {
-        examples.push(body.example());
+      if (bodyItem.example) {
+        examples.push(bodyItem.example);
       }
-      if (body.examples() && body.examples().length > 0) {
-        for (const example of body.examples()) {
-          examples.push(example.value());
+      if (bodyItem.examples && bodyItem.examples.length > 0) {
+        for (const example of bodyItem.examples) {
+          examples.push(example);
         }
       }
+      const expanded = tools.expandedForm(bodyItem.type, spec.types);
+      const canonical: CanonicalType = tools.canonicalForm(expanded);
       request.body[mediaType] = {
         mediaType: mediaType,
-        schema: SchemaTransformer.execute(spec, body),
+        schema: SchemaTransformer.transform(canonical),
         examples: examples,
       };
     }

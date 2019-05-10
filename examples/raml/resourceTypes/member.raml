@@ -8,6 +8,9 @@ uses:
 get:
   is: [ traits.partial ]
   description: Returns <<resourcePathName | !singularize>> data
+  headers:
+    X-Authorization:
+      type: string
   responses:
     200:
       body:

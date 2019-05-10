@@ -21,7 +21,6 @@ export default class OperationTransformer {
         parameters.push(...ParameterTransformer.transformFromQueryString(spec, queryString));
       }
       const requestHeaders = HeaderTransformer.execute(spec, method.headers() || []);
-      const body = method.body() || [];
       const responses = method.responses() || [];
       operations.push({
         method: method.method(),
@@ -29,7 +28,7 @@ export default class OperationTransformer {
         description: description ? description.value() : null,
         securedBy: SecuredByTransformer.execute(spec, method.securedBy(), auth),
         parameters: parameters,
-        request: RequestTransformer.execute(spec, body, requestHeaders),
+        request: RequestTransformer.execute(spec, method, requestHeaders),
         responses: ResponseTransformer.execute(spec, responses),
         transactions: [],
         tags: [],

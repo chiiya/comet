@@ -15,7 +15,7 @@ export default class SchemaTransformer {
     return this.transform(canonical);
   }
 
-  protected static transform(canonical: CanonicalType): Schema {
+  public static transform(canonical: CanonicalType): Schema {
     const schema: Schema = {};
     this.transformType(schema, canonical);
     this.transformProperties(schema, canonical);
