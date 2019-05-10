@@ -22,10 +22,6 @@ export default class OperationTransformer {
     if (operation.externalDocs) {
       description = `[${operation.externalDocs.description}](${operation.externalDocs.url})\n\n${description}`;
     }
-    const transaction = {
-      request: RequestTransformer.execute(spec, operation.requestBody, headers),
-      responses: ResponseTransformer.execute(spec, operation.responses),
-    };
     return {
       method,
       name: operation.operationId || null,
@@ -34,7 +30,9 @@ export default class OperationTransformer {
       tags: operation.tags,
       parameters: ParameterTransformer.execute(spec, params),
       securedBy: operation.security,
-      transactions: [transaction],
+      request: RequestTransformer.execute(spec, operation.requestBody, headers),
+      responses: ResponseTransformer.execute(spec, operation.responses),
+      transactions: [],
     };
   }
 
