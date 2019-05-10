@@ -22,13 +22,13 @@ export default class RequestTransformer {
     for (const exampleRequest of requests) {
       const headers = HeaderTransformer.execute(exampleRequest.headers);
       for (const header of headers) {
-        if (header.key === 'Content-Type' || foundHeaders[header.key]) {
+        if (header.name === 'Content-Type' || foundHeaders[header.name]) {
           continue;
         }
-        foundHeaders[header.key] = true;
+        foundHeaders[header.name] = true;
         request.headers.push(header);
       }
-      const contentType = headers.find(header => header.key === 'Content-Type');
+      const contentType = headers.find(header => header.name === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
       if (mediaType !== null) {
         if (request.body[mediaType]) {

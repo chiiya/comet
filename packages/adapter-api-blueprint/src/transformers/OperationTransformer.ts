@@ -70,7 +70,7 @@ export default class OperationTransformer {
         headers.push(...transaction.request.headers);
       }
     }
-    return headers.find(item => item.key === header) !== undefined ? { default: [] } : undefined;
+    return headers.find(item => item.name === header) !== undefined ? { default: [] } : undefined;
   }
 
   /**

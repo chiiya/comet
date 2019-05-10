@@ -16,7 +16,7 @@ export default class HeaderTransformer {
     for (const param of headerParams) {
       const schema = param.schema;
       headers.push({
-        key: param.name,
+        name: param.name,
         description: param.description || null,
         deprecated: param.deprecated || false,
         example: ParameterValueResolver.inferValue(spec, param),
@@ -34,7 +34,7 @@ export default class HeaderTransformer {
       const header = spec.deref(specHeaders[name]);
       const schema = header.schema;
       headers.push({
-        key: name,
+        name: name,
         description: header.description || null,
         deprecated: header.deprecated || false,
         example: ParameterValueResolver.inferValue(spec, header),

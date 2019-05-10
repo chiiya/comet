@@ -44,10 +44,10 @@ export default class OperationTransformer {
   protected static mergeHeaders(resourceHeaders: Header[], operationHeaders: Header[]): Header[] {
     const mergedHeaders = {};
     for (const header of resourceHeaders) {
-      mergedHeaders[header.key] = header;
+      mergedHeaders[header.name] = header;
     }
     for (const header of operationHeaders) {
-      mergedHeaders[header.key] = header;
+      mergedHeaders[header.name] = header;
     }
     const headers = [];
     for (const header of Object.keys(mergedHeaders)) {

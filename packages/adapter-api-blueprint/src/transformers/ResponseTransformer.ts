@@ -27,14 +27,14 @@ export default class ResponseTransformer {
       }
       const headers = HeaderTransformer.execute(exampleResponse.headers);
       for (const header of headers) {
-        if (header.key === 'Content-Type' || foundHeaders[statusCode][header.key]) {
+        if (header.name === 'Content-Type' || foundHeaders[statusCode][header.name]) {
           continue;
         }
-        foundHeaders[statusCode][header.key] = true;
+        foundHeaders[statusCode][header.name] = true;
         responses[statusCode].headers.push(header);
       }
 
-      const contentType = headers.find(header => header.key === 'Content-Type');
+      const contentType = headers.find(header => header.name === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
       if (mediaType !== null) {
         if (responses[statusCode].body[mediaType]) {

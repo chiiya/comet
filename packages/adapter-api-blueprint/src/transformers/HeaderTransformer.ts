@@ -12,7 +12,7 @@ export default class HeaderTransformer {
     for (const header of data) {
       headers.push({
         description: null,
-        key: header.name,
+        name: header.name,
         example: header.value,
         schema: this.inferSchemaFromPrimitive(header.value),
         deprecated: false,

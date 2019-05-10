@@ -177,7 +177,7 @@ export interface Body {
 
 export interface Header {
   description?: string;
-  key: string;
+  name: string;
   schema?: Schema;
   example?: any;
   deprecated?: boolean;
