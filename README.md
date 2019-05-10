@@ -1,7 +1,8 @@
 <p align="center"><img src="https://i.postimg.cc/1RYn00Tg/comet-logo.png" alt="Comet"></p>
 <p align="center"><strong>Automated testing and documentation for RESTful APIs.</strong></p>
 
-**Notice:** This package is still in early development and not intended for usage.
+**Notice:** This package is still in early development and not intended for usage. Check out 
+the [roadmap](https://changemap.co/chiiya/comet/) for more information.
 To test parser functionality, call:
 ```bash
 npx comet make:documentation examples/(blueprint.apib)|(openapi.yml)|(raml/api.raml)
