@@ -13,7 +13,6 @@ export default class SchemaTransformer {
     const expanded = tools.expandedForm(object, spec.types);
     const canonical: CanonicalType = tools.canonicalForm(expanded);
     return this.transform(canonical);
-    // return tools.canonicalForm(expanded);
   }
 
   protected static transform(canonical: CanonicalType): Schema {
