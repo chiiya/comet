@@ -1,10 +1,13 @@
-import { SecuritySchemeRef } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import { Authentication, Dict, SecurityRequirement } from '@comet-cli/types';
 import Specification from '../Specification';
+import { SecuritySchemeRef } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 
 export default class SecuredByTransformer {
-  public static execute(spec: Specification, auth: Dict<Authentication>): SecurityRequirement[] {
-    const securedBy = spec.api.securedBy() || [];
+  public static execute(
+    spec: Specification,
+    securedBy: SecuritySchemeRef[],
+    auth: Dict<Authentication>,
+  ): SecurityRequirement[] {
     const requirements: SecurityRequirement[] = [];
     for (const ref of securedBy) {
       const requirement = {};

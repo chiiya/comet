@@ -18,12 +18,13 @@ export default class RamlAdapter implements AdapterInterface {
       await writeFile('./result-parsed.json', JSON.stringify(result.toJSON(), null, 2));
       const specification = new Specification(result);
       const authentication = AuthenticationTransformer.execute(specification);
+      const securedBy = specification.api.securedBy() || [];
       return {
         info: InformationTransformer.execute(specification),
         auth: authentication,
         groups: [],
-        resources: ResourceTransformer.execute(specification),
-        securedBy: SecuredByTransformer.execute(specification, authentication),
+        resources: ResourceTransformer.execute(specification, authentication),
+        securedBy: SecuredByTransformer.execute(specification, securedBy, authentication),
       };
     } catch (error) {
       // Provide a more helpful error message

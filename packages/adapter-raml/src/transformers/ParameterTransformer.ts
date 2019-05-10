@@ -1,17 +1,17 @@
 import Specification from '../Specification';
 import { TypeDeclaration } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
-import { Parameter } from '@comet-cli/types';
+import { Parameter, ParameterLocation } from '@comet-cli/types';
 import SchemaTransformer from './SchemaTransformer';
 
 export default class ParameterTransformer {
-  public static execute(spec: Specification, params: TypeDeclaration[]): Parameter[] {
+  public static execute(spec: Specification, params: TypeDeclaration[], location: ParameterLocation): Parameter[] {
     const parameters: Parameter[] = [];
     for (const param of params) {
       const description = param.description();
       parameters.push({
         name: param.name(),
         description: description ? description.value() : undefined,
-        location: 'path',
+        location: location,
         required: param.required(),
         example: this.getExampleValue(param),
         schema: SchemaTransformer.execute(spec, param),
