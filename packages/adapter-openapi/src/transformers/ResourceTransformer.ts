@@ -5,7 +5,7 @@ import ParameterTransformer from './ParameterTransformer';
 import OperationTransformer from './OperationTransformer';
 
 export default class ResourceTransformer {
-  public static execute(spec: Specification) {
+  public static execute(spec: Specification): Resource[] {
     const resources: Resource[] = [];
     for (const path of Object.keys(spec.entity.paths)) {
       const openApiResource = spec.entity.paths[path];
