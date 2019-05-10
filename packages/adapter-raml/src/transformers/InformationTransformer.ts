@@ -1,6 +1,7 @@
 import { Dict, Information, Schema, Server } from '@comet-cli/types';
 import SchemaTransformer from './SchemaTransformer';
 import Specification from '../Specification';
+import ParameterTransformer from './ParameterTransformer';
 
 export default class InformationTransformer {
   public static execute(spec: Specification): Information {

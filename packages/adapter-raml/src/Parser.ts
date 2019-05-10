@@ -10,7 +10,7 @@ export default class Parser {
    * @param pathOrObject
    * @param logger
    */
-  public static async load(pathOrObject: string, logger: LoggerInterface): Promise<any> {
+  public static async load(pathOrObject: string, logger: LoggerInterface): Promise<Api> {
     let result: Api;
     try {
       result = await raml.loadApi(pathOrObject);
