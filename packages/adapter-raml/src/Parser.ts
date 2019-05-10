@@ -14,7 +14,7 @@ export default class Parser {
     let result: Api;
     try {
       result = await raml.loadApi(pathOrObject);
-      result = result.expand();
+      result = result.expand(true);
     } catch (error) {
       if (error.name === 'ApiLoadingError') {
         const issues: RamlParserError[] = error.parserErrors;

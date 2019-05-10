@@ -12,9 +12,8 @@ baseUriParameters:
         type: object
         properties:
           host: string
-          mail: string
-  query:
-    type: string | number
+          mail?: string
+  query: Query
 
 uses:
   shapes: ./dataTypes/shapes.raml
