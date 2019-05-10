@@ -5,6 +5,7 @@ import SecuredByTransformer from './SecuredByTransformer';
 import ParameterTransformer from './ParameterTransformer';
 import HeaderTransformer from './HeaderTransformer';
 import RequestTransformer from './RequestTransformer';
+import ResponseTransformer from './ResponseTransformer';
 
 export default class OperationTransformer {
   public static execute(spec: Specification, methods: Method[], auth: Dict<Authentication>): Operation[] {
@@ -21,6 +22,7 @@ export default class OperationTransformer {
       }
       const requestHeaders = HeaderTransformer.execute(spec, method.headers() || []);
       const body = method.body() || [];
+      const responses = method.responses() || [];
       operations.push({
         method: method.method(),
         name: method.displayName(),
@@ -28,6 +30,7 @@ export default class OperationTransformer {
         securedBy: SecuredByTransformer.execute(spec, method.securedBy(), auth),
         parameters: parameters,
         request: RequestTransformer.execute(spec, body, requestHeaders),
+        responses: ResponseTransformer.execute(spec, responses),
         transactions: [],
         tags: [],
         deprecated: false,
