@@ -1,4 +1,4 @@
-import { ApiBlueprintResponse } from '../../types/blueprint';
+import { ApiBlueprintExample, ApiBlueprintResponse } from '../../types/blueprint';
 import { Responses } from '@comet-cli/types';
 import HeaderTransformer from './HeaderTransformer';
 
@@ -50,5 +50,26 @@ export default class ResponseTransformer {
     }
 
     return responses;
+  }
+
+  /**
+   * Get a responses object from all transaction examples.
+   * @param examples
+   */
+  public static transformFromExamples(examples: ApiBlueprintExample[]): Responses {
+    if (examples.length === 0) {
+      return {};
+    }
+
+    // First, get an array of all example responses.
+    const exampleResponses: ApiBlueprintResponse[] = [];
+    for (const example of examples) {
+      if (example.responses && example.responses.length > 0) {
+        exampleResponses.push(...example.responses);
+      }
+    }
+
+    // Then, build the responses from those examples
+    return this.execute(exampleResponses);
   }
 }

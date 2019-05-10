@@ -3,6 +3,8 @@ import { Authentication, Dict, Operation, Parameter, Transaction } from '@comet-
 import * as get from 'lodash/get';
 import ParameterTransformer from './ParameterTransformer';
 import TransactionTransformer from './TransactionTransformer';
+import RequestTransformer from './RequestTransformer';
+import ResponseTransformer from './ResponseTransformer';
 
 export default class OperationTransformer {
   /**
@@ -21,6 +23,8 @@ export default class OperationTransformer {
       method: action.method,
       description: action.description || null,
       parameters: parsedParameters,
+      request: RequestTransformer.transformFromExamples(action.examples),
+      responses: ResponseTransformer.transformFromExamples(action.examples),
       transactions: parsedTransactions,
       deprecated: false,
       securedBy: securedBy !== undefined ? [securedBy] : null,

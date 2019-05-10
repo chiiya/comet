@@ -1,4 +1,4 @@
-import { ApiBlueprintRequest } from '../../types/blueprint';
+import { ApiBlueprintExample, ApiBlueprintRequest } from '../../types/blueprint';
 import { Request } from '@comet-cli/types';
 import HeaderTransformer from './HeaderTransformer';
 
@@ -44,5 +44,26 @@ export default class RequestTransformer {
     }
 
     return request;
+  }
+
+  /**
+   * Get a request object from all transaction examples.
+   * @param examples
+   */
+  public static transformFromExamples(examples: ApiBlueprintExample[]): Request {
+    if (examples.length === 0) {
+      return null;
+    }
+
+    // First, get an array of _all_ example requests (from all transactions).
+    const exampleRequests: ApiBlueprintRequest[] = [];
+    for (const example of examples) {
+      if (example.requests && example.requests.length > 0) {
+        exampleRequests.push(...example.requests);
+      }
+    }
+
+    // Then, build the request from those examples
+    return this.execute(exampleRequests);
   }
 }
