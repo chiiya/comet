@@ -1,17 +1,27 @@
-import { Api } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import { Dict, Information, Schema, Server } from '@comet-cli/types';
 import SchemaTransformer from './SchemaTransformer';
 import Specification from '../Specification';
 
 export default class InformationTransformer {
   public static execute(spec: Specification): Information {
-    const description = spec.api.description();
     return {
       version: spec.api.version(),
       name: spec.api.title(),
-      description: description ? description.value() : null,
+      description: this.transformDescription(spec),
       servers: this.transformServers(spec),
     };
+  }
+
+  protected static transformDescription(spec: Specification): string {
+    let description = spec.api.description() ? spec.api.description().value() : '';
+    const documentation = spec.api.documentation() || [];
+    for (const item of documentation) {
+      if (item.content()) {
+        description += `\n\n${item.content().value()}`;
+      }
+    }
+
+    return description;
   }
 
   protected static transformServers(spec: Specification): Server[] {
