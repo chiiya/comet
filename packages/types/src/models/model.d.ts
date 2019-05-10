@@ -130,6 +130,8 @@ export interface Operation {
   name?: string;
   description?: string;
   parameters: Parameter[];
+  request?: Request;
+  responses?: Responses;
   transactions?: Transaction[];
   deprecated?: boolean;
   securedBy?: SecurityRequirement[];
