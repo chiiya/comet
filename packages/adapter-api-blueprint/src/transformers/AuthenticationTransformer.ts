@@ -14,7 +14,7 @@ export default class AuthenticationTransformer {
     const location = <ApiKeyLocation>spec.metadata['AUTH_LOCATION'] || null;
     const flowType = spec.metadata['AUTH_FLOW_TYPE'] || null;
     const refreshUri = spec.metadata['AUTH_REFRESH_URI'] || null;
-    const authorizationUri = spec.metadata['AUTH_REFRESH_URI'] || null;
+    const authorizationUri = spec.metadata['AUTH_AUTHORIZATION_URI'] || null;
     const tokenUri = spec.metadata['AUTH_TOKEN_URI'] || null;
 
     if (type && ['basic', 'digest', 'jwt', 'key', 'oauth2'].includes(type) === false) {
