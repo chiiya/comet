@@ -55,12 +55,25 @@ ungroup_root = true # Will un-group resource groups in API Blueprint named `Root
 ```
 
 ## Examples
-Example specifications in OpenAPI, RAML and API Blueprint with instructions for compilation can be found under the 
+Example specifications in OpenAPI, RAML and API Blueprint format with instructions for compilation can be found under the 
 `examples` folder. For an example laravel project check out [comet-demo](https://github.com/chiiya/comet-demo). You can 
 find the generated test cases in the `tests/Comet` folder.
 
+## About
+Comet takes an API specification in any input format, converts it to its own internal API model, and then executes a bunch of
+tasks based on that model. The advantages are obvious: we have a model that is optimized for automated processing 
+(information is always in exactly one place, everything is expanded, etc.), plus we can write code once and support all
+input formats. All commands in **comet** have the same structure:
+
+![architecture.png](https://i.postimg.cc/1zzJBsxV/architecture.png)
+
+Every command resolves its adapter and plugins at runtime from the user configuration, executes the adapter to transform 
+the input into our own model and then executes a list of plugins, in order.  
+Type definitions for both the internal API model as well as the interfaces for adapters and plugins are available 
+in the `@comet-cli/types` package.
+
 ## Setup
-Comet is set up as a monorepo using lerna and yarn workspaces.
+Comet is set up as a monorepo using lerna and yarn workspaces. 
 
 ### Requirements
 ```bash
