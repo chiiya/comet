@@ -40,19 +40,16 @@ The default configuration (in `.cometrc.toml`) looks like the following:
 # adapter = "@comet-cli/adapter-openapi"
 
 [commands.make.schemas]
-decorators = ["@comet-cli/decorator-json-schemas"]
-factories = ["@comet-cli/factory-json-schemas"]
+plugins = ["@comet-cli/plugin-json-schemas"]
 output = "exports/schemas"
 
 [commands.make.tests]
-decorators = ["@comet-cli/decorator-json-schemas", "@comet-cli/decorator-tests"]
-factories = ["@comet-cli/factory-tests-laravel"]
+plugins = ["@comet-cli/decorator-tests", "@comet-cli/factory-tests-laravel"] # Order matters!
 output = "tests/Comet"
 base_url = "/api" # Base url to which the endpoints get appended.
 
 [commands.make.documentation]
-decorators = []
-factories = []
+plguins = []
 output = "exports/documentation"
 ungroup_root = true # Will un-group resource groups in API Blueprint named `Root`
 ```
