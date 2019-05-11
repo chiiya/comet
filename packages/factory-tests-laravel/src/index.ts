@@ -2,7 +2,7 @@ import { CommandConfig, Factory, OpenApiSpec } from '@comet-cli/types';
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
 import { Parameter, TestCase } from '@comet-cli/decorator-tests/types/tests';
-import { Action } from '@comet-cli/decorator-json-schemas/types/json-schema';
+import { Action } from '../types/legacy';
 const path = require('path');
 
 export default class LaravelTestsFactory implements Factory {

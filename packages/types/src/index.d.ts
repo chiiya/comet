@@ -10,6 +10,7 @@ export * from './models/model';
 
 // Core interfaces
 export { AdapterInterface } from './core/adapter';
+export { PluginInterface } from './core/plugin';
 export { Factory } from './core/factory';
 export { Decorator } from './core/decorator';
 export { LoggerInterface } from './core/logger';

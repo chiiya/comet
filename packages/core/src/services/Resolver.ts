@@ -1,5 +1,5 @@
 import ConfigRepository from '../config/ConfigRepository';
-import { Decorator, Factory, AdapterInterface } from '@comet-cli/types';
+import { AdapterInterface, PluginInterface } from '@comet-cli/types';
 
 export default class Resolver {
   /** Comet config repository */
@@ -53,84 +53,43 @@ export default class Resolver {
   }
 
   /**
-   * Resolve the configured decorators for a command and return an instance of each.
+   * Resolve the configured plugins for a command and return an instance of each.
    */
-  public async resolveDecorators(): Promise<Decorator[]> {
-    // Fetch configured decorators from config
-    const configuredDecorators = this.config.get(`commands.${this.signature}.decorators`);
-    if (configuredDecorators == null) {
+  public async resolvePlugins(): Promise<PluginInterface[]> {
+    // Fetch configured plugins from config
+    const configuredPlugins = this.config.get(`commands.${this.signature}.plugins`);
+    if (configuredPlugins == null) {
       throw new Error(`ConfigError:
-      No resolvable decorator configuration could be found for \`${this.command}\`.
+      No resolvable plugin configuration could be found for \`${this.command}\`.
       Please check your configuration file, and make sure that a value has been
-      defined for \`${this.signature}.decorators\`
+      defined for \`${this.signature}.plugins\`
       `);
     }
 
-    if (Array.isArray(configuredDecorators) === false) {
+    if (Array.isArray(configuredPlugins) === false) {
       throw new Error(`ConfigError:
-      The decorator configuration for \`${this.command}\` is not a valid array. Please make
+      The plugin configuration for \`${this.command}\` is not a valid array. Please make
       sure your configuration is correct
       `);
     }
 
-    // Try to import the configured decorators
-    const decoratorClasses: Decorator[] = [];
-    if (typeof configuredDecorators !== 'string') {
-      for (let i = 0; i < configuredDecorators.length; i = i + 1) {
-        const decorator = configuredDecorators[i];
+    // Try to import the configured plugins
+    const pluginClasses: PluginInterface[] = [];
+    if (typeof configuredPlugins !== 'string') {
+      for (let i = 0; i < configuredPlugins.length; i = i + 1) {
+        const plugin = configuredPlugins[i];
         try {
-          let decoratorClass = await import(decorator);
-          decoratorClass = decoratorClass.default;
-          decoratorClasses.push(new decoratorClass());
+          let pluginClass = await import(plugin);
+          pluginClass = pluginClass.default;
+          pluginClasses.push(new pluginClass());
         } catch (error) {
           error.message =
-            `Could not find module \`${decorator}\`. Run \`npm install ${decorator}\` to install`;
+            `Could not find module \`${plugin}\`. Run \`npm install ${plugin}\` to install`;
           throw error;
         }
       }
     }
 
-    return decoratorClasses;
-  }
-
-  /**
-   * Resolve the configured factories for a command and return an instance of each.
-   */
-  public async resolveFactories(): Promise<Factory[]> {
-    // Fetch configured factories from config
-    const configuredFactories = this.config.get(`commands.${this.signature}.factories`);
-    if (configuredFactories == null) {
-      throw new Error(`ConfigError:
-      No resolvable factory configuration could be found for \`${this.command}\`.
-      Please check your configuration file, and make sure that a value has been
-      defined for \`${this.signature}.factories\`
-      `);
-    }
-
-    if (Array.isArray(configuredFactories) === false) {
-      throw new Error(`ConfigError:
-      The factory configuration for \`${this.command}\` is not a valid array. Please make
-      sure your configuration is correct
-      `);
-    }
-
-    // Try to import the configured factories
-    const factoryClasses: Factory[] = [];
-    if (typeof configuredFactories !== 'string') {
-      for (let i = 0; i < configuredFactories.length; i = i + 1) {
-        const factory = configuredFactories[i];
-        try {
-          let factoryClass = await import(factory);
-          factoryClass = factoryClass.default;
-          factoryClasses.push(new factoryClass());
-        } catch (error) {
-          error.message =
-            `Could not find module \`${factory}\`. Run \`npm install ${factory}\` to install`;
-          throw error;
-        }
-      }
-    }
-
-    return factoryClasses;
+    return pluginClasses;
   }
 }

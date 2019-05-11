@@ -20,7 +20,7 @@ export const getOperationName = (apiPath: string, method: string): string  => {
     .replace(/(\/?{.+}(?:\/$)?)/g, '')
     .replace('/', '-');
   let suffix;
-  switch (method) {
+  switch (method.toLowerCase()) {
     case 'get':
       if (isSingleResourceOperation === true) {
         suffix = 'show';
@@ -36,7 +36,7 @@ export const getOperationName = (apiPath: string, method: string): string  => {
       suffix = 'update';
       break;
     default:
-      suffix = method;
+      suffix = method.toLowerCase();
   }
 
   return `${base}-${suffix}`;

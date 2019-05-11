@@ -58,7 +58,6 @@ export default class MakeDocumentation extends BaseCommand {
    */
   async execute(specification: ApiModel) {
     await writeFile('./result.json', JSON.stringify(specification, null, 2));
-    // await this.runDecorators(specification);
-    // await this.runFactories(specification);
+    await this.runPlugins(specification);
   }
 }

@@ -9,7 +9,7 @@ import {
   Action,
   JsonSchema,
   OpenApiSpecJsonDecorated,
-} from '@comet-cli/decorator-json-schemas/types/json-schema';
+} from '../types/legacy';
 import { camelize, slugify } from '@comet-cli/utils';
 import {
   Method,

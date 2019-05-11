@@ -5,31 +5,21 @@ module.exports = {
   commands: {
     make: {
       tests: {
-        decorators: [
-          '@comet-cli/decorator-json-schemas',
+        plugins: [
           '@comet-cli/decorator-tests',
-        ],
-        factories: [
           '@comet-cli/factory-tests-laravel',
         ],
         output: 'tests/Comet',
         base_url: '/api',
       },
       schemas: {
-        decorators: [
-          '@comet-cli/decorator-json-schemas',
-        ],
-        factories: [
-          '@comet-cli/factory-json-schemas',
+        plugins: [
+          '@comet-cli/plugin-json-schemas',
         ],
         output: 'exports/schemas',
       },
       documentation: {
-        decorators: [
-          // '@comet-cli/decorator-json-schemas',
-        ],
-        factories: [
-          // '@comet-cli/factory-json-schemas',
+        plugins: [
         ],
         output: 'exports/documentation',
         ungroupRoot: true,

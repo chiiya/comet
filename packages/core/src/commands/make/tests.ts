@@ -57,9 +57,7 @@ export default class MakeTests extends BaseCommand {
    */
   async execute(specification: ApiModel) {
     this.logger.spin('Creating test case definitions...');
-    // await this.runDecorators(specification);
-    // console.log(JSON.stringify(specification.decorated.testSuite, null, 4));
-    // await this.runFactories(specification);
+    await this.runPlugins(specification);
     this.logger.succeed('Test cases created');
     this.printWarnings();
   }

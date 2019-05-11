@@ -57,8 +57,7 @@ export default class MakeSchemas extends BaseCommand {
    */
   async execute(specification: ApiModel) {
     this.logger.spin('Creating JSON Schemas...');
-    // await this.runDecorators(specification);
-    // await this.runFactories(specification);
+    await this.runPlugins(specification);
     this.logger.succeed('JSON Schemas created');
   }
 }
