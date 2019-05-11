@@ -85,3 +85,5 @@ export const ucfirst = (str: string): string => {
 export const isNumber = (str: any): boolean => {
   return !isNaN(str) && !isNaN(parseFloat(str));
 };
+
+export { JsonSchemaTransformer } from './transformer';

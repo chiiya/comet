@@ -1,11 +1,11 @@
 import {
   ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource,
 } from '@comet-cli/types';
-import Transformer from './transformer';
-import { Action } from '../types/json-schema';
+import { Action } from '../types';
 import { getOperationName } from '@comet-cli/utils';
 import { emptyDir, ensureDir, rmdir, writeJSONSync } from 'fs-extra';
 import { join } from 'path';
+import { JsonSchemaTransformer } from '@comet-cli/utils';
 
 export default class JsonSchemaPlugin implements PluginInterface {
   /**
@@ -81,7 +81,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
     for (const mime of Object.keys(bodies)) {
       if (mime.includes('json')) {
         if (bodies[mime].schema) {
-          const schema = Transformer.execute(bodies[mime].schema);
+          const schema = JsonSchemaTransformer.execute(bodies[mime].schema);
           action = {
             schema,
             path: path,

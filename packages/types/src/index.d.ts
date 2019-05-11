@@ -7,6 +7,7 @@ export { FileInformation } from './helpers/file';
 // Models
 export * from './models/open-api';
 export * from './models/model';
+export * from './models/json-schema';
 
 // Core interfaces
 export { AdapterInterface } from './core/adapter';

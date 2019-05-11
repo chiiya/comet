@@ -1,7 +1,6 @@
-import { Schema } from '@comet-cli/types';
-import { JsonSchema } from '../types/json-schema';
+import { Schema, JsonSchema } from '@comet-cli/types';
 
-export default class Transformer {
+export class JsonSchemaTransformer {
   /**
    * Execute the transformer.
    * @param schema
