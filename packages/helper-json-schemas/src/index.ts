@@ -1,6 +1,6 @@
 import { Schema, JsonSchema } from '@comet-cli/types';
 
-export class JsonSchemaTransformer {
+export default class JsonSchemaTransformer {
   /**
    * Execute the transformer.
    * @param schema
@@ -16,9 +16,9 @@ export class JsonSchemaTransformer {
    * @param schema
    */
   static transformSchema(schema: Schema): JsonSchema {
-    delete schema.discriminator;
-    delete schema.xml;
-    const transformed = <JsonSchema>{ ...schema };
+    const transformed = { ...schema };
+    delete transformed.discriminator;
+    delete transformed.xml;
     // Transform nested schema definitions
     const nested = ['allOf', 'oneOf', 'anyOf', 'not', 'items', 'additionalProperties'];
     for (const struct of nested) {
@@ -37,6 +37,6 @@ export class JsonSchemaTransformer {
       });
     }
 
-    return transformed;
+    return <JsonSchema>transformed;
   }
 }

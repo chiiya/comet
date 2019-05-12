@@ -2,7 +2,8 @@ import {
   ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource,
 } from '@comet-cli/types';
 import { Action } from '../types';
-import { getOperationName, JsonSchemaTransformer } from '@comet-cli/utils';
+import { getOperationName } from '@comet-cli/utils';
+import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
 import { emptyDir, ensureDir, rmdir, writeJSONSync } from 'fs-extra';
 import { join } from 'path';
 
