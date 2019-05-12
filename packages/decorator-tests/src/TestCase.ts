@@ -1,6 +1,6 @@
 import { Method, TestCase as ITestCase, Parameter } from '../types/tests';
 import { OpenAPIOperation } from '@comet-cli/types';
-import { getOperationName, slugify, camelize } from '@comet-cli/utils';
+import { getOperationName, slugify, camelize } from '@comet-cli/helper-utils';
 
 export default class TestCase implements ITestCase {
   method: Method;

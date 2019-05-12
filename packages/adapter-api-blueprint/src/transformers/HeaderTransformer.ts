@@ -1,6 +1,6 @@
 import { ApiBlueprintHeader } from '../../types/blueprint';
 import { Header, Schema } from '@comet-cli/types';
-import { isNumber } from '@comet-cli/utils';
+import { isNumber } from '@comet-cli/helper-utils';
 
 export default class HeaderTransformer {
   /**

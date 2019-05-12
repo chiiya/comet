@@ -1,7 +1,7 @@
 import { ApiBlueprintSpec } from '../types/blueprint';
 import { readFile } from 'fs-extra';
 import { LoggerInterface } from '@comet-cli/types';
-import { ucfirst } from '@comet-cli/utils';
+import { ucfirst } from '@comet-cli/helper-utils';
 const { promisify } = require('util');
 const drafter = require('drafter');
 

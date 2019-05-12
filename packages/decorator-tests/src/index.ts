@@ -10,7 +10,7 @@ import {
   JsonSchema,
   OpenApiSpecJsonDecorated,
 } from '../types/legacy';
-import { camelize, slugify } from '@comet-cli/utils';
+import { camelize, slugify } from '@comet-cli/helper-utils';
 import {
   Method,
   TestCase as ITestCase,

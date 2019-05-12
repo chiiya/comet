@@ -42,6 +42,6 @@
   },
   "devDependencies": {
     "@comet-cli/types": "^0.1.1",
-    "@comet-cli/utils": "^0.1.1"
+    "@comet-cli/helper-utils": "^0.1.1"
   }
 }
