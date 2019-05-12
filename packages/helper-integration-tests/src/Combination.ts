@@ -1,7 +1,5 @@
-/**
- * Based on https://gist.github.com/axelpale/3118596
- */
 export default class Combination {
+
   /**
    * Get all possible combinations of `k` elements in a set.
    *

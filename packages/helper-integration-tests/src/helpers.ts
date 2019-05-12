@@ -1,24 +1,26 @@
-import { ApiModel, CommandConfig, Operation } from '@comet-cli/types';
-import { camelize, slugify, getOperationName } from '@comet-cli/helper-utils';
-import { TestCase } from '../types';
+import { Parameter } from '@comet-cli/types';
+import { camelize, slugify, getOperationName, EnhancedOperation } from '@comet-cli/helper-utils';
 
 /**
  * Parse the operation name, e.g.:
- * `{path: '/users', method: 'GET', parameters: ['filter[email]']}` -> testUsersIndexFilterEmail
- * @param testCase
+ * `{path: '/users', method: 'GET', parameters: ['filter[email]']}` -> UsersIndexFilterEmail
  * @param operation
+ * @param parameters
  */
-export const parseTestCaseName = (testCase: TestCase, operation: Operation): string => {
+export const buildTestCaseName = (
+  operation: EnhancedOperation,
+  parameters: Parameter[],
+): string => {
   // Step 1: Get the operation base name.
   let name = 'Base';
   if (operation.name) {
     name = camelize(slugify(operation.name));
   } else {
-    name = camelize(getOperationName(testCase.path, testCase.method));
+    name = camelize(getOperationName(operation.uri, operation.method));
   }
 
   // Step 2: Append used parameters
-  const queryParameters = testCase.parameters.filter(item => item.location !== 'path');
+  const queryParameters = parameters.filter(item => item.location !== 'path');
   if (queryParameters.length > 0) {
     name = `${name}With`;
   }
@@ -33,24 +35,4 @@ export const parseTestCaseName = (testCase: TestCase, operation: Operation): str
   }
 
   return name;
-};
-
-/**
- * Parse the API base URL from config or the specification.
- *
- * @param config
- * @param model
- *
- * @throws Error
- */
-export const parseUrl = (config: CommandConfig, model: ApiModel) => {
-  if (config.base_url) {
-    return config.base_url;
-  }
-  if (model.servers && model.servers.length > 0) {
-    return model.servers[0].url;
-  }
-  throw new Error(
-    'No API base URL configuration found. Did you set a value for `base_url` in your config?',
-  );
 };

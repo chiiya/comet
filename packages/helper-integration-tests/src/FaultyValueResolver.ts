@@ -2,6 +2,11 @@ import { Schema } from '@comet-cli/types';
 import { FaultyValue } from '../types';
 
 export default class FaultyValueResolver {
+  /**
+   * Get a list of faulty values for a given schema and property.
+   * @param value
+   * @param schema
+   */
   public static resolveFaultyValues(value: string, schema: Schema): FaultyValue[] {
     const faultyValues: FaultyValue[] = [];
     if (schema.properties[value]) {
@@ -32,11 +37,8 @@ export default class FaultyValueResolver {
   }
 
   /**
-   * Generate a random string not containing any numbers and equal to 'true' or 'false'
-   *
+   * Generate a random string not containing any numbers and equal to 'true' or 'false'.
    * @param length
-   *
-   * @returns string
    */
   protected static generateRandomString(length: number): string {
     let string: string = '';
