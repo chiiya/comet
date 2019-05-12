@@ -1,4 +1,4 @@
-# `@comet-cli/identify`
+# `@comet-cli/helper-identify`
 
 > TODO: description
 

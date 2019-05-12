@@ -7,7 +7,7 @@ import {
   CommandConfig,
   AdapterInterface, PluginInterface,
 } from '@comet-cli/types';
-import { identify } from '@comet-cli/identify';
+import { identify } from '@comet-cli/helper-identify';
 import Logger from '../helpers/Logger';
 import File from '../helpers/File';
 import { readFile } from 'fs-extra';

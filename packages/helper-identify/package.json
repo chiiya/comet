@@ -1,5 +1,5 @@
 {
-  "name": "@comet-cli/identify",
+  "name": "@comet-cli/helper-identify",
   "version": "0.1.5",
   "description": "Identify media type of API description files",
   "keywords": [
