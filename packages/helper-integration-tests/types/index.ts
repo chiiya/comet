@@ -15,6 +15,7 @@ export interface TestCase {
   requestBody: string;
   schema: string;
   isFaulty: boolean;
+  fullUri: string;
 }
 
 export type Parameters = {

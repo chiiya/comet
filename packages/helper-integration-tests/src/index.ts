@@ -3,7 +3,7 @@ import { camelize, slugify, getAllOperationsWithUris, EnhancedOperation } from '
 import Combination from './Combination';
 import MissingExampleException from './MissingExampleException';
 import { Parameters, TestCase, TestSuite } from '../types';
-import { buildTestCaseName } from './helpers';
+import { buildTestCaseName, getResolvedUrl } from './helpers';
 import FaultyValueResolver from './FaultyValueResolver';
 
 export default class TestSuiteCreator {
@@ -18,9 +18,9 @@ export default class TestSuiteCreator {
       url: uri,
       testCases: [],
     };
-    const operations: EnhancedOperation = getAllOperationsWithUris(model);
+    const operations: EnhancedOperation[] = getAllOperationsWithUris(model);
     for (const operation of operations) {
-      testSuite.testCases.push(...this.buildOperation(operation));
+      testSuite.testCases.push(...this.buildOperation(operation, uri));
     }
 
     return testSuite;
@@ -29,8 +29,9 @@ export default class TestSuiteCreator {
   /**
    * Build test cases for a given API operation.
    * @param operation
+   * @param uri
    */
-  protected static buildOperation(operation: EnhancedOperation): TestCase[] {
+  protected static buildOperation(operation: EnhancedOperation, uri: string): TestCase[] {
     const testCases: TestCase[] = [];
 
     // Get request example
@@ -48,7 +49,7 @@ export default class TestSuiteCreator {
       const parameters = this.getParameters(operation);
       const combinations = Combination.combinations(parameters.optional);
       // Create one test case with just the required parameters...
-      testCases.push(this.createTestCase(operation, parameters. required, exampleString, schema));
+      testCases.push(this.createTestCase(operation, parameters. required, exampleString, schema, uri));
       // ... and one for each combination of optional parameters (+ required)
       for (const combination of combinations) {
         testCases.push(
@@ -57,19 +58,20 @@ export default class TestSuiteCreator {
             [...parameters.required, ...combination],
             exampleString,
             schema,
+            uri,
           ),
         );
       }
       // Create faulty test cases if it has a request body
       if (example !== undefined && schema !== undefined) {
-        testCases.push(...this.createFaultyTestCases(operation, parameters.required, example, schema));
+        testCases.push(...this.createFaultyTestCases(operation, parameters.required, example, schema, uri));
       }
     } else {
       // No parameters
-      testCases.push(this.createTestCase(operation, [], exampleString, schema));
+      testCases.push(this.createTestCase(operation, [], exampleString, schema, uri));
       // Create faulty test cases
       if (example !== undefined && schema !== undefined) {
-        testCases.push(...this.createFaultyTestCases(operation, [], example, schema));
+        testCases.push(...this.createFaultyTestCases(operation, [], example, schema, uri));
       }
     }
 
@@ -167,12 +169,14 @@ export default class TestSuiteCreator {
    * @param parameters
    * @param schema
    * @param example
+   * @param uri
    */
   protected static createFaultyTestCases(
     operation: EnhancedOperation,
     parameters: Parameter[],
     example: string | object,
     schema: Schema,
+    uri: string,
   ) {
     const testCases = [];
     let body;
@@ -197,6 +201,7 @@ export default class TestSuiteCreator {
           requestBody: JSON.stringify(bodyCopy),
           schema: JSON.stringify(schema),
           isFaulty: true,
+          fullUri: getResolvedUrl(uri, operation.uri, parameters),
         };
         testCases.push(testCase);
       }
@@ -210,12 +215,14 @@ export default class TestSuiteCreator {
    * @param parameters
    * @param example
    * @param schema
+   * @param uri
    */
   protected static createTestCase(
     operation: EnhancedOperation,
     parameters: Parameter[],
     example: string,
     schema: Schema,
+    uri: string,
   ): TestCase {
     return {
       name: buildTestCaseName(operation, parameters),
@@ -226,6 +233,7 @@ export default class TestSuiteCreator {
       requestBody: example,
       schema: JSON.stringify(schema),
       isFaulty: false,
+      fullUri: getResolvedUrl(uri, operation.uri, parameters),
     };
   }
 }

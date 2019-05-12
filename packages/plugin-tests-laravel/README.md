@@ -1,4 +1,4 @@
-## `@comet-cli/factory-tests-laravel`
+## `@comet-cli/plugin-tests-laravel`
 
 This package contains the implementation of a Laravel tests factory. It can generate test cases for the Laravel PHP framework
 based on previously decorated test case definitions.

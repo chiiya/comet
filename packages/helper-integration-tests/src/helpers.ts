@@ -1,5 +1,6 @@
 import { Parameter } from '@comet-cli/types';
 import { camelize, slugify, getOperationName, EnhancedOperation } from '@comet-cli/helper-utils';
+import { TestCase } from '../types';
 
 /**
  * Parse the operation name, e.g.:
@@ -35,4 +36,28 @@ export const buildTestCaseName = (
   }
 
   return name;
+};
+
+/**
+ * Get the full url with resolved path and query parameters.
+ * @param baseUrl
+ * @param path
+ * @param parameters
+ */
+export const getResolvedUrl = (baseUrl: string, path: string, parameters: Parameter[]): string => {
+  let url = path;
+  let hasAddedQueryParameter = false;
+  parameters.forEach((parameter: Parameter) => {
+    if (parameter.location === 'path') {
+      const replace = `{${parameter.name}}`;
+      const expression = new RegExp(replace, 'gi');
+      url = url.replace(expression, parameter.value);
+    }
+    if (parameter.location === 'query') {
+      const separator = hasAddedQueryParameter ? '&' : '?';
+      url = `${url}${separator}${parameter.name}=${parameter.value}`;
+      hasAddedQueryParameter = true;
+    }
+  });
+  return `${baseUrl}${url}`;
 };
