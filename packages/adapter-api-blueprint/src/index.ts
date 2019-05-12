@@ -4,13 +4,13 @@ import {
   CommandConfig,
   LoggerInterface,
 } from '@comet-cli/types';
-import ParsingException from './ParsingException';
 import Parser from './Parser';
 import Specification from './Specification';
 import AuthenticationTransformer from './transformers/AuthenticationTransformer';
 import InformationTransformer from './transformers/InformationTransformer';
 import ResourceGroupTransformer from './transformers/ResourceGroupTransformer';
 import ResourceTransformer from './transformers/ResourceTransformer';
+import { writeFile } from 'fs-extra';
 
 export default class ApiBlueprintAdapter implements AdapterInterface {
   /**
@@ -23,6 +23,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     try {
       // Parse input file
       const result = await Parser.load(path, logger);
+      await writeFile('./result-parsed.json', JSON.stringify(result, null, 2));
       const specification = new Specification(result);
       const auth = AuthenticationTransformer.execute(specification);
       const spec = {

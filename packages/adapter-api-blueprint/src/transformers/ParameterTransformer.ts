@@ -11,6 +11,11 @@ export default class ParameterTransformer {
   public static execute(uri: string, params: ApiBlueprintParameter[]): Parameter[] {
     const parameters: Parameter[] = [];
     for (const param of params) {
+      // First, test whether the parameter is actually defined in the URI
+      const inUri = new RegExp(`{.*${param.name}.*}`);
+      if (inUri.test(uri) === false) {
+        continue;
+      }
       const isQueryParam = new RegExp(`{[?&#+].*${param.name}`);
       let location;
       let defaultRequired;

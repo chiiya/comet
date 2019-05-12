@@ -39,12 +39,13 @@ export default class ResourceTransformer {
         if (existingResource !== undefined) {
           existingResource.operations.push(OperationTransformer.execute(existingResource.path, action, auth));
         } else {
-          const operation = OperationTransformer.execute(resource.uriTemplate, action, auth);
+          console.log(trimmedUri);
+          const operation = OperationTransformer.execute(trimmedUri, action, auth);
           resources.push({
             path: trimmedUri,
             name: null,
             description: null,
-            parameters: ParameterTransformer.execute(resource.uriTemplate, resource.parameters),
+            parameters: ParameterTransformer.execute(uri, resource.parameters),
             operations: [operation],
           });
         }
@@ -61,8 +62,7 @@ export default class ResourceTransformer {
           name: resource.name,
           description: resource.description,
           parameters: ParameterTransformer.execute(resource.uriTemplate, resource.parameters),
-          // tslint:disable-next-line:object-shorthand-properties-first
-          operations,
+          operations: operations,
         });
       }
     }
