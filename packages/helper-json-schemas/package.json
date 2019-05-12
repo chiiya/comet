@@ -32,7 +32,7 @@
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"
   },
-  "devDependencies": {
+  "dependencies": {
     "@comet-cli/types": "^0.1.1"
   }
 }

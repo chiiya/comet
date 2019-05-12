@@ -1,5 +1,3 @@
-const path = require('path');
-
 /**
  * Transform a path into a human readable operation name
  * `GET countries/{country}/assets` -> `countries-assets-index.json`
