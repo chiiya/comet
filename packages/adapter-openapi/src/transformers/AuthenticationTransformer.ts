@@ -35,10 +35,14 @@ export default class AuthenticationTransformer {
           };
         }
       }
+      let description = scheme.description || '';
+      if (scheme.bearerFormat) {
+        description = `\n Bearer-Format: ${scheme.bearerFormat}`;
+      }
       auth[name] = {
         type,
         flows,
-        description: scheme.description,
+        description: description || undefined,
         name: scheme.name,
         location: scheme.in,
       };
