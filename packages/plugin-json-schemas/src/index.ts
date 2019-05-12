@@ -9,7 +9,7 @@ import { join } from 'path';
 
 export default class JsonSchemaPlugin implements PluginInterface {
   /**
-   * Execute the json schema plugin.
+   * Export JSON Schema definitions for all endpoints.
    * @param model
    * @param config
    * @param logger
@@ -104,7 +104,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
     let hasRequests = false;
     let hasResponses = false;
     actions.map((action: Action) => {
-      const filename = this.getFilePath(action.name, action.operation);
+      const filename = join(`${action.operation}s`, `${action.name}.json`);
       writeJSONSync(join(outputDir, filename), action.schema, { spaces: 4 });
       if (action.operation === 'request') {
         hasRequests = true;
@@ -121,18 +121,5 @@ export default class JsonSchemaPlugin implements PluginInterface {
     if (hasResponses === false) {
       await rmdir(join(outputDir, 'responses'));
     }
-  }
-
-  /**
-   * Transform a path into a readable file name
-   * `GET countries/{country}/assets` -> `countries-assets-index-response.json`
-   * `GET countries` -> `countries-index-response.json`
-   * `GET countries/{id}` -> `countries-show-response.json`
-   * `POST countries` -> `countries-store-response.json`
-   * @param name
-   * @param operation
-   */
-  protected getFilePath(name: string, operation: 'request' | 'response'): string {
-    return join(`${operation}s`, `${name}.json`);
   }
 }
