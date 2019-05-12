@@ -22,7 +22,7 @@ export default class RequestTransformer {
     for (const exampleRequest of requests) {
       const headers = HeaderTransformer.execute(exampleRequest.headers);
       for (const header of headers) {
-        if (header.name === 'Content-Type' || foundHeaders[header.name]) {
+        if (foundHeaders[header.name]) {
           continue;
         }
         foundHeaders[header.name] = true;
