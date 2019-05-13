@@ -1,4 +1,4 @@
-import { OpenAPISchema } from '@comet-cli/types';
+import { OpenAPISchema } from '../../types/open-api';
 
 export default class SchemaValueResolver {
   /**
@@ -36,7 +36,7 @@ export default class SchemaValueResolver {
     }
 
     // Resolve array data type
-    if (schema.type && schema.type === 'array' && schema.items.type === 'object') {
+    if (schema.type && schema.type === 'array' && schema.items && schema.items.type === 'object') {
       return [this.resolveObjectValue(schema.items)];
     }
 
@@ -48,12 +48,12 @@ export default class SchemaValueResolver {
       return undefined;
     }
     const value = {};
-    Object.keys(schema.properties).forEach((property: string) => {
-      const result = this.execute(schema.properties[property]);
+    for (const name of Object.keys(schema.properties)) {
+      const result = this.execute(schema.properties[name]);
       if (result !== undefined) {
-        value[property] = result;
+        value[name] = result;
       }
-    });
+    }
     return value;
   }
 

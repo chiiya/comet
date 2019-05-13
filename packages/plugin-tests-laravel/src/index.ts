@@ -1,8 +1,10 @@
 import { ApiModel, CommandConfig, LoggerInterface, PluginInterface } from '@comet-cli/types';
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
-import { Action } from '../types/legacy';
-import { TestCase } from '@comet-cli/helper-integration-tests/types';
+import TestSuiteCreator, { TestCase } from '@comet-cli/helper-integration-tests';
+import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
+import { getAllResources } from '@comet-cli/helper-utils';
+import JsonSchemaPlugin from '@comet-cli/plugin-json-schemas';
 const path = require('path');
 const handlebars = require('handlebars');
 
@@ -37,13 +39,31 @@ export default class LaravelTestsPlugin implements PluginInterface {
         throw error;
       }
     }
+    const testSuite = TestSuiteCreator.execute(model, this.getUrl(model, config));
     // Step 3: Write relevant JSON Schemas to files
-    await this.writeJsonSchemaFiles(model, config);
+    await this.writeJsonSchemaFiles(model, testSuite.testCases, config);
     // Step 4: Create hook trait
     await this.createHookTraitFile(config);
     // Step 5: Create test case definitions
-    await this.createTestCases(model.decorated.testSuite.testCases, config);
+    await this.createTestCases(testSuite.testCases, config);
     this.printWarnings(warnings, logger);
+  }
+
+  /**
+   * Get the base URL.
+   * @param model
+   * @param config
+   */
+  protected getUrl(model: ApiModel, config: CommandConfig): string {
+    if (config.base_url) {
+      return config.base_url;
+    }
+    if (model.info.servers && model.info.servers.length > 0) {
+      return model.info.servers[0].uri;
+    }
+    throw new Error(
+      'No API base URL configuration found. Did you set a value for `base_url` in your config?',
+    );
   }
 
   /**
@@ -68,7 +88,7 @@ export default class LaravelTestsPlugin implements PluginInterface {
     if (object.phpunit.testsuites && Array.isArray(object.phpunit.testsuites.testsuite)) {
       // @ts-ignore
       const testSuites = object.phpunit.testsuites.testsuite;
-      const index = testSuites.findIndex(entry => entry._attributes.name === 'Comet');
+      const index = testSuites.findIndex((entry: any) => entry._attributes.name === 'Comet');
       if (index !== -1) {
         testSuites.splice(index, 1);
       }
@@ -99,20 +119,23 @@ export default class LaravelTestsPlugin implements PluginInterface {
   /**
    * Write relevant json schemas into the tests folder.
    * @param model
+   * @param testCases
    * @param config
    */
-  protected async writeJsonSchemaFiles(model: ApiModel, config: CommandConfig) {
-    const usedSchemas = new Set(model.decorated.testSuite.testCases.map((testCase: TestCase) => {
-      return testCase.schema;
-    }));
-    const schemasToWrite = model.decorated.jsonSchemas.filter((action: Action) => {
-      return action.$operation === 'response' && usedSchemas.has(action.$name) === true;
-    });
+  protected async writeJsonSchemaFiles(model: ApiModel, testCases: TestCase[], config: CommandConfig) {
+    const resources = getAllResources(model);
+    const actions = [];
+    for (const resource of resources) {
+      actions.push(...JsonSchemaPlugin.generateSchemas(resource));
+    }
+    // @ts-ignore
+    const usedSchemas = new Set(testCases.map(testCase => JsonSchemaTransformer.execute(testCase.schema)));
+    const schemasToWrite = [...usedSchemas];
     for (let i = 0; i < schemasToWrite.length; i += 1) {
-      const action: Action = schemasToWrite[i];
-      await ensureDir(path.join(config.output, 'schemas'));
-      const file = path.join(config.output, 'schemas', `${action.$name}.json`);
-      await writeJson(file, action.schema, { spaces: 4 });
+      const action = schemasToWrite[i];
+      // await ensureDir(path.join(config.output, 'schemas'));
+      // const file = path.join(config.output, 'schemas', `${action.$name}.json`);
+      // await writeJson(file, action.schema, { spaces: 4 });
     }
   }
 
@@ -136,6 +159,7 @@ export default class LaravelTestsPlugin implements PluginInterface {
     };
     const outputDir = config.output;
     handlebars.registerHelper('getTestCaseName', (testCase: TestCase) => {
+      // @ts-ignore
       return testCase.name.charAt(0).toUpperCase() + testCase.name.slice(1);
     });
     handlebars.registerHelper('getBody', (testCase: TestCase) => {

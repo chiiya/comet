@@ -34,5 +34,9 @@
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"
+  },
+  "devDependencies": {
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

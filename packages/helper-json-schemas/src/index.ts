@@ -20,7 +20,7 @@ export default class JsonSchemaTransformer {
     delete transformed.discriminator;
     delete transformed.xml;
     // Transform nested schema definitions
-    const nested = ['allOf', 'oneOf', 'anyOf', 'not', 'items', 'additionalProperties'];
+    const nested: (keyof Schema)[] = ['allOf', 'oneOf', 'anyOf', 'not', 'items', 'additionalProperties'];
     for (const struct of nested) {
       if (Array.isArray(transformed[struct])) {
         for (let i = 0; i < transformed[struct].length; i = i + 1) {
@@ -31,10 +31,11 @@ export default class JsonSchemaTransformer {
       }
     }
     // Transform properties, which are also schema definitions
-    if (typeof transformed.properties === 'object') {
-      Object.keys(transformed.properties).forEach((key: string) => {
+    if (transformed.properties && typeof transformed.properties === 'object') {
+      for (const key of Object.keys(transformed.properties)) {
+        // @ts-ignore
         transformed.properties[key] = this.transformSchema(schema.properties[key]);
-      });
+      }
     }
 
     return <JsonSchema>transformed;

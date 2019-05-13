@@ -1,7 +1,7 @@
 export default class ParsingException extends Error {
   /**
    * ParsingException constructor.
-   * @param {string} message
+   * @param message
    */
   constructor(message: string) {
     super();

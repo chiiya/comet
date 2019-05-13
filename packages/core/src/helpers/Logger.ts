@@ -1,7 +1,7 @@
 import { Signale } from 'signale';
 import * as Ora from 'ora';
-import * as Table from 'tty-table';
 import { LoggerInterface } from '@comet-cli/types';
+const table = require('tty-table');
 
 // Signale options
 const options = {
@@ -92,7 +92,7 @@ export default class Logger implements LoggerInterface {
    * @param warnings
    */
   printWarnings(warnings: any[][]): void {
-    const table = Table(
+    const tb = table(
       [
         {
           value: 'Line',
@@ -118,7 +118,7 @@ export default class Logger implements LoggerInterface {
         align: 'left',
       },
     );
-    console.log(table.render());
+    console.log(tb.render());
   }
 
   /**
@@ -128,7 +128,7 @@ export default class Logger implements LoggerInterface {
    * @param errors
    */
   printErrors(errors: any[][]): void {
-    const table = Table(
+    const tb = table(
       [
         {
           value: 'Line',
@@ -154,6 +154,6 @@ export default class Logger implements LoggerInterface {
         align: 'left',
       },
     );
-    console.log(table.render());
+    console.log(tb.render());
   }
 }

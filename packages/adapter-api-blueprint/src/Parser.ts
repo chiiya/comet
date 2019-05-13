@@ -19,6 +19,7 @@ export default class Parser {
       result = await parse(source, { type: 'ast', requireBlueprintName: true });
     } catch (error) {
       this.printError(error.result, source, logger);
+      return process.exit(-1);
     }
     if (result.error && result.error.code !== 0) {
       this.printError(result, source, logger);

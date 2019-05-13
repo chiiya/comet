@@ -60,7 +60,7 @@ export default class InformationTransformer {
    */
   protected static getServers(spec: Specification): Server[] {
     const servers: Server[] = [];
-    for (const server of spec.entity.servers) {
+    for (const server of spec.entity.servers || []) {
       const variables: Dict<Schema> = {};
       if (server.variables) {
         for (const name of Object.keys(server.variables)) {
@@ -73,8 +73,8 @@ export default class InformationTransformer {
       }
       servers.push({
         uri: server.url,
-        description: server.description || null,
-        variables: server.variables ? variables : null,
+        description: server.description || undefined,
+        variables: server.variables ? variables : undefined,
       });
     }
 

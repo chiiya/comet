@@ -11,8 +11,8 @@ export default class RequestTransformer {
     const bodies = object.body || {};
     const request: Request = {
       headers,
-      description: null,
-      body: Object.keys(bodies).length > 0 ? {} : null,
+      description: undefined,
+      body: Object.keys(bodies).length > 0 ? {} : undefined,
     };
 
     for (const mime of Object.keys(bodies)) {
@@ -29,6 +29,7 @@ export default class RequestTransformer {
       }
       const expanded = tools.expandedForm(bodyItem.type, spec.types);
       const canonical: CanonicalType = tools.canonicalForm(expanded);
+      // @ts-ignore
       request.body[mediaType] = {
         mediaType: mediaType,
         schema: SchemaTransformer.transform(canonical),

@@ -1,9 +1,9 @@
 import { ApiBlueprintCopy, ApiBlueprintResource } from '../../types/blueprint';
 import { Authentication, CommandConfig, Operation, Resource } from '@comet-cli/types';
-import * as get from 'lodash/get';
 import ParameterTransformer from './ParameterTransformer';
 import OperationTransformer from './OperationTransformer';
 import Specification from '../Specification';
+const _ = require('lodash');
 
 export default class ResourceTransformer {
   /**
@@ -25,7 +25,7 @@ export default class ResourceTransformer {
       // If the action URI is different from the resource URI (excluding query parameters)
       // there should be a new resource for it.
       for (const action of resource.actions || []) {
-        const uri = get(action, 'attributes.uriTemplate');
+        const uri = _.get(action, 'attributes.uriTemplate');
         if (uri === undefined || uri === '' || uri === null) {
           actions.push(action);
           continue;
@@ -39,12 +39,11 @@ export default class ResourceTransformer {
         if (existingResource !== undefined) {
           existingResource.operations.push(OperationTransformer.execute(existingResource.path, action, auth));
         } else {
-          console.log(trimmedUri);
           const operation = OperationTransformer.execute(trimmedUri, action, auth);
           resources.push({
             path: trimmedUri,
-            name: null,
-            description: null,
+            name: undefined,
+            description: undefined,
             parameters: ParameterTransformer.execute(uri, resource.parameters),
             operations: [operation],
           });
@@ -90,7 +89,8 @@ export default class ResourceTransformer {
     const rootGroup = spec.ast.content.find((item) => {
       return item.content.length > 0
         && item.content.find(item => item.element === 'resource') !== undefined
-        && item.hasOwnProperty('attributes')
+        && item.hasOwnProperty('attributes') === false
+        // @ts-ignore
         && item.attributes.name === 'Root';
     });
 

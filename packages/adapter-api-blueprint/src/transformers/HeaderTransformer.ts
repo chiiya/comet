@@ -11,7 +11,7 @@ export default class HeaderTransformer {
     const headers: Header[] = [];
     for (const header of data) {
       headers.push({
-        description: null,
+        description: undefined,
         name: header.name,
         example: header.value,
         schema: this.inferSchemaFromPrimitive(header.value),

@@ -1,5 +1,9 @@
 import { Schema } from '@comet-cli/types';
-import { FaultyValue } from '../types';
+
+export type FaultyValue = {
+  value: any,
+  fault: string,
+};
 
 export default class FaultyValueResolver {
   /**
@@ -9,7 +13,7 @@ export default class FaultyValueResolver {
    */
   public static resolveFaultyValues(value: string, schema: Schema): FaultyValue[] {
     const faultyValues: FaultyValue[] = [];
-    if (schema.properties[value]) {
+    if (schema.properties && schema.properties[value]) {
       const subSchema = schema.properties[value];
       if (
         subSchema.type

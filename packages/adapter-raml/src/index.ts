@@ -8,9 +8,6 @@ import SecuredByTransformer from './transformers/SecuredByTransformer';
 import ResourceTransformer from './transformers/ResourceTransformer';
 
 export default class RamlAdapter implements AdapterInterface {
-  protected config: CommandConfig;
-  protected logger: LoggerInterface;
-
   async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
     // Parse input file
     try {

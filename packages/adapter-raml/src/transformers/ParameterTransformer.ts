@@ -12,7 +12,7 @@ export default class ParameterTransformer {
       const description = param.description();
       parameters.push({
         name: param.name(),
-        description: description ? description.value() : null,
+        description: description ? description.value() : undefined,
         location: location,
         required: param.required(),
         example: this.getExampleValue(param),

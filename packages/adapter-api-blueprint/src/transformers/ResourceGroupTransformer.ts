@@ -19,18 +19,18 @@ export default class ResourceGroupTransformer {
     const astGroups = spec.ast.content.filter((item) => {
       const isGroup = item.content.length > 0
         && item.content.find(item => item.element === 'resource') !== undefined
-        && item.hasOwnProperty('attributes')
+        && item.attributes
         && item.attributes.name !== '';
 
-      return config.ungroupRoot === true ? (isGroup && item.attributes.name !== 'Root') : isGroup;
+      return config.ungroupRoot === true ? (isGroup && item.attributes && item.attributes.name !== 'Root') : isGroup;
     });
     for (const group of astGroups) {
       const description = <ApiBlueprintCopy>group.content.find((item) => {
         return item.element === 'copy';
       });
       resourceGroups.push({
-        name: group.attributes.name,
-        description: description !== undefined ? description.content : null,
+        name: group.attributes ? group.attributes.name : '',
+        description: description !== undefined ? description.content : undefined,
         resources: ResourceTransformer.transformFromResourceGroup(group.content, auth),
       });
     }

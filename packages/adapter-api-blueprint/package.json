@@ -41,7 +41,10 @@
     "tty-table": "^2.7.0"
   },
   "devDependencies": {
+    "@comet-cli/helper-utils": "^0.1.1",
     "@comet-cli/types": "^0.1.1",
-    "@comet-cli/helper-utils": "^0.1.1"
+    "@types/lodash": "^4.14.126",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

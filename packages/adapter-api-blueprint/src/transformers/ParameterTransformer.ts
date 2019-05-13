@@ -1,5 +1,5 @@
 import { ApiBlueprintParameter } from '../../types/blueprint';
-import { Schema, Parameter } from '@comet-cli/types';
+import {Schema, Parameter, ParameterLocation} from '@comet-cli/types';
 import ParsingException from '../ParsingException';
 
 export default class ParameterTransformer {
@@ -17,7 +17,7 @@ export default class ParameterTransformer {
         continue;
       }
       const isQueryParam = new RegExp(`{[?&#+].*${param.name}`);
-      let location;
+      let location: ParameterLocation;
       let defaultRequired;
       if (isQueryParam.test(uri) === true) {
         location = 'query';
@@ -70,6 +70,7 @@ export default class ParameterTransformer {
 
     // If it's a nested array type definition (e.g. array[string]), adjust the schema
     if (isNestedArrayType) {
+      // @ts-ignore
       const nestedType = /array\[(\w+)]/g.exec(data.type)[1];
       schema.type = 'array';
       if (this.isValidType(nestedType)) {

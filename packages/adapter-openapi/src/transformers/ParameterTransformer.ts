@@ -13,14 +13,15 @@ export default class ParameterTransformer {
       return parameter;
     });
     for (const param of params) {
+      const schema = param.schema;
       if (param.in !== 'header') {
         parameters.push({
           name: param.name,
-          description: param.description || null,
+          description: param.description || undefined,
           deprecated: param.deprecated || false,
           location: param.in,
-          required: param.required,
-          schema: SchemaTransformer.execute(spec, param.schema),
+          required: param.required || false,
+          schema: schema ? SchemaTransformer.execute(spec, schema) : undefined,
           example: ParameterValueResolver.inferValue(spec, param),
         });
       }

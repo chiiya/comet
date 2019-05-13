@@ -17,10 +17,11 @@ export default abstract class BaseCommand extends Command {
   protected configRepository: ConfigRepository;
 
   /** Resolved adapter instance */
+  // @ts-ignore
   protected adapter: AdapterInterface;
 
   /** Resolved plugin instances */
-  protected plugins: PluginInterface[];
+  protected plugins: PluginInterface[] = [];
 
   /** Logger instance */
   protected logger: Logger;
@@ -78,14 +79,12 @@ export default abstract class BaseCommand extends Command {
    * @param args
    */
   protected async loadFile(args: { input: string; }): Promise<File> {
-    let file;
     try {
-      file = new File(args.input);
+      return new File(args.input);
     } catch (error) {
       this.logger.fail(`${args.input} is not a valid file.\n${error.message}`);
-      this.exit(-1);
+      return this.exit(-1);
     }
-    return file;
   }
 
   /**
@@ -106,7 +105,7 @@ export default abstract class BaseCommand extends Command {
     } catch (error) {
       this.logger.fail(error.message);
       console.error(error.stack);
-      process.exit(-1);
+      return this.exit(-1);
     }
 
     this.logger.succeed('Input file parsed');
@@ -128,6 +127,7 @@ export default abstract class BaseCommand extends Command {
       }
     } catch (error) {
       this.logger.fail(error.message);
+      console.error(error.stack);
       this.exit(-1);
     }
   }

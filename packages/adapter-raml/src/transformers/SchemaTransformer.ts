@@ -2,10 +2,10 @@ import {
   TypeDeclaration,
 } from 'raml-1-parser/dist/parser/artifacts/raml10parserapi';
 import { Schema } from '@comet-cli/types';
-import * as constants from 'ramldt2jsonschema/src/constants';
 import Specification from '../Specification';
 import { CanonicalType } from '../../types/raml';
 const tools = require('datatype-expansion');
+const constants = require('ramldt2jsonschema/src/constants');
 
 export default class SchemaTransformer {
   public static execute(spec: Specification, declaration: TypeDeclaration): Schema {
@@ -39,7 +39,7 @@ export default class SchemaTransformer {
     // If union of arrays
     const subSchemas = canonical.anyOf || [];
     if (canonical.type === 'union' && subSchemas.length > 0 && subSchemas[0].type === 'array') {
-      const items = subSchemas.map(subSchema => this.transform(subSchema.items));
+      const items = subSchemas.map(subSchema => this.transform(<CanonicalType>subSchema.items));
       schema.items = { anyOf: [] };
       schema.items.anyOf = items;
       schema.type = 'array';
@@ -51,7 +51,7 @@ export default class SchemaTransformer {
     }
   }
 
-  protected static guessTypeFromNameAndFormat(canonical: CanonicalType): { type: string, pattern: string } {
+  protected static guessTypeFromNameAndFormat(canonical: CanonicalType): { type: string | undefined, pattern: string } {
     let type;
     let pattern = undefined;
     const name = canonical.type;
@@ -183,7 +183,9 @@ export default class SchemaTransformer {
       if (/^\/.*\/$/.test(key)) {
         schema['patternProperties'] = canonical['patternProperties'] || {};
         const stringRegex = key.slice(1, -1);
+        // @ts-ignore
         schema['patternProperties'][stringRegex] = canonical.properties[key];
+        // @ts-ignore
         delete schema.properties[key];
       }
     }

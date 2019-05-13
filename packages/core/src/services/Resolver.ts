@@ -25,7 +25,7 @@ export default class Resolver {
   /**
    * Resolve the configured adapter for a command and return an instance of it.
    */
-  public async resolveAdapter(detected: string): Promise<AdapterInterface> {
+  public async resolveAdapter(detected: string | null): Promise<AdapterInterface> {
     // Fetch configured adapter from config
     const configuredAdapter = this.config.get(`commands.${this.signature}.adapter`);
     if (configuredAdapter == null && detected === null) {
@@ -57,7 +57,7 @@ export default class Resolver {
    */
   public async resolvePlugins(): Promise<PluginInterface[]> {
     // Fetch configured plugins from config
-    const configuredPlugins = this.config.get(`commands.${this.signature}.plugins`);
+    const configuredPlugins = <string[]>this.config.get(`commands.${this.signature}.plugins`);
     if (configuredPlugins == null) {
       throw new Error(`ConfigError:
       No resolvable plugin configuration could be found for \`${this.command}\`.
@@ -75,18 +75,15 @@ export default class Resolver {
 
     // Try to import the configured plugins
     const pluginClasses: PluginInterface[] = [];
-    if (typeof configuredPlugins !== 'string') {
-      for (let i = 0; i < configuredPlugins.length; i = i + 1) {
-        const plugin = configuredPlugins[i];
-        try {
-          let pluginClass = await import(plugin);
-          pluginClass = pluginClass.default;
-          pluginClasses.push(new pluginClass());
-        } catch (error) {
-          error.message =
-            `Could not find module \`${plugin}\`. Run \`npm install ${plugin}\` to install`;
-          throw error;
-        }
+    for (const plugin of configuredPlugins) {
+      try {
+        let pluginClass = await import(plugin);
+        pluginClass = pluginClass.default;
+        pluginClasses.push(new pluginClass());
+      } catch (error) {
+        error.message =
+          `Could not find module \`${plugin}\`. Run \`npm install ${plugin}\` to install`;
+        throw error;
       }
     }
 

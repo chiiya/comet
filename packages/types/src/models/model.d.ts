@@ -36,6 +36,7 @@ export interface Schema {
   enum?: any[];
   discriminator?: string;
   xml?: XmlDeclaration;
+  [key: string]: any; // For decoration
 }
 
 export interface XmlDeclaration {
@@ -44,6 +45,7 @@ export interface XmlDeclaration {
   prefix?: string;
   attribute?: boolean;
   wrapped?: boolean;
+  [key: string]: any; // For decoration
 }
 
 export interface ApiModel {
@@ -51,7 +53,7 @@ export interface ApiModel {
   auth?: Dict<Authentication>;
   groups: ResourceGroup[];
   resources: Resource[];
-  securedBy?: SecurityRequirement[];
+  securedBy: SecurityRequirement[];
   [key: string]: any; // For decoration
 }
 
@@ -78,8 +80,8 @@ export interface Resource {
   path: string;
   name?: string;
   description?: string;
-  parameters?: Parameter[];
-  operations?: Operation[];
+  parameters: Parameter[];
+  operations: Operation[];
   [key: string]: any; // For decoration
 }
 
@@ -132,9 +134,9 @@ export interface Operation {
   parameters: Parameter[];
   request?: Request;
   responses?: Responses;
-  transactions?: Transaction[];
+  transactions: Transaction[];
   deprecated?: boolean;
-  securedBy?: SecurityRequirement[];
+  securedBy: SecurityRequirement[];
   tags?: string[];
   [key: string]: any; // For decoration
 }
@@ -151,7 +153,7 @@ export interface Responses {
 
 export interface Request {
   description?: string;
-  headers?: Header[];
+  headers: Header[];
   body?: Bodies;
   [key: string]: any; // For decoration
 }
@@ -159,7 +161,7 @@ export interface Request {
 export interface Response {
   description?: string;
   statusCode: number | string;
-  headers?: Header[];
+  headers: Header[];
   body?: Bodies;
   [key: string]: any; // For decoration
 }
@@ -171,7 +173,7 @@ export interface Bodies {
 export interface Body {
   schema?: Schema;
   mediaType?: string;
-  examples?: any[];
+  examples: any[];
   [key: string]: any; // For decoration
 }
 
@@ -189,8 +191,8 @@ export interface Parameter {
   name: string;
   description?: string;
   required: boolean;
-  location: ParameterLocation;
-  schema: Schema;
+  location?: ParameterLocation;
+  schema?: Schema;
   example?: any;
   deprecated?: boolean;
   [key: string]: any; // For decoration

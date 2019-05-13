@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
+    "strict": true,
     "module": "commonjs",
     "declaration": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "removeComments": true,
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2015",
+    "esModuleInterop": true,
     "sourceMap": true,
+    "suppressImplicitAnyIndexErrors": true,
     "lib": [
       "es2015",
       "es2017",

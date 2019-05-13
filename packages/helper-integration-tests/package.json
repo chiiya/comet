@@ -1,14 +1,15 @@
 {
   "name": "@comet-cli/helper-integration-tests",
   "version": "0.1.5",
-  "description": "Helper package for creating testsuite models",
+  "description": "Helper package for creating a testsuite model",
   "keywords": [
     "comet",
-    "tests",
+    "api",
     "testing"
   ],
   "author": "Elisha Witte <elishawitte@gmail.com>",
-  "homepage": "https://github.com/chiiya/comet/tree/master/packages/helper-integration-tests#readme",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/adapter-openapi#readme",
+  "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "directories": {
@@ -33,5 +34,9 @@
   "dependencies": {
     "@comet-cli/types": "^0.1.1",
     "@comet-cli/helper-utils": "^0.1.1"
+  },
+  "devDependencies": {
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

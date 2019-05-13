@@ -1,11 +1,18 @@
 import {
-  ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource,
+  ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource, JsonSchema,
 } from '@comet-cli/types';
-import { Action } from '../types';
 import { getOperationName } from '@comet-cli/helper-utils';
 import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
 import { emptyDir, ensureDir, rmdir, writeJSONSync } from 'fs-extra';
 import { join } from 'path';
+
+export interface Action {
+  path: string;
+  method: string;
+  operation: 'request' | 'response';
+  name: string;
+  schema: JsonSchema;
+}
 
 export default class JsonSchemaPlugin implements PluginInterface {
   /**
@@ -18,11 +25,11 @@ export default class JsonSchemaPlugin implements PluginInterface {
     const actions: Action[] = [];
     for (const group of model.groups) {
       for (const resource of group.resources) {
-        actions.push(...this.generateSchemas(resource));
+        actions.push(...JsonSchemaPlugin.generateSchemas(resource));
       }
     }
     for (const resource of model.resources) {
-      actions.push(...this.generateSchemas(resource));
+      actions.push(...JsonSchemaPlugin.generateSchemas(resource));
     }
     const outputDir = config.output;
     await ensureDir(join(outputDir, 'requests'));
@@ -36,7 +43,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
    * Generate schemas for a given API resource.
    * @param resource
    */
-  protected generateSchemas(resource: Resource): Action[] {
+  public static generateSchemas(resource: Resource): Action[] {
     const actions: Action[] = [];
     for (const operation of resource.operations) {
       // Build schemas from requests
@@ -51,7 +58,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
       if (operation.responses) {
         for (const code of Object.keys(operation.responses)) {
           if (code.startsWith('2') === true && operation.responses[code].body) {
-            const bodies = operation.responses[code].body;
+            const bodies = operation.responses[code].body || {};
             const action = this.createFromMediaTypes(bodies, resource.path, operation.method, 'response');
             if (action) {
               actions.push(action);
@@ -71,19 +78,20 @@ export default class JsonSchemaPlugin implements PluginInterface {
    * @param method
    * @param operation
    */
-  protected createFromMediaTypes(
+  protected static createFromMediaTypes(
     bodies: Bodies,
     path: string,
     method: string,
     operation: 'request' | 'response',
-  ): Action | null {
-    let action: Action = null;
+  ): Action | undefined {
+    let action = undefined;
     for (const mime of Object.keys(bodies)) {
       if (mime.includes('json')) {
-        if (bodies[mime].schema) {
-          const schema = JsonSchemaTransformer.execute(bodies[mime].schema);
+        const schema = bodies[mime].schema;
+        if (schema) {
+          const jsonSchema = JsonSchemaTransformer.execute(schema);
           action = {
-            schema,
+            schema: jsonSchema,
             path: path,
             method: method,
             operation: operation,

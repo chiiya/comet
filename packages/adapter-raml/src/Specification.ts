@@ -8,6 +8,7 @@ export default class Specification {
 
   constructor(api: Api) {
     this.api = api;
+    this.types = {};
     this.authenticationMappings = {};
     this.constructTypes();
   }
@@ -15,7 +16,6 @@ export default class Specification {
   protected constructTypes(): void {
     const model = this.api.toJSON({ serializeMetadata: false });
     const types = model.types || [];
-    this.types = {};
     // Convert array to object for easy access.
     for (const type of types) {
       const keys = Object.keys(type);

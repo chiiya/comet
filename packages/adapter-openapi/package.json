@@ -40,5 +40,10 @@
     "lodash": "^4.17.11",
     "swagger-parser": "^6.0.5",
     "swagger2openapi": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/json-pointer": "^1.0.30",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

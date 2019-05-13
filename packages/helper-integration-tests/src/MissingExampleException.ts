@@ -1,7 +1,7 @@
 export default class MissingExampleException extends Error {
   /**
    * MissingExampleException constructor.
-   * @param {string} message
+   * @param message
    */
   constructor(message: string) {
     super();

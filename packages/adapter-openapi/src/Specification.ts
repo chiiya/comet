@@ -34,7 +34,7 @@ import { MergedOpenAPISchema } from './transformers/SchemaTransformer';
  * endless recursion because of circular refs
  */
 class RefCounter {
-  protected counter = {};
+  protected counter: {[key:string]: number} = {};
 
   reset(): void {
     this.counter = {};

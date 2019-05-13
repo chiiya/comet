@@ -12,7 +12,7 @@ export default class ResourceTransformer {
       const parameters = resource.uriParameters();
       resources.push({
         name: resource.displayName(),
-        description: description ? description.value() : null,
+        description: description ? description.value() : undefined,
         path: resource.completeRelativeUri(),
         parameters: ParameterTransformer.execute(spec, parameters, 'path'),
         operations: OperationTransformer.execute(spec, resource.methods(), auth),

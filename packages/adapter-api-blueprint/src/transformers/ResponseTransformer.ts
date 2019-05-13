@@ -19,7 +19,7 @@ export default class ResponseTransformer {
           statusCode: Number(statusCode),
           headers: [],
           body: {},
-          description: exampleResponse.description || null,
+          description: exampleResponse.description || undefined,
         };
       }
       if (foundHeaders[statusCode] === undefined) {
@@ -37,9 +37,12 @@ export default class ResponseTransformer {
       const contentType = headers.find(header => header.name === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
       if (mediaType !== null) {
+        // @ts-ignore
         if (responses[statusCode].body[mediaType]) {
+          // @ts-ignore
           responses[statusCode].body[mediaType].examples.push(exampleResponse.body);
         } else {
+          // @ts-ignore
           responses[statusCode].body[mediaType] = {
             mediaType,
             schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : null,

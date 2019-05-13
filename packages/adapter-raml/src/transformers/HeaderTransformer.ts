@@ -11,7 +11,7 @@ export default class HeaderTransformer {
       const description = header.description();
       headers.push({
         name: header.name(),
-        description: description ? description.value() : null,
+        description: description ? description.value() : undefined,
         required: header.required(),
         example: ParameterTransformer.getExampleValue(header),
         schema: SchemaTransformer.execute(spec, header),

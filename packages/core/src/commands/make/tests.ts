@@ -1,6 +1,6 @@
 import { flags } from '@oclif/command';
 import BaseCommand from '../../application/BaseCommand';
-import { ApiModel, OpenApiSpec } from '@comet-cli/types';
+import { ApiModel } from '@comet-cli/types';
 
 export default class MakeTests extends BaseCommand {
   /** Description of the command, displayed when using help flag */

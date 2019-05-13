@@ -11,9 +11,6 @@ import AuthenticationTransformer from './transformers/AuthenticationTransformer'
 import ResourceTransformer from './transformers/ResourceTransformer';
 
 export default class OpenApiAdapter implements AdapterInterface {
-  protected config: CommandConfig;
-  protected logger: LoggerInterface;
-
   async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
     // Parse input file
     try {
@@ -24,7 +21,7 @@ export default class OpenApiAdapter implements AdapterInterface {
         auth: AuthenticationTransformer.execute(specification),
         groups: [],
         resources: ResourceTransformer.execute(specification),
-        securedBy: specification.entity.security || null,
+        securedBy: specification.entity.security || [],
       };
     } catch (error) {
       // Provide a more helpful error message

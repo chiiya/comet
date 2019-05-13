@@ -9,8 +9,8 @@ export default class AuthenticationTransformer {
    */
   public static execute(spec: Specification): Authentication {
     const type = <AuthType>spec.metadata['AUTH_TYPE'] || null;
-    const description = spec.metadata['AUTH_DESCRIPTION'] || null;
-    const name = spec.metadata['AUTH_NAME'] || null;
+    const description = spec.metadata['AUTH_DESCRIPTION'] || undefined;
+    const name = spec.metadata['AUTH_NAME'] || undefined;
     const location = <ApiKeyLocation>spec.metadata['AUTH_LOCATION'] || null;
     const flowType = spec.metadata['AUTH_FLOW_TYPE'] || null;
     const refreshUri = spec.metadata['AUTH_REFRESH_URI'] || null;
@@ -32,7 +32,7 @@ export default class AuthenticationTransformer {
       );
     }
 
-    let flows = null;
+    let flows = undefined;
 
     if (flowType) {
       flows = {};

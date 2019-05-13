@@ -1,7 +1,6 @@
 import { Dict, Information, Schema, Server } from '@comet-cli/types';
 import SchemaTransformer from './SchemaTransformer';
 import Specification from '../Specification';
-import ParameterTransformer from './ParameterTransformer';
 
 export default class InformationTransformer {
   public static execute(spec: Specification): Information {
@@ -38,7 +37,7 @@ export default class InformationTransformer {
     const server: Server = {
       variables,
       uri: baseUri.value(),
-      description: null,
+      description: undefined,
     };
     return [server];
   }

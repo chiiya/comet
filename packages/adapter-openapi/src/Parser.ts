@@ -1,6 +1,6 @@
 import { OpenApiSpec } from '../types/open-api';
-import { convertObj } from 'swagger2openapi';
 const parser = require('swagger-parser');
+const converter = require('swagger2openapi');
 
 export default class Parser {
   /**
@@ -25,13 +25,13 @@ export default class Parser {
    * @param spec
    */
   protected static convertSwaggerToOpenApi(spec: any): Promise<OpenApiSpec> {
-    return new Promise<OpenApiSpec>((resolve, reject) =>
-      convertObj(spec, { patch: true, warnOnly: true }, (err, res) => {
+    return new Promise<OpenApiSpec>((resolve, reject) => {
+      converter.convertObj(spec, { patch: true, warnOnly: true }, (err: any, res: any) => {
         if (err) {
           return reject(err);
         }
         resolve(res && (res.openapi as any));
-      }),
-    );
+      });
+    });
   }
 }

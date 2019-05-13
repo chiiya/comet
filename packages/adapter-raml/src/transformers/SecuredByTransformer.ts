@@ -10,7 +10,7 @@ export default class SecuredByTransformer {
   ): SecurityRequirement[] {
     const requirements: SecurityRequirement[] = [];
     for (const ref of securedBy) {
-      const requirement = {};
+      const requirement: { [key: string]: string[] } = {};
       const scheme = ref.toJSON();
       if (typeof scheme === 'string') {
         const mappings = spec.authenticationMappings[ref.securityScheme().name()];

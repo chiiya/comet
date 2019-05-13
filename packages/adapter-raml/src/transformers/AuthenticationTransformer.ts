@@ -11,7 +11,7 @@ export default class AuthenticationTransformer {
     const schemes = spec.api.securitySchemes() || [];
     const auth: Dict<Authentication> = {};
     for (const scheme of schemes) {
-      let type: AuthType;
+      let type: AuthType | undefined = undefined;
       switch (scheme.type()) {
         case 'OAuth 2.0':
           type = 'oauth2';
@@ -50,7 +50,7 @@ export default class AuthenticationTransformer {
               flows: {},
               name: header.name(),
               location: 'header',
-              description: null,
+              description: undefined,
             };
             mappings.push(`comet_auth_${count}`);
             count += 1;
@@ -64,7 +64,7 @@ export default class AuthenticationTransformer {
               flows: {},
               name: param.name(),
               location: 'query',
-              description: null,
+              description: undefined,
             };
             mappings.push(`comet_auth_${count}`);
             count += 1;
@@ -78,7 +78,7 @@ export default class AuthenticationTransformer {
         auth[scheme.name()] = {
           type,
           flows,
-          description: scheme.description() ? scheme.description().value() : null,
+          description: scheme.description() ? scheme.description().value() : undefined,
         };
         spec.authenticationMappings[scheme.name()] = [...mappings, scheme.name()];
       } else {
@@ -90,12 +90,12 @@ export default class AuthenticationTransformer {
   }
 
   protected static getOAuth2Settings(scheme: AbstractSecurityScheme): any {
-    const flows = {};
+    const flows: ({ [key: string]: any }) = {};
 
     const settings = <OAuth2SecuritySchemeSettings>scheme.settings();
     const grants = settings.authorizationGrants() || [];
     const grant = grants[0];
-    let flowType;
+    let flowType: string;
     switch (grant) {
       case 'authorization_code':
         flowType = 'authorizationCode';

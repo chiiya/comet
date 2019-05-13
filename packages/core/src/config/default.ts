@@ -6,8 +6,7 @@ module.exports = {
     make: {
       tests: {
         plugins: [
-          '@comet-cli/decorator-tests',
-          '@comet-cli/factory-tests-laravel',
+          '@comet-cli/plugin-tests-laravel',
         ],
         output: 'tests/Comet',
         base_url: '/api',

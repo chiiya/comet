@@ -40,10 +40,10 @@ export const RAML_YAML = /(?:^|\n)\s*#%RAML \d\.\d\n/i;
 
 /**
  * Identifies given source.
- * @param {string} source - The source code of API description file.
- * @returns {string|null} Media type of given file.
+ * @param source - The source code of API description file.
+ * @returns Media type of given file.
  */
-export const identify = (source: string): string => {
+export const identify = (source: string): string | null => {
   if (source.match(API_BLUEPRINT_HEADER)) {
     // There is 'FORMAT: 1A' present at the begining,
     // so we can say it is API Blueprint

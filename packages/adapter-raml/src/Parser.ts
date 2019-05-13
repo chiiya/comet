@@ -19,9 +19,9 @@ export default class Parser {
       if (error.name === 'ApiLoadingError') {
         const issues: RamlParserError[] = error.parserErrors;
         this.logIssues(issues, logger);
-      } else {
-        throw error;
+        return process.exit(-1);
       }
+      throw error;
     }
 
     if (result.RAMLVersion() === 'RAML08') {

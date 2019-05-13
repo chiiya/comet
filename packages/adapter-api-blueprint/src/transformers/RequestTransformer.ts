@@ -10,7 +10,7 @@ export default class RequestTransformer {
   public static execute(requests: ApiBlueprintRequest[]): Request {
     // Iterate over the requests, group them by media-type and extract all the headers
     const request: Request = {
-      description: null,
+      description: undefined,
       headers: [],
       body: {},
     };
@@ -31,9 +31,12 @@ export default class RequestTransformer {
       const contentType = headers.find(header => header.name === 'Content-Type');
       const mediaType = contentType !== undefined ? contentType.example : null;
       if (mediaType !== null) {
+        // @ts-ignore
         if (request.body[mediaType]) {
+          // @ts-ignore
           request.body[mediaType].examples.push(exampleRequest.body);
         } else {
+          // @ts-ignore
           request.body[mediaType] = {
             mediaType,
             schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : null,
@@ -50,9 +53,9 @@ export default class RequestTransformer {
    * Get a request object from all transaction examples.
    * @param examples
    */
-  public static transformFromExamples(examples: ApiBlueprintExample[]): Request {
+  public static transformFromExamples(examples: ApiBlueprintExample[]): Request | undefined {
     if (examples.length === 0) {
-      return null;
+      return undefined;
     }
 
     // First, get an array of _all_ example requests (from all transactions).

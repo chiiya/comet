@@ -1,10 +1,32 @@
 import { ApiModel, Parameter, Schema } from '@comet-cli/types';
-import { camelize, slugify, getAllOperationsWithUris, EnhancedOperation } from '@comet-cli/helper-utils';
+import { camelize, EnhancedOperation, getAllOperationsWithUris, slugify } from '@comet-cli/helper-utils';
 import Combination from './Combination';
 import MissingExampleException from './MissingExampleException';
-import { Parameters, TestCase, TestSuite } from '../types';
 import { buildTestCaseName, getResolvedUrl } from './helpers';
 import FaultyValueResolver from './FaultyValueResolver';
+
+export interface TestSuite {
+  name: string;
+  url: string;
+  testCases: TestCase[];
+}
+
+export interface TestCase {
+  name: string;
+  path: string;
+  method: string;
+  parameters: Parameter[];
+  hasRequestBody: boolean;
+  requestBody: string | undefined;
+  schema: Schema | undefined;
+  isFaulty: boolean;
+  fullUri: string;
+}
+
+export type Parameters = {
+  required: Parameter[],
+  optional: Parameter[],
+};
 
 export default class TestSuiteCreator {
   /**
@@ -36,7 +58,7 @@ export default class TestSuiteCreator {
 
     // Get request example
     const example = this.getExampleRequest(operation);
-    let exampleString = null;
+    let exampleString = undefined;
     if (example !== undefined) {
       exampleString = this.getExampleAsString(operation, example);
     }
@@ -122,14 +144,15 @@ export default class TestSuiteCreator {
    * @param operation
    */
   protected static getSchema(operation: EnhancedOperation): Schema | undefined {
-    const responses = operation.responses;
+    const responses = operation.responses || {};
     for (const code of Object.keys(responses)) {
+      const { body } = responses[code];
       if (
         code.startsWith('2') === true
-        && operation.responses[code].body
-        && operation.responses[code].body['application/json']
+        && body
+        && body['application/json']
       ) {
-        return operation.responses[code].body['application/json'].schema;
+        return body['application/json'].schema;
       }
     }
   }
@@ -199,7 +222,7 @@ export default class TestSuiteCreator {
           parameters: parameters,
           hasRequestBody: example !== undefined,
           requestBody: JSON.stringify(bodyCopy),
-          schema: JSON.stringify(schema),
+          schema: schema,
           isFaulty: true,
           fullUri: getResolvedUrl(uri, operation.uri, parameters),
         };
@@ -220,8 +243,8 @@ export default class TestSuiteCreator {
   protected static createTestCase(
     operation: EnhancedOperation,
     parameters: Parameter[],
-    example: string,
-    schema: Schema,
+    example: string | undefined,
+    schema: Schema | undefined,
     uri: string,
   ): TestCase {
     return {
@@ -231,7 +254,7 @@ export default class TestSuiteCreator {
       parameters: parameters,
       hasRequestBody: example !== undefined,
       requestBody: example,
-      schema: JSON.stringify(schema),
+      schema: schema,
       isFaulty: false,
       fullUri: getResolvedUrl(uri, operation.uri, parameters),
     };

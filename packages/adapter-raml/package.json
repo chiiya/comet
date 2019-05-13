@@ -39,5 +39,9 @@
     "raml-1-parser": "^1.1.52",
     "raml2obj": "^6.2.0",
     "ramldt2jsonschema": "^0.3.1"
+  },
+  "devDependencies": {
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
   }
 }

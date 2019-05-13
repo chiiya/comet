@@ -14,17 +14,21 @@ export default class BodyResolver {
    * @throws Error
    * @throws UnresolvableParameterError
    */
-  public static execute(spec: Specification, contents: OpenAPIMediaTypes, type: SchemaType = 'other'): Bodies {
+  public static execute(
+    spec: Specification,
+    contents: OpenAPIMediaTypes,
+    type: SchemaType = 'other',
+  ): Bodies | undefined {
     const bodies: Bodies = {};
     if (contents === undefined) {
-      return null;
+      return undefined;
     }
     for (const mime of Object.keys(contents)) {
       const content = contents[mime];
       const schema = content.schema;
       bodies[mime] = {
         mediaType: mime,
-        schema: schema ? SchemaTransformer.execute(spec, content.schema, type) : null,
+        schema: schema ? SchemaTransformer.execute(spec, schema, type) : undefined,
         examples: this.resolveExamples(spec, content),
       };
     }

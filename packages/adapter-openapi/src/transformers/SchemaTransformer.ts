@@ -13,7 +13,7 @@ export default class SchemaTransformer {
     const schema: Schema = {};
     const isCircular = !!rawSchema['x-circular-ref'];
 
-    if (isCircular === true) {
+    if (isCircular) {
       schema['x-circular-ref'] = true;
       spec.exitRef(ref);
       return schema;
@@ -76,7 +76,7 @@ export default class SchemaTransformer {
    * Transform type definition.
    * @param schema
    */
-  protected static transformType(schema: OpenAPISchema): string | string[] {
+  protected static transformType(schema: OpenAPISchema): string | string[] | undefined {
     const type = this.detectType(schema);
     if (typeof type === 'string' && schema.nullable === true) {
       return [type, 'null'];
@@ -89,8 +89,8 @@ export default class SchemaTransformer {
    * Transform enum definition.
    * @param schema
    */
-  protected static transformEnum(schema: OpenAPISchema): any[] {
-    if (typeof schema.type === 'string' && schema.nullable === true) {
+  protected static transformEnum(schema: OpenAPISchema): any[] | undefined {
+    if (schema.enum && typeof schema.type === 'string' && schema.nullable === true) {
       return schema.enum.concat([null]);
     }
 
@@ -101,7 +101,7 @@ export default class SchemaTransformer {
    * Transform discriminator definition.
    * @param schema
    */
-  protected static transformDiscriminator(schema: OpenAPISchema): string {
+  protected static transformDiscriminator(schema: OpenAPISchema): string | undefined {
     if (schema.discriminator && schema.discriminator.propertyName) {
       return schema.discriminator.propertyName;
     }
@@ -118,6 +118,7 @@ export default class SchemaTransformer {
     const keywords = this.getTypeKeywords();
     for (const keyword of Object.keys(keywords)) {
       const type = keywords[keyword];
+      // @ts-ignore
       if (schema[keyword] !== undefined) {
         return type;
       }
@@ -130,7 +131,11 @@ export default class SchemaTransformer {
    * @param schema
    * @param $ref
    */
-  protected static mergeAllOf(spec: Specification, schema: OpenAPISchema, $ref: string): MergedOpenAPISchema {
+  protected static mergeAllOf(
+    spec: Specification,
+    schema: OpenAPISchema,
+    $ref: string | undefined,
+  ): MergedOpenAPISchema {
     const allOf = schema.allOf;
 
     if (allOf === undefined) {
@@ -143,7 +148,7 @@ export default class SchemaTransformer {
       parentRefs: [],
     };
 
-    const allOfSchemas = schema.allOf.map((subSchema) => {
+    const allOfSchemas = allOf.map((subSchema) => {
       const resolved = spec.deref(subSchema);
       const subRef = subSchema.$ref || undefined;
       const subMerged = this.mergeAllOf(spec, resolved, subRef);
@@ -239,7 +244,7 @@ export default class SchemaTransformer {
   /**
    * Get a list of keywords that indicate a certain type in a JSON Schema.
    */
-  protected static getTypeKeywords(): object {
+  protected static getTypeKeywords(): {[key: string]: string} {
     return {
       multipleOf: 'number',
       maximum: 'number',

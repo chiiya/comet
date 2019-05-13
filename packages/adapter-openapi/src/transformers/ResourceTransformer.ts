@@ -17,6 +17,7 @@ export default class ResourceTransformer {
         if (methods.includes(key) === false) {
           continue;
         }
+        // @ts-ignore
         const operation = openApiResource[key];
         if (operation) {
           operations.push(OperationTransformer.execute(spec, operation, key, resourceHeaders));

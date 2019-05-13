@@ -11,11 +11,12 @@ export default class ResponseTransformer {
     for (const code of Object.keys(specResponses)) {
       const response = specResponses[code];
       const headers = response.headers || null;
+      const content = response.content;
       responses[code] = {
         statusCode: code === 'default' ? code : Number(code),
-        description: response.description || null,
-        headers: headers ? HeaderTransformer.transformFromHeaders(spec, headers) : null,
-        body: BodyResolver.execute(spec, response.content, 'response'),
+        description: response.description || undefined,
+        headers: headers ? HeaderTransformer.transformFromHeaders(spec, headers) : [],
+        body: content ? BodyResolver.execute(spec, content, 'response') : undefined,
       };
     }
 

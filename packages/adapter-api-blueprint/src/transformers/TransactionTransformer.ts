@@ -10,12 +10,12 @@ export default class TransactionTransformer {
    */
   public static execute(examples: ApiBlueprintExample[]): Transaction[] {
     if (examples.length === 0) {
-      return null;
+      return [];
     }
     const transactions = [];
     for (const example of examples) {
       const transaction: Transaction = {
-        request: null,
+        request: undefined,
         responses: {},
       };
       if (example.requests && example.requests.length > 0) {

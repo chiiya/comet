@@ -1,6 +1,5 @@
 import { Parameter } from '@comet-cli/types';
 import { camelize, slugify, getOperationName, EnhancedOperation } from '@comet-cli/helper-utils';
-import { TestCase } from '../types';
 
 /**
  * Parse the operation name, e.g.:

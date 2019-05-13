@@ -25,7 +25,7 @@ export default class OperationTransformer {
       operations.push({
         method: method.method(),
         name: method.displayName(),
-        description: description ? description.value() : null,
+        description: description ? description.value() : undefined,
         securedBy: SecuredByTransformer.execute(spec, method.securedBy(), auth),
         parameters: parameters,
         request: RequestTransformer.execute(spec, method, requestHeaders),

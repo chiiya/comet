@@ -11,12 +11,12 @@ export default class RequestTransformer {
   ): Request {
     const request: Request = {
       headers,
-      description: null,
-      body: null,
+      description: undefined,
+      body: undefined,
     };
     const body = spec.deref(requestBody);
     if (body) {
-      request.description = body.description || null;
+      request.description = body.description || undefined;
       request.body = BodyResolver.execute(spec, body.content, 'request');
     }
     spec.exitRef(requestBody);

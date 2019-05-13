@@ -17,10 +17,10 @@ export default class HeaderTransformer {
       const schema = param.schema;
       headers.push({
         name: param.name,
-        description: param.description || null,
+        description: param.description || undefined,
         deprecated: param.deprecated || false,
         example: ParameterValueResolver.inferValue(spec, param),
-        schema: schema ? SchemaTransformer.execute(spec, param.schema) : null,
+        schema: schema ? SchemaTransformer.execute(spec, schema) : undefined,
         required: param.required || false,
       });
     }
@@ -35,10 +35,10 @@ export default class HeaderTransformer {
       const schema = header.schema;
       headers.push({
         name: name,
-        description: header.description || null,
+        description: header.description || undefined,
         deprecated: header.deprecated || false,
         example: ParameterValueResolver.inferValue(spec, header),
-        schema: schema ? SchemaTransformer.execute(spec, header.schema) : null,
+        schema: schema ? SchemaTransformer.execute(spec, schema) : undefined,
         required: header.required || false,
       });
       spec.deref(specHeaders[name]);

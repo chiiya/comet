@@ -38,7 +38,7 @@ export default class ResponseTransformer {
       }
       responses[code] = {
         statusCode: Number(code),
-        description: description ? description.value() : null,
+        description: description ? description.value() : undefined,
         headers: HeaderTransformer.execute(spec, headers),
         body: body,
       };

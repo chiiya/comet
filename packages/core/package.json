@@ -58,8 +58,7 @@
     "@comet-cli/adapter-api-blueprint": "^0.1.5",
     "@comet-cli/adapter-openapi": "^0.1.5",
     "@comet-cli/adapter-raml": "^0.1.5",
-    "@comet-cli/decorator-tests": "^0.1.2",
-    "@comet-cli/plugin-json-schemas": "^0.1.2",
+    "@comet-cli/plugin-json-schemas": "^0.1.5",
     "@comet-cli/plugin-tests-laravel": "^0.1.5",
     "@comet-cli/helper-identify": "^0.1.5",
     "@comet-cli/helper-utils": "^0.1.1",
@@ -88,9 +87,9 @@
     "@types/signale": "^1.2.0",
     "globby": "^8",
     "ts-node": "^7",
-    "tslint": "^5",
+    "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",
-    "typescript": "^3.0"
+    "typescript": "^3.4.5"
   },
   "gitHead": "8b3651f7766bb0f7f92ce2675f649f9a51c78b2c"
 }

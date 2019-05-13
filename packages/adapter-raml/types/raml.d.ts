@@ -31,6 +31,7 @@ export interface CanonicalType {
   enum?: any[];
   example?: any;
   xml?: XmlDeclaration;
+  [key: string]: any;
 }
 
 export interface XmlDeclaration {

@@ -22,15 +22,16 @@ export default class OperationTransformer {
     if (operation.externalDocs) {
       description = `[${operation.externalDocs.description}](${operation.externalDocs.url})\n\n${description}`;
     }
+    const requestBody = operation.requestBody;
     return {
       method,
-      name: operation.operationId || null,
-      description: description || null,
+      name: operation.operationId || undefined,
+      description: description || undefined,
       deprecated: operation.deprecated || false,
       tags: operation.tags,
       parameters: ParameterTransformer.execute(spec, params),
-      securedBy: operation.security,
-      request: RequestTransformer.execute(spec, operation.requestBody, headers),
+      securedBy: operation.security || [],
+      request: requestBody ? RequestTransformer.execute(spec, requestBody, headers) : undefined,
       responses: ResponseTransformer.execute(spec, operation.responses),
       transactions: [],
     };
@@ -42,7 +43,7 @@ export default class OperationTransformer {
    * @param operationHeaders
    */
   protected static mergeHeaders(resourceHeaders: Header[], operationHeaders: Header[]): Header[] {
-    const mergedHeaders = {};
+    const mergedHeaders: {[key:string]: Header} = {};
     for (const header of resourceHeaders) {
       mergedHeaders[header.name] = header;
     }

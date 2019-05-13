@@ -42,7 +42,7 @@ export class JsonPointer {
    * // returns foo
    * JsonPointerHelper.baseName('/path/foo/subpath', 2)
    */
-  static baseName(pointer, level = 1) {
+  static baseName(pointer: string, level = 1) {
     const tokens = JsonPointer.parse(pointer);
     return tokens[tokens.length - level];
   }
@@ -56,7 +56,7 @@ export class JsonPointer {
    * // returns /path
    * JsonPointerHelper.dirName('/path/foo/subpath', 2)
    */
-  static dirName(pointer, level = 1) {
+  static dirName(pointer: string, level = 1) {
     const tokens = JsonPointer.parse(pointer);
     return JsonPointerLib.compile(tokens.slice(0, tokens.length - level));
   }
@@ -69,7 +69,7 @@ export class JsonPointer {
    * // returns ['foo', 'subpath']
    * JsonPointerHelper.relative('/path', '/path/foo/subpath')
    */
-  static relative(from, to): string[] {
+  static relative(from: string, to: string): string[] {
     const fromTokens = JsonPointer.parse(from);
     const toTokens = JsonPointer.parse(to);
     return toTokens.slice(fromTokens.length);
@@ -79,7 +79,7 @@ export class JsonPointer {
    * overridden JsonPointer original parse to take care of prefixing '#' symbol
    * that is not valid JsonPointer
    */
-  static parse(pointer) {
+  static parse(pointer: string) {
     let ptr = pointer;
     if (ptr.charAt(0) === '#') {
       ptr = ptr.substring(1);
@@ -87,30 +87,8 @@ export class JsonPointer {
     return origParse(ptr);
   }
 
-  /**
-   * Creates a JSON pointer path, by joining one or more tokens to a base path.
-   *
-   * @param {string} base - The base path
-   * @param {string|string[]} tokens - The token(s) to append (e.g. ["name", "first"])
-   * @returns {string}
-   */
-  static join(base, tokens) {
-    // TODO: optimize
-    const baseTokens = JsonPointer.parse(base);
-    const resTokens = baseTokens.concat(tokens);
-    return JsonPointerLib.compile(resTokens);
-  }
-
   static get(object: object, pointer: string) {
     return JsonPointerLib.get(object, pointer);
-  }
-
-  static compile(tokens: string[]) {
-    return JsonPointerLib.compile(tokens);
-  }
-
-  static escape(pointer: string) {
-    return JsonPointerLib.escape(pointer);
   }
 }
 (JsonPointerLib as any).parse = JsonPointer.parse;

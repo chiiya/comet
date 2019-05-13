@@ -1,7 +1,7 @@
 import Specification from '../Specification';
 import { Information } from '@comet-cli/types';
 import ParsingException from '../ParsingException';
-import * as get from 'lodash/get';
+const _ = require('lodash');
 
 export default class InformationTransformer {
   /**
@@ -9,9 +9,9 @@ export default class InformationTransformer {
    * @param spec
    */
   public static execute(spec: Specification): Information {
-    const name = get(spec.ast, 'name');
+    const name = _.get(spec.ast, 'name');
     const host = spec.metadata['HOST'];
-    const version = spec.metadata['VERSION'] || null;
+    const version = spec.metadata['VERSION'];
 
     // Throw exception if required metadata is missing.
     if (name === undefined) {
@@ -28,7 +28,7 @@ export default class InformationTransformer {
     return {
       version,
       name,
-      description: get(spec.ast, 'description', null),
+      description: _.get(spec.ast, 'description', undefined),
       servers: [server],
     };
   }

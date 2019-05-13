@@ -4,8 +4,7 @@ interface Key {
 
 export interface CommandConfig {
   readonly adapter: string;
-  readonly decorators: string[];
-  readonly factories: string[];
+  readonly plugins: string[];
   readonly [key: string]: any;
 }
 
