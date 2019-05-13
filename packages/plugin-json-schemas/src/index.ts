@@ -1,5 +1,5 @@
 import {
-  ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource, JsonSchema,
+  ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource, JsonSchema, Operation,
 } from '@comet-cli/types';
 import { getOperationName } from '@comet-cli/helper-utils';
 import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
@@ -55,20 +55,27 @@ export default class JsonSchemaPlugin implements PluginInterface {
         }
       }
       // Build schemas from successful responses (2xx code)
-      if (operation.responses) {
-        for (const code of Object.keys(operation.responses)) {
-          if (code.startsWith('2') === true && operation.responses[code].body) {
-            const bodies = operation.responses[code].body || {};
-            const action = this.createFromMediaTypes(bodies, resource.path, operation.method, 'response');
-            if (action) {
-              actions.push(action);
-            }
-          }
-        }
+      const action = this.generateResponseSchemaFromOperation(operation, resource.path);
+      if (action !== undefined) {
+        actions.push(action);
       }
     }
 
     return actions;
+  }
+
+  public static generateResponseSchemaFromOperation(operation: Operation, path: string): Action | undefined {
+    if (operation.responses) {
+      for (const code of Object.keys(operation.responses)) {
+        if (code.startsWith('2') === true && operation.responses[code].body) {
+          const bodies = operation.responses[code].body || {};
+          const action = this.createFromMediaTypes(bodies, path, operation.method, 'response');
+          if (action) {
+            return action;
+          }
+        }
+      }
+    }
   }
 
   /**

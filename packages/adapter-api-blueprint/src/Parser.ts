@@ -46,7 +46,7 @@ export default class Parser {
     for (const warning of warnings) {
       messages.push([
         this.getLineNumber(warning.location, source),
-        ucfirst(warning.message),
+        ucfirst(this.fixWarningMessage(warning.message)),
         warning.code,
       ]);
     }

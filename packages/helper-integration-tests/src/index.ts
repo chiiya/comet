@@ -4,6 +4,7 @@ import Combination from './Combination';
 import MissingExampleException from './MissingExampleException';
 import { buildTestCaseName, getResolvedUrl } from './helpers';
 import FaultyValueResolver from './FaultyValueResolver';
+import JsonSchemaPlugin, { Action } from '@comet-cli/plugin-json-schemas';
 
 export interface TestSuite {
   name: string;
@@ -19,6 +20,7 @@ export interface TestCase {
   hasRequestBody: boolean;
   requestBody: string | undefined;
   schema: Schema | undefined;
+  schemaName: string | undefined;
   isFaulty: boolean;
   fullUri: string;
 }
@@ -63,15 +65,14 @@ export default class TestSuiteCreator {
       exampleString = this.getExampleAsString(operation, example);
     }
 
-    // Find corresponding response JSON Schema
-    const schema = this.getSchema(operation);
+    const action = JsonSchemaPlugin.generateResponseSchemaFromOperation(operation, operation.uri);
 
     // Build test cases
     if (operation.parameters) {
       const parameters = this.getParameters(operation);
       const combinations = Combination.combinations(parameters.optional);
       // Create one test case with just the required parameters...
-      testCases.push(this.createTestCase(operation, parameters. required, exampleString, schema, uri));
+      testCases.push(this.createTestCase(operation, parameters. required, exampleString, action, uri));
       // ... and one for each combination of optional parameters (+ required)
       for (const combination of combinations) {
         testCases.push(
@@ -79,21 +80,21 @@ export default class TestSuiteCreator {
             operation,
             [...parameters.required, ...combination],
             exampleString,
-            schema,
+            action,
             uri,
           ),
         );
       }
       // Create faulty test cases if it has a request body
-      if (example !== undefined && schema !== undefined) {
-        testCases.push(...this.createFaultyTestCases(operation, parameters.required, example, schema, uri));
+      if (example !== undefined && action && action.schema !== undefined) {
+        testCases.push(...this.createFaultyTestCases(operation, parameters.required, example, action, uri));
       }
     } else {
       // No parameters
-      testCases.push(this.createTestCase(operation, [], exampleString, schema, uri));
+      testCases.push(this.createTestCase(operation, [], exampleString, action, uri));
       // Create faulty test cases
-      if (example !== undefined && schema !== undefined) {
-        testCases.push(...this.createFaultyTestCases(operation, [], example, schema, uri));
+      if (example !== undefined && action && action.schema !== undefined) {
+        testCases.push(...this.createFaultyTestCases(operation, [], example, action, uri));
       }
     }
 
@@ -129,7 +130,7 @@ export default class TestSuiteCreator {
    */
   protected static getExampleAsString(operation: EnhancedOperation, example: any): string | undefined {
     if (typeof example === 'string') {
-      return example;
+      return JSON.stringify(JSON.parse(example));
     }
     if (typeof example === 'object') {
       return JSON.stringify(example);
@@ -137,24 +138,6 @@ export default class TestSuiteCreator {
     throw new MissingExampleException(
       `Example request body for \`${operation.method.toUpperCase()} ${operation.uri}\` should be object or string`,
     );
-  }
-
-  /**
-   * Get the schema definition for a JSON response.
-   * @param operation
-   */
-  protected static getSchema(operation: EnhancedOperation): Schema | undefined {
-    const responses = operation.responses || {};
-    for (const code of Object.keys(responses)) {
-      const { body } = responses[code];
-      if (
-        code.startsWith('2') === true
-        && body
-        && body['application/json']
-      ) {
-        return body['application/json'].schema;
-      }
-    }
   }
 
   /**
@@ -172,7 +155,7 @@ export default class TestSuiteCreator {
           `\`${operation.method.toUpperCase()} ${operation.uri}\`: Missing example value for parameter ${param.name}`,
         );
       } else {
-        if (param.required === true) {
+        if (param.required) {
           requiredParameters.push(param);
         } else {
           optionalParameters.push(param);
@@ -190,7 +173,7 @@ export default class TestSuiteCreator {
    * Create a faulty test case (faulty value for request attribute).
    * @param operation
    * @param parameters
-   * @param schema
+   * @param action
    * @param example
    * @param uri
    */
@@ -198,7 +181,7 @@ export default class TestSuiteCreator {
     operation: EnhancedOperation,
     parameters: Parameter[],
     example: string | object,
-    schema: Schema,
+    action: Action,
     uri: string,
   ) {
     const testCases = [];
@@ -209,7 +192,7 @@ export default class TestSuiteCreator {
       body = example;
     }
     for (const key of Object.keys(body)) {
-      const faultyValues = FaultyValueResolver.resolveFaultyValues(key, schema);
+      const faultyValues = FaultyValueResolver.resolveFaultyValues(key, action.schema);
       let attributeName = camelize(slugify(key));
       attributeName = `${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}`;
       for (const value of faultyValues) {
@@ -222,7 +205,8 @@ export default class TestSuiteCreator {
           parameters: parameters,
           hasRequestBody: example !== undefined,
           requestBody: JSON.stringify(bodyCopy),
-          schema: schema,
+          schema: action.schema,
+          schemaName: action.name,
           isFaulty: true,
           fullUri: getResolvedUrl(uri, operation.uri, parameters),
         };
@@ -237,14 +221,14 @@ export default class TestSuiteCreator {
    * @param operation
    * @param parameters
    * @param example
-   * @param schema
+   * @param action
    * @param uri
    */
   protected static createTestCase(
     operation: EnhancedOperation,
     parameters: Parameter[],
     example: string | undefined,
-    schema: Schema | undefined,
+    action: Action | undefined,
     uri: string,
   ): TestCase {
     return {
@@ -254,7 +238,8 @@ export default class TestSuiteCreator {
       parameters: parameters,
       hasRequestBody: example !== undefined,
       requestBody: example,
-      schema: schema,
+      schema: action ? action.schema : undefined,
+      schemaName: action ? action.name : undefined,
       isFaulty: false,
       fullUri: getResolvedUrl(uri, operation.uri, parameters),
     };

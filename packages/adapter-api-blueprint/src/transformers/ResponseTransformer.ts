@@ -45,7 +45,7 @@ export default class ResponseTransformer {
           // @ts-ignore
           responses[statusCode].body[mediaType] = {
             mediaType,
-            schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : null,
+            schema: exampleResponse.schema !== '' ? JSON.parse(exampleResponse.schema) : undefined,
             examples: exampleResponse.body ? [exampleResponse.body] : [],
           };
         }

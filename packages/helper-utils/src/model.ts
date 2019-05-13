@@ -11,7 +11,7 @@ export type EnhancedOperation = Operation & {
 export const getAllResources = (model: ApiModel): Resource[] => {
   const resources: Resource[] = model.resources;
   for (const group of model.groups) {
-    resources.push(...resources);
+    resources.push(...group.resources);
   }
 
   return resources;

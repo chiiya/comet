@@ -86,11 +86,11 @@ export default class ResourceTransformer {
         && item.content.find(item => item.element === 'resource') !== undefined
         && item.hasOwnProperty('attributes') === false;
     });
+    // @ts-ignore
     const rootGroup = spec.ast.content.find((item) => {
       return item.content.length > 0
         && item.content.find(item => item.element === 'resource') !== undefined
-        && item.hasOwnProperty('attributes') === false
-        // @ts-ignore
+        && item.attributes
         && item.attributes.name === 'Root';
     });
 

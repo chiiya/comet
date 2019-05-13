@@ -28,7 +28,7 @@
     "url": "git+https://github.com/chiiya/comet.git"
   },
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc && rm -rf lib/stubs && cp -r src/stubs lib/stubs"
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"

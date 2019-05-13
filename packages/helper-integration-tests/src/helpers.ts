@@ -26,10 +26,10 @@ export const buildTestCaseName = (
   }
   for (const param of queryParameters) {
     const parameterName = camelize(slugify(param.name));
-    name = `${name}${parameterName.charAt(0).toUpperCase() + parameterName.slice(1)}and`;
+    name = `${name}${parameterName.charAt(0).toUpperCase() + parameterName.slice(1)}And`;
   }
 
-  // Remove last 'and'
+  // Remove last 'And'
   if (queryParameters.length > 0) {
     name = name.slice(0, -3);
   }

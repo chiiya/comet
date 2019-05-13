@@ -1,4 +1,4 @@
-import { Schema } from '@comet-cli/types';
+import { JsonSchema } from '@comet-cli/types';
 
 export type FaultyValue = {
   value: any,
@@ -11,7 +11,7 @@ export default class FaultyValueResolver {
    * @param value
    * @param schema
    */
-  public static resolveFaultyValues(value: string, schema: Schema): FaultyValue[] {
+  public static resolveFaultyValues(value: string, schema: JsonSchema): FaultyValue[] {
     const faultyValues: FaultyValue[] = [];
     if (schema.properties && schema.properties[value]) {
       const subSchema = schema.properties[value];

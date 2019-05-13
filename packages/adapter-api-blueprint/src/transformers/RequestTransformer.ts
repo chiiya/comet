@@ -39,7 +39,7 @@ export default class RequestTransformer {
           // @ts-ignore
           request.body[mediaType] = {
             mediaType,
-            schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : null,
+            schema: exampleRequest.schema !== '' ? JSON.parse(exampleRequest.schema) : undefined,
             examples: exampleRequest.body ? [exampleRequest.body] : [],
           };
         }

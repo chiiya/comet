@@ -2,9 +2,8 @@ import { ApiModel, CommandConfig, LoggerInterface, PluginInterface } from '@come
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
 import TestSuiteCreator, { TestCase } from '@comet-cli/helper-integration-tests';
-import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
 import { getAllResources } from '@comet-cli/helper-utils';
-import JsonSchemaPlugin from '@comet-cli/plugin-json-schemas';
+import JsonSchemaPlugin, { Action } from '@comet-cli/plugin-json-schemas';
 const path = require('path');
 const handlebars = require('handlebars');
 
@@ -18,7 +17,7 @@ export default class LaravelTestsPlugin implements PluginInterface {
   async execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<void> {
     const warnings: string[] = [];
     const outputDir = config.output;
-    await ensureDir(path.resolve(__dirname, config.output));
+    await ensureDir(outputDir);
     // Step 1: Update the PHPUnit configuration file
     try {
       await this.updatePhpUnitConfig(outputDir);
@@ -128,14 +127,16 @@ export default class LaravelTestsPlugin implements PluginInterface {
     for (const resource of resources) {
       actions.push(...JsonSchemaPlugin.generateSchemas(resource));
     }
-    // @ts-ignore
-    const usedSchemas = new Set(testCases.map(testCase => JsonSchemaTransformer.execute(testCase.schema)));
-    const schemasToWrite = [...usedSchemas];
+    const testCasesWithSchemas = testCases.filter(testCase => testCase.schemaName !== undefined);
+    const usedSchemas = new Set(testCasesWithSchemas.map(testCase => testCase.schemaName));
+    const schemasToWrite = actions.filter((action: Action) => {
+      return action.operation === 'response' && usedSchemas.has(action.name) === true;
+    });
     for (let i = 0; i < schemasToWrite.length; i += 1) {
       const action = schemasToWrite[i];
-      // await ensureDir(path.join(config.output, 'schemas'));
-      // const file = path.join(config.output, 'schemas', `${action.$name}.json`);
-      // await writeJson(file, action.schema, { spaces: 4 });
+      await ensureDir(path.join(config.output, 'schemas'));
+      const file = path.join(config.output, 'schemas', `${action.name}.json`);
+      await writeJson(file, action.schema, { spaces: 4 });
     }
   }
 
@@ -144,7 +145,7 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * @param config
    */
   protected async createHookTraitFile(config: CommandConfig) {
-    const source = await readFile('./stubs/hooks.hbs');
+    const source = await readFile(path.join(__dirname, 'stubs', 'hooks.hbs'), 'utf8');
     await writeFile(path.join(config.output, 'HasHooks.php'), source);
   }
 
@@ -166,9 +167,9 @@ export default class LaravelTestsPlugin implements PluginInterface {
       return testCase.hasRequestBody ? `'${testCase.requestBody}'` : 'null';
     });
     handlebars.registerHelper('getSchemaPath', (testCase: TestCase) => {
-      return `base_path().'/${outputDir}/schemas/${testCase.schema}.json'`;
+      return `base_path().'/${outputDir}/schemas/${testCase.schemaName}.json'`;
     });
-    const source = await readFile('./stubs/testsuite.hbs');
+    const source = await readFile(path.join(__dirname, 'stubs', 'testsuite.hbs'), 'utf8');
     const template = handlebars.compile(source);
     const result = template(data);
     await writeFile(path.join(config.output, 'CometApiTest.php'), result);

@@ -18,32 +18,30 @@ class CometApiTest extends TestCase
         parent::setUp();
         $this->artisan('db:seed');
     }
+    {{#testCases}}
 
-    {{#each testcases}}
-
-
-      {{#if isFaulty}}
-        public function test{{getTestCaseName this}}()
-        {
-            $body = {{getBody this}};
-            $headers = $this->getJsonHeaders($body);
-            $response = $this->executeRequest('${testCase.method.toUpperCase()}', '{{url}}', $headers, $body);
-            $this->assertHasClientError($response);
-        }
-      {{else}}
-        public function test{{getTestCaseName this}}()
-        {
-            $body = {{getBody this}};
-            $headers = $this->getJsonHeaders($body);
-            $response = $this->executeRequest('${testCase.method.toUpperCase()}', '{{url}}', $headers, $body);
-            $response->assertSuccessful();
-            {{#if schema}}
-              $responseContent = $response->getContent();
-              $this->assertJsonMatchesSchema(json_decode($responseContent), {{getSchemaPath this}});
-            {{/if}}
-        }
-      {{/if}}
-    {{/each}}
+    {{#if isFaulty}}
+    public function test{{{getTestCaseName this}}}()
+    {
+        $body = {{{getBody this}}};
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('${testCase.method.toUpperCase()}', '{{{url}}}', $headers, $body);
+        $this->assertHasClientError($response);
+    }
+    {{else}}
+    public function test{{getTestCaseName this}}()
+    {
+        $body = {{{getBody this}}};
+        $headers = $this->getJsonHeaders($body);
+        $response = $this->executeRequest('${testCase.method.toUpperCase()}', '{{{url}}}', $headers, $body);
+        $response->assertSuccessful();
+        {{#if schema}}
+        $responseContent = $response->getContent();
+        $this->assertJsonMatchesSchema(json_decode($responseContent), {{{getSchemaPath this}}});
+        {{/if}}
+    }
+    {{/if}}
+    {{/testCases}}
 
     /**
     * Assert that a test response returned a client error (4xx).

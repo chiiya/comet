@@ -9,7 +9,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2015",
-    "esModuleInterop": true,
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "lib": [
