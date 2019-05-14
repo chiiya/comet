@@ -36,10 +36,6 @@ import { MergedOpenAPISchema } from './transformers/SchemaTransformer';
 class RefCounter {
   protected counter: {[key:string]: number} = {};
 
-  reset(): void {
-    this.counter = {};
-  }
-
   visit(ref: string): void {
     this.counter[ref] = this.counter[ref] ? this.counter[ref] + 1 : 1;
   }
@@ -101,7 +97,7 @@ export default class Specification {
   /**
    * Get spec part by JsonPointer ($ref)
    */
-  byRef = <T extends any = any>(ref: string): T | undefined => {
+  byRef<T extends any = any>(ref: string): T | undefined {
     let res;
     let reference = ref;
     if (!this.entity) {
@@ -119,13 +115,6 @@ export default class Specification {
     return res || {};
   }
 
-  /**
-   * Resets visited endpoints. Should be run after.
-   */
-  resetVisited() {
-    this.refCounter = new RefCounter();
-  }
-
   exitRef<T>(ref: Referenced<T>) {
     if (!this.isRef(ref)) {
       return;
@@ -137,12 +126,5 @@ export default class Specification {
     for (const parent$ref of schema.parentRefs || []) {
       this.exitRef({ $ref: parent$ref });
     }
-  }
-
-  shallowDeref<T extends object>(obj: OpenAPIRef | T): T {
-    if (this.isRef(obj)) {
-      return this.byRef<T>(obj.$ref)!;
-    }
-    return obj;
   }
 }

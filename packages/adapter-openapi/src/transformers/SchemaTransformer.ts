@@ -174,15 +174,15 @@ export default class SchemaTransformer {
 
       if (subSchema.properties !== undefined) {
         merged.properties = merged.properties || {};
-        for (const prop in subSchema.properties) {
-          if (!merged.properties[prop]) {
-            merged.properties[prop] = subSchema.properties[prop];
+        for (const key of Object.keys(subSchema.properties)) {
+          if (!merged.properties[key]) {
+            merged.properties[key] = subSchema.properties[key];
           } else {
             // merge inner properties
-            merged.properties[prop] = this.mergeAllOf(
+            merged.properties[key] = this.mergeAllOf(
               spec,
-              { allOf: [merged.properties[prop], subSchema.properties[prop]] },
-              `${$ref}/properties/${prop}`,
+              { allOf: [merged.properties[key], subSchema.properties[key]] },
+              `${$ref}/properties/${key}`,
             );
           }
         }
