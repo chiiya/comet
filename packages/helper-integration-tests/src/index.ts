@@ -1,4 +1,4 @@
-import { ApiModel, Parameter, Schema } from '@comet-cli/types';
+import { ApiModel, Parameter } from '@comet-cli/types';
 import { camelize, EnhancedOperation, getAllOperationsWithUris, slugify } from '@comet-cli/helper-utils';
 import Combination from './Combination';
 import MissingExampleException from './MissingExampleException';
@@ -19,8 +19,7 @@ export interface TestCase {
   parameters: Parameter[];
   hasRequestBody: boolean;
   requestBody: string | undefined;
-  schema: Schema | undefined;
-  schemaName: string | undefined;
+  action: Action | undefined;
   isFaulty: boolean;
   fullUri: string;
 }
@@ -205,8 +204,7 @@ export default class TestSuiteCreator {
           parameters: parameters,
           hasRequestBody: example !== undefined,
           requestBody: JSON.stringify(bodyCopy),
-          schema: action.schema,
-          schemaName: action.name,
+          action: action,
           isFaulty: true,
           fullUri: getResolvedUrl(uri, operation.uri, parameters),
         };
@@ -238,8 +236,7 @@ export default class TestSuiteCreator {
       parameters: parameters,
       hasRequestBody: example !== undefined,
       requestBody: example,
-      schema: action ? action.schema : undefined,
-      schemaName: action ? action.name : undefined,
+      action: action ? action : undefined,
       isFaulty: false,
       fullUri: getResolvedUrl(uri, operation.uri, parameters),
     };

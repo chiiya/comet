@@ -2,8 +2,7 @@ import { ApiModel, CommandConfig, LoggerInterface, PluginInterface } from '@come
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
 import TestSuiteCreator, { TestCase } from '@comet-cli/helper-integration-tests';
-import { getAllResources } from '@comet-cli/helper-utils';
-import JsonSchemaPlugin, { Action } from '@comet-cli/plugin-json-schemas';
+import { Action } from '@comet-cli/plugin-json-schemas';
 const path = require('path');
 const handlebars = require('handlebars');
 
@@ -122,18 +121,9 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * @param config
    */
   protected async writeJsonSchemaFiles(model: ApiModel, testCases: TestCase[], config: CommandConfig) {
-    const resources = getAllResources(model);
-    const actions = [];
-    for (const resource of resources) {
-      actions.push(...JsonSchemaPlugin.generateSchemas(resource));
-    }
-    const testCasesWithSchemas = testCases.filter(testCase => testCase.schemaName !== undefined);
-    const usedSchemas = new Set(testCasesWithSchemas.map(testCase => testCase.schemaName));
-    const schemasToWrite = actions.filter((action: Action) => {
-      return action.operation === 'response' && usedSchemas.has(action.name) === true;
-    });
-    for (let i = 0; i < schemasToWrite.length; i += 1) {
-      const action = schemasToWrite[i];
+    const schemas = testCases.filter((testCase: TestCase) => testCase.action !== undefined);
+    for (const schema of schemas) {
+      const action: Action = <Action>schema.action;
       await ensureDir(path.join(config.output, 'schemas'));
       const file = path.join(config.output, 'schemas', `${action.name}.json`);
       await writeJson(file, action.schema, { spaces: 4 });
@@ -167,7 +157,9 @@ export default class LaravelTestsPlugin implements PluginInterface {
       return testCase.hasRequestBody ? `'${testCase.requestBody}'` : 'null';
     });
     handlebars.registerHelper('getSchemaPath', (testCase: TestCase) => {
-      return `base_path().'/${outputDir}/schemas/${testCase.schemaName}.json'`;
+      if (testCase.action) {
+        return `base_path().'/${outputDir}/schemas/${testCase.action.name}.json'`;
+      }
     });
     const source = await readFile(path.join(__dirname, 'stubs', 'testsuite.hbs'), 'utf8');
     const template = handlebars.compile(source);
