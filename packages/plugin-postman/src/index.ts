@@ -44,6 +44,16 @@ export default class PostmanPlugin implements PluginInterface {
 
   protected getVariables(model: ApiModel): PostmanVariable[] {
     const variables: PostmanVariable[] = [];
+    if (model.info.servers.length > 0) {
+      variables.push({
+        id: uuidv4(),
+        key: 'url',
+        value: '{{url_0}}',
+        description: 'Request base URL',
+        type: 'string',
+        name: 'Server Base URL',
+      });
+    }
     // Add URLs as variables
     for (const [index, server] of model.info.servers.entries() || []) {
       let uri = server.uri;
@@ -134,13 +144,14 @@ export default class PostmanPlugin implements PluginInterface {
         });
       }
     }
+    const uri = this.resolveUri(resource, operation);
     const request: PostmanRequest = {
       method: operation.method,
       description: operation.request ? operation.request.description : undefined,
       url: {
-        raw: `{{url_0}}${resource.path}`,
-        host: '{{url_0}}',
-        path: resource.path,
+        raw: `{{url}}${uri}`,
+        host: '{{url}}',
+        path: uri,
       },
     };
     if (operation.request && operation.request.body) {
@@ -153,7 +164,7 @@ export default class PostmanPlugin implements PluginInterface {
         const jsonType = types.find(type => type.includes('json'));
         if (jsonType !== undefined) {
           headers = this.setContentTypeHeader(headers, jsonType);
-          const body = operation.request.body[jsonType];
+          body = operation.request.body[jsonType];
         } else {
           const type = types[0];
           headers = this.setContentTypeHeader(headers, type);
@@ -181,5 +192,39 @@ export default class PostmanPlugin implements PluginInterface {
       value: type,
     });
     return excludedContentType;
+  }
+
+  protected resolveUri(resource: Resource, operation: Operation): string {
+    let uri = resource.path;
+    const requiredQueryParams = [];
+    const foundQueryParams = {};
+    for (const param of operation.parameters) {
+      if (param.example && param.location === 'path') {
+        uri = uri.replace(`{${param.name}}`, param.example);
+      }
+      if (param.location === 'query' && param.required) {
+        requiredQueryParams.push(param);
+        foundQueryParams[param.name] = true;
+      }
+    }
+    for (const param of resource.parameters) {
+      if (param.example && param.location === 'path') {
+        uri = uri.replace(`{${param.name}}`, param.example);
+      }
+      if (param.location === 'query' && param.required && foundQueryParams[param.name] === undefined) {
+        requiredQueryParams.push(param);
+      }
+    }
+
+    if (requiredQueryParams.length > 0) {
+      let queryString = '?';
+      for (const param of requiredQueryParams) {
+        queryString += `${param.name}=${param.example ? param.example : ''}&`;
+      }
+      queryString = queryString.substring(0, queryString.length - 1);
+      uri += queryString;
+    }
+
+    return uri;
   }
 }
