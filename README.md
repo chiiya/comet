@@ -22,6 +22,16 @@ This will create a `result.json` file with the resulting model tree.
 </pre>
 
 ## Usage
+Currently, the following commands are available:
+#### Make Schemas
+`comet make:schemas` will generate valid JSON-Schema definitions for all requests and responses.
+#### Make Tests
+`comet make:tests` will generate integration tests for all endpoints and parameter combinations for the Laravel framework.
+#### Make Postman
+`comet make:postman` will generate a Postman Collection for your API.
+#### Make Documentation
+`comet make:documentation` will generate an API documentation.
+
 For usage, see the [core package](https://github.com/chiiya/comet/tree/master/packages/core).
 
 ## Configuration
