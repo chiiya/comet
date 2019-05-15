@@ -1,6 +1,6 @@
 export interface PostmanCollection {
   info: PostmanInformation;
-  item?: (PostmanItem | PostmanFolder)[];
+  item: (PostmanItem | PostmanFolder)[];
   event?: PostmanEvent[];
   variable?: PostmanVariable[];
   auth?: PostmanAuth;
@@ -160,7 +160,7 @@ export interface PostmanUrl {
   port?: string;
   query?: PostmanQueryParam[];
   hash?: string;
-  variable: PostmanVariable[];
+  variable?: PostmanVariable[];
 }
 
 export interface PostmanQueryParam {

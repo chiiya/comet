@@ -8,7 +8,7 @@ export default class AuthenticationTransformer {
     const auth: Dict<Authentication> = {};
     for (const name of Object.keys(schemes)) {
       const scheme = <OpenAPISecurityScheme>spec.deref(schemes[name]);
-      let type: AuthType | undefined = undefined;
+      let type: AuthType = 'key';
       switch (scheme.type) {
         case 'http':
           if (scheme.scheme === 'basic' || scheme.scheme === 'digest') {

@@ -11,7 +11,7 @@ export default class AuthenticationTransformer {
     const schemes = spec.api.securitySchemes() || [];
     const auth: Dict<Authentication> = {};
     for (const scheme of schemes) {
-      let type: AuthType | undefined = undefined;
+      let type: AuthType = 'key';
       switch (scheme.type()) {
         case 'OAuth 2.0':
           type = 'oauth2';

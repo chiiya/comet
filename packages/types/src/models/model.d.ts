@@ -93,7 +93,7 @@ export interface ResourceGroup {
 }
 
 export interface Authentication {
-  type?: AuthType;
+  type: AuthType;
   description?: string;
   name?: string;
   location?: ApiKeyLocation;

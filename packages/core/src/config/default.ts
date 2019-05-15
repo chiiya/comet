@@ -23,6 +23,13 @@ module.exports = {
         output: 'exports/documentation',
         ungroupRoot: true,
       },
+      postman: {
+        plugins: [
+          '@comet-cli/plugin-postman',
+        ],
+        output: 'exports',
+        ungroupRoot: true,
+      },
     },
   },
 };

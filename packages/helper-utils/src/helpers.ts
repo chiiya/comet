@@ -83,3 +83,14 @@ export const ucfirst = (str: string): string => {
 export const isNumber = (str: any): boolean => {
   return !isNaN(str) && !isNaN(parseFloat(str));
 };
+
+/**
+ * Get a prettified operation name:
+ * countries-index -> Countries - Index
+ * @param path
+ * @param method
+ */
+export const prettifyOperationName = (path: string, method: string): string => {
+  const operationName = getOperationName(path, method);
+  return operationName.split('-').map((part: string) => ucfirst(part)).join(' - ');
+};
