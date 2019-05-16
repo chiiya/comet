@@ -19,6 +19,7 @@ export interface Schema {
   anyOf?: Schema[];
   allOf?: Schema[];
   not?: Schema;
+  example?: any;
   title?: string;
   multipleOf?: number;
   maximum?: number;
