@@ -9,91 +9,27 @@ import {
 import {
   PostmanCollection,
   PostmanFolder, PostmanHeader,
-  PostmanInformation,
   PostmanItem, PostmanRequest,
   PostmanVariable,
 } from '../types';
 import { prettifyOperationName } from '@comet-cli/helper-utils';
 import { ensureDir, writeFile } from 'fs-extra';
 import { join } from 'path';
+import { transformInformation } from './transformers/information';
+import { transformVariables } from './transformers/variables';
 const uuidv4 = require('uuid/v4');
 
 export default class PostmanPlugin implements PluginInterface {
   async execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<void> {
     const collection: PostmanCollection = {
-      info: this.getInformation(model),
-      variable: this.getVariables(model),
+      info: transformInformation(model),
+      variable: transformVariables(model),
       item: this.getItems(model),
     };
 
     const path = join(config.output, 'postman.json');
-
     await ensureDir(config.output);
     await writeFile(path, JSON.stringify(collection, null, 2));
-  }
-
-  protected getInformation(model: ApiModel): PostmanInformation {
-    return {
-      name: model.info.name,
-      description: model.info.description,
-      version: model.info.version,
-      schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
-      _postman_id: uuidv4(),
-    };
-  }
-
-  protected getVariables(model: ApiModel): PostmanVariable[] {
-    const variables: PostmanVariable[] = [];
-    if (model.info.servers.length > 0) {
-      variables.push({
-        id: uuidv4(),
-        key: 'url',
-        value: '{{url_0}}',
-        description: 'Request base URL',
-        type: 'string',
-        name: 'Server Base URL',
-      });
-    }
-    // Add URLs as variables
-    for (const [index, server] of model.info.servers.entries() || []) {
-      let uri = server.uri;
-      // Replace variables with their default value, if possible.
-      if (server.variables) {
-        for (const name of Object.keys(server.variables)) {
-          const variable = server.variables[name];
-          if (variable.default) {
-            uri = uri.replace(`{${name}}`, variable.default);
-          }
-        }
-      }
-      variables.push({
-        id: uuidv4(),
-        key: `url_${index}`,
-        value: uri,
-        description: server.description,
-        type: 'string',
-        name: `Server URL ${index}`,
-      });
-    }
-    // Add auth secrets as variables
-    if (model.auth) {
-      for (const name of Object.keys(model.auth)) {
-        const scheme = model.auth[name];
-        variables.push(this.getAuthSecret(scheme));
-      }
-    }
-
-    return variables;
-  }
-
-  protected getAuthSecret(auth: Authentication): PostmanVariable {
-    return {
-      id: uuidv4(),
-      key: `auth_${auth.type}`,
-      description: auth.description,
-      type: 'string',
-      name: `Auth secret for ${auth.type.toUpperCase()}`,
-    };
   }
 
   protected getItems(model: ApiModel): (PostmanItem | PostmanFolder)[] {
@@ -173,9 +109,10 @@ export default class PostmanPlugin implements PluginInterface {
       }
 
       if (body && body.examples.length > 0) {
+        const example = body.examples[0];
         request.body = {
           mode: 'raw',
-          raw: body.examples[0],
+          raw: (typeof example === 'object') ? JSON.stringify(example, null, 2) : example,
         };
       }
     }
