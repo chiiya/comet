@@ -1,6 +1,8 @@
 import SchemaValueResolver from './SchemaValueResolver';
 import { OpenAPIHeader, OpenAPIParameter } from '../../types/open-api';
 import Specification from '../Specification';
+import SchemaTransformer from '../transformers/SchemaTransformer';
+import { Schema } from '@comet-cli/types';
 
 export default class ParameterValueResolver {
   /**
@@ -17,17 +19,17 @@ export default class ParameterValueResolver {
     const parameter = spec.deref(apiParameter);
     spec.exitRef(apiParameter);
 
-    value = this.inferExampleValue(parameter);
+    value = this.inferExampleValue(spec, parameter);
     if (value !== undefined) {
       return value;
     }
 
-    value = this.inferDefaultValue(parameter);
+    value = this.inferDefaultValue(spec, parameter);
     if (value !== undefined) {
       return value;
     }
 
-    value = this.inferEnumValue(parameter);
+    value = this.inferEnumValue(spec, parameter);
     if (value !== undefined) {
       return value;
     }
@@ -38,21 +40,27 @@ export default class ParameterValueResolver {
   /**
    * Infer a parameter's value from defined example values.
    * These examples can be found in multiple locations.
+   * @param spec
    * @param apiParameter
    * @throws Error
    */
-  protected static inferExampleValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
+  protected static inferExampleValue(spec: Specification, apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.hasOwnProperty('example')) {
       return apiParameter.example;
     }
 
     // Take a random value from examples
     if (apiParameter.hasOwnProperty('examples') && apiParameter.examples) {
-      // return apiParameter.examples[Object.keys(apiParameter.examples)[0]].value;
+      const examples = Object.keys(apiParameter.examples);
+      const index = Math.floor(Math.random() * examples.length);
+      const example = spec.deref(apiParameter.examples[index]);
+      spec.exitRef(apiParameter.examples[index]);
+      return example.value;
     }
 
     if (apiParameter.schema) {
-      const result = SchemaValueResolver.resolveExampleValue(apiParameter.schema);
+      const schema = SchemaTransformer.execute(spec, apiParameter.schema);
+      const result = SchemaValueResolver.resolveExampleValue(schema);
       if (result !== undefined) {
         return result;
       }
@@ -69,7 +77,8 @@ export default class ParameterValueResolver {
       }
 
       if (content.schema) {
-        const result = SchemaValueResolver.resolveExampleValue(content.schema);
+        const schema = SchemaTransformer.execute(spec, content.schema);
+        const result = SchemaValueResolver.resolveExampleValue(schema);
         if (result !== undefined) {
           return result;
         }
@@ -81,11 +90,13 @@ export default class ParameterValueResolver {
 
   /**
    * Infer a parameter's value from defined default values.
+   * @param spec
    * @param apiParameter
    */
-  protected static inferDefaultValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
+  protected static inferDefaultValue(spec: Specification, apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.schema) {
-      const result = SchemaValueResolver.resolveDefaultValue(apiParameter.schema);
+      const schema = SchemaTransformer.execute(spec, apiParameter.schema);
+      const result = SchemaValueResolver.resolveDefaultValue(schema);
       if (result !== undefined) {
         return result;
       }
@@ -94,7 +105,8 @@ export default class ParameterValueResolver {
     if (apiParameter.content) {
       const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
       if (content.schema) {
-        const result = SchemaValueResolver.resolveDefaultValue(content.schema);
+        const schema = SchemaTransformer.execute(spec, content.schema);
+        const result = SchemaValueResolver.resolveDefaultValue(schema);
         if (result !== undefined) {
           return result;
         }
@@ -106,11 +118,13 @@ export default class ParameterValueResolver {
 
   /**
    * Infer a parameter's value from defined enum values (take random).
+   * @param spec
    * @param apiParameter
    */
-  protected static inferEnumValue(apiParameter: OpenAPIParameter | OpenAPIHeader): any {
+  protected static inferEnumValue(spec: Specification, apiParameter: OpenAPIParameter | OpenAPIHeader): any {
     if (apiParameter.schema) {
-      const result = SchemaValueResolver.resolveEnumValue(apiParameter.schema);
+      const schema = SchemaTransformer.execute(spec, apiParameter.schema);
+      const result = SchemaValueResolver.resolveEnumValue(schema);
       if (result !== undefined) {
         return result;
       }
@@ -119,7 +133,8 @@ export default class ParameterValueResolver {
     if (apiParameter.content) {
       const content = apiParameter.content[Object.keys(apiParameter.content)[0]];
       if (content.schema) {
-        const result = SchemaValueResolver.resolveEnumValue(content.schema);
+        const schema = SchemaTransformer.execute(spec, content.schema);
+        const result = SchemaValueResolver.resolveEnumValue(schema);
         if (result !== undefined) {
           return result;
         }

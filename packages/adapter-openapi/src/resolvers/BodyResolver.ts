@@ -1,5 +1,5 @@
 import { OpenAPIMediaType, OpenAPIMediaTypes } from '../../types/open-api';
-import { Bodies } from '@comet-cli/types';
+import { Bodies, Schema } from '@comet-cli/types';
 import { SchemaType } from '../../types/helpers';
 import Specification from '../Specification';
 import SchemaTransformer from '../transformers/SchemaTransformer';
@@ -24,19 +24,21 @@ export default class BodyResolver {
       return undefined;
     }
     for (const mime of Object.keys(contents)) {
+      spec.resetVisited();
       const content = contents[mime];
-      const schema = content.schema;
+      const requestSchema = content.schema;
+      const schema = requestSchema ? SchemaTransformer.execute(spec, requestSchema, type) : undefined;
       bodies[mime] = {
         mediaType: mime,
-        schema: schema ? SchemaTransformer.execute(spec, schema, type) : undefined,
-        examples: this.resolveExamples(spec, content),
+        schema: schema,
+        examples: this.resolveExamples(spec, content, schema),
       };
     }
 
     return bodies;
   }
 
-  protected static resolveExamples(spec: Specification, content: OpenAPIMediaType): any[] {
+  protected static resolveExamples(spec: Specification, content: OpenAPIMediaType, schema: Schema | undefined): any[] {
     const examples = [];
     if (content.hasOwnProperty('example')) {
       examples.push(content.example);
@@ -53,10 +55,8 @@ export default class BodyResolver {
         spec.exitRef(content.examples[name]);
       }
     }
-    if (content.schema) {
-      const schema = spec.deref(content.schema);
+    if (schema !== undefined) {
       const result = SchemaValueResolver.execute(schema);
-      spec.exitRef(content.schema);
       if (result !== undefined) {
         examples.push(result);
       }

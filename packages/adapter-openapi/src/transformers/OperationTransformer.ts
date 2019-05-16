@@ -25,7 +25,7 @@ export default class OperationTransformer {
     const requestBody = operation.requestBody;
     return {
       method,
-      name: operation.operationId || undefined,
+      name: operation.summary || operation.operationId || undefined,
       description: description || undefined,
       deprecated: operation.deprecated || false,
       tags: operation.tags,

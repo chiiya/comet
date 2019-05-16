@@ -238,6 +238,7 @@ export default class SchemaTransformer {
       'minProperties',
       'xml',
       'x-circular-ref',
+      'example',
     ];
   }
 

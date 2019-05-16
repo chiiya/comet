@@ -38,6 +38,7 @@
   "dependencies": {
     "json-pointer": "^0.6.0",
     "lodash": "^4.17.11",
+    "openapi-sampler": "^1.0.0-beta.14",
     "swagger-parser": "^6.0.5",
     "swagger2openapi": "^5.3.0"
   },

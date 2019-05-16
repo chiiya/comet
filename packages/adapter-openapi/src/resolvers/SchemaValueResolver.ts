@@ -1,12 +1,12 @@
-import { OpenAPISchema } from '../../types/open-api';
+import { Schema } from '@comet-cli/types';
+const sampler = require('openapi-sampler');
 
 export default class SchemaValueResolver {
   /**
-   *
    * @param schema
    * @throws UnresolvableParameterError
    */
-  public static execute(schema: OpenAPISchema): any  {
+  public static execute(schema: Schema): any  {
     let value;
 
     // Resolve a primitive data type value.
@@ -40,10 +40,10 @@ export default class SchemaValueResolver {
       return [this.resolveObjectValue(schema.items)];
     }
 
-    return undefined;
+    return sampler.sample(schema);
   }
 
-  public static resolveObjectValue(schema: OpenAPISchema): any {
+  public static resolveObjectValue(schema: Schema): any {
     if (schema.properties === undefined) {
       return undefined;
     }
@@ -52,19 +52,21 @@ export default class SchemaValueResolver {
       const result = this.execute(schema.properties[name]);
       if (result !== undefined) {
         value[name] = result;
+      } else if (schema.required && schema.required.includes(name)) {
+        value[name] = `<${schema.properties[name].type}>`;
       }
     }
     return value;
   }
 
-  public static resolveExampleValue(schema: OpenAPISchema): any {
+  public static resolveExampleValue(schema: Schema): any {
     if (schema.hasOwnProperty('example')) {
       return schema.example;
     }
     return undefined;
   }
 
-  public static resolveDefaultValue(schema: OpenAPISchema): any {
+  public static resolveDefaultValue(schema: Schema): any {
     if (schema.hasOwnProperty('default')) {
       return schema.default;
     }
@@ -75,7 +77,7 @@ export default class SchemaValueResolver {
     return undefined;
   }
 
-  public static resolveEnumValue(schema: OpenAPISchema): any {
+  public static resolveEnumValue(schema: Schema): any {
     if (schema.enum) {
       return schema.enum[Math.floor(Math.random() * schema.enum.length)];
     }

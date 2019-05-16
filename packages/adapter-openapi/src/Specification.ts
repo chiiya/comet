@@ -115,6 +115,10 @@ export default class Specification {
     return res || {};
   }
 
+  resetVisited() {
+    this.refCounter = new RefCounter();
+  }
+
   exitRef<T>(ref: Referenced<T>) {
     if (!this.isRef(ref)) {
       return;
