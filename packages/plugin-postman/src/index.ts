@@ -1,16 +1,15 @@
 import {
   ApiModel,
-  Authentication, Body,
+  Body,
   CommandConfig,
-  LoggerInterface, Operation,
+  LoggerInterface, Operation, Parameter,
   PluginInterface,
   Resource,
 } from '@comet-cli/types';
 import {
   PostmanCollection,
   PostmanFolder, PostmanHeader,
-  PostmanItem, PostmanRequest,
-  PostmanVariable,
+  PostmanItem, PostmanQueryParam, PostmanRequest, PostmanUrl, PostmanVariable,
 } from '../types';
 import { prettifyOperationName } from '@comet-cli/helper-utils';
 import { ensureDir, writeFile } from 'fs-extra';
@@ -84,11 +83,7 @@ export default class PostmanPlugin implements PluginInterface {
     const request: PostmanRequest = {
       method: operation.method,
       description: operation.request ? operation.request.description : undefined,
-      url: {
-        raw: `{{url}}${uri}`,
-        host: '{{url}}',
-        path: uri,
-      },
+      url: uri,
     };
     if (operation.request && operation.request.body) {
       const types = Object.keys(operation.request.body);
@@ -131,23 +126,20 @@ export default class PostmanPlugin implements PluginInterface {
     return excludedContentType;
   }
 
-  protected resolveUri(resource: Resource, operation: Operation): string {
+  protected resolveUri(resource: Resource, operation: Operation): PostmanUrl {
     let uri = resource.path;
+    uri = uri
+      .replace(/\/{([a-zA-Z0-9\-_]+)}(\/|$)/g, '/:$1$2')
+      .replace(/^{([a-zA-Z0-9\-_]+)}:/, '{{$1}}:');
     const requiredQueryParams = [];
     const foundQueryParams = {};
     for (const param of operation.parameters) {
-      if (param.example && param.location === 'path') {
-        uri = uri.replace(`{${param.name}}`, param.example);
-      }
       if (param.location === 'query' && param.required) {
         requiredQueryParams.push(param);
         foundQueryParams[param.name] = true;
       }
     }
     for (const param of resource.parameters) {
-      if (param.example && param.location === 'path') {
-        uri = uri.replace(`{${param.name}}`, param.example);
-      }
       if (param.location === 'query' && param.required && foundQueryParams[param.name] === undefined) {
         requiredQueryParams.push(param);
       }
@@ -162,6 +154,60 @@ export default class PostmanPlugin implements PluginInterface {
       uri += queryString;
     }
 
-    return uri;
+    const path = uri.split('/');
+
+    return {
+      raw: `{{url}}${uri}`,
+      host: '{{url}}',
+      path: path,
+      query: this.resolveQueryParameters(resource, operation),
+      variable: this.resolvePathParameters(resource, operation),
+    };
+  }
+
+  protected resolveQueryParameters(resource: Resource, operation: Operation): PostmanQueryParam[] {
+    const params: PostmanQueryParam[] = [];
+    const queryParams: {[name: string]: Parameter} = {};
+    for (const param of resource.parameters) {
+      if (param.location === 'query') {
+        queryParams[param.name] = param;
+      }
+    }
+    for (const param of operation.parameters) {
+      if (param.location === 'query') {
+        queryParams[param.name] = param;
+      }
+    }
+    for (const param of Object.values(queryParams)) {
+      params.push({
+        key: param.name,
+        value: param.example,
+        description: param.description,
+      });
+    }
+    return params;
+  }
+
+  protected resolvePathParameters(resource: Resource, operation: Operation): PostmanVariable[] {
+    const params: PostmanVariable[] = [];
+    const pathParams: {[name: string]: Parameter} = {};
+    for (const param of resource.parameters) {
+      if (param.location === 'path') {
+        pathParams[param.name] = param;
+      }
+    }
+    for (const param of operation.parameters) {
+      if (param.location === 'path') {
+        pathParams[param.name] = param;
+      }
+    }
+    for (const param of Object.values(pathParams)) {
+      params.push({
+        key: param.name,
+        value: param.example,
+        description: param.description,
+      });
+    }
+    return params;
   }
 }

@@ -32,3 +32,25 @@ export const getAllOperationsWithUris = (model: ApiModel): EnhancedOperation[] =
 
   return operations;
 };
+
+export const groupOperationsByTags = (model: ApiModel): {[tag: string]: EnhancedOperation[]} | undefined => {
+  const operations = getAllOperationsWithUris(model);
+  const tags = {};
+  let count = 0;
+  for (const operation of operations) {
+    if (operation.tags && operation.tags.length > 0) {
+      const tag = operation.tags[0];
+      if (tags[tag]) {
+        tags[tag].push(operation);
+      } else {
+        tags[tag] = [operation];
+      }
+      count += 1;
+    }
+  }
+  // We can only group by tags if all operations have a tag set
+  if (count === operations.length) {
+    return tags;
+  }
+  return undefined;
+};

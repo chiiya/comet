@@ -51,7 +51,7 @@ export interface PostmanFolder {
 }
 
 export interface PostmanVariable {
-  id: string;
+  id?: string;
   key: string;
   value?: any;
   type?: 'string' | 'boolean' | 'number' | 'any';
