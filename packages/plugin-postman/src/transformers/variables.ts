@@ -1,18 +1,17 @@
 import { ApiModel, Authentication } from '@comet-cli/types';
 import { PostmanVariable } from '../../types';
+import { ucfirst } from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 
+/**
+ * Create Postman Collection variables for data that is reused a lot.
+ * @param model
+ */
 export const transformVariables = (model: ApiModel): PostmanVariable[] => {
   const variables: PostmanVariable[] = [];
   variables.push(...createServerVariables(model));
+  variables.push(...createAuthVariables(model));
 
-  // Add auth secrets as variables
-  if (model.auth) {
-    for (const name of Object.keys(model.auth)) {
-      const scheme = model.auth[name];
-      variables.push(getAuthSecret(scheme));
-    }
-  }
   return variables;
 };
 
@@ -63,12 +62,38 @@ const createServerVariables = (model: ApiModel): PostmanVariable[] => {
   return variables;
 };
 
-export const getAuthSecret = (auth: Authentication): PostmanVariable => {
-  return {
-    id: uuidv4(),
-    key: `auth_${auth.type}`,
-    description: auth.description,
-    type: 'string',
-    name: `Auth secret for ${auth.type.toUpperCase()}`,
-  };
+/**
+ * Create variables for each auth secret.
+ * @param model
+ */
+export const createAuthVariables = (model: ApiModel): PostmanVariable[] => {
+  const variables: PostmanVariable[] = [];
+  if (model.auth === undefined) {
+    return variables;
+  }
+  for (const name of Object.keys(model.auth)) {
+    const scheme = model.auth[name];
+    if (scheme.type === 'basic' || scheme.type === 'digest') {
+      variables.push({
+        key: `auth_${scheme.type}_username`,
+        description: scheme.description || `Username for HTTP ${ucfirst(scheme.type)} Auth`,
+        type: 'string',
+        name: `HTTP ${ucfirst(scheme.type)} Username`,
+      });
+      variables.push({
+        key: `auth_${scheme.type}_password`,
+        description: scheme.description || `Password for HTTP ${ucfirst(scheme.type)} Auth`,
+        type: 'string',
+        name: `HTTP ${ucfirst(scheme.type)} Password`,
+      });
+    } else {
+      variables.push({
+        key: `auth_${name}`,
+        description: scheme.description || `Auth secret for ${ucfirst(scheme.type)}`,
+        type: 'string',
+        name: `${scheme.type.toUpperCase()} Auth Secret`,
+      });
+    }
+  }
+  return variables;
 };
