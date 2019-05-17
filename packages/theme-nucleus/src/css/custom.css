@@ -5,3 +5,57 @@ html {
     min-height: 100%;
   }
 }
+
+.resource-list {
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    background: #e5eff5;
+  }
+}
+
+.resource-active {
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: .25rem;
+    left: -1.7rem;
+    bottom: .25rem;
+    width: 4px;
+    background: #3eb0ef;
+  }
+}
+
+.text-tiny {
+  font-size: 10px;
+}
+
+h1 {
+  @apply text-3xl;
+  @apply font-bold;
+  @apply text-gray-700;
+  @apply mb-1;
+}
+h2 {
+  @apply text-2xl;
+  @apply font-bold;
+  @apply text-gray-700;
+}
+h3 {
+  @apply text-xl;
+  @apply font-bold;
+  @apply text-gray-700;
+}
+
+p {
+  color: #586679;
+  margin-bottom: 1rem;
+  margin-top: 0;
+  word-spacing: .05em;
+}

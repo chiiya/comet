@@ -11,7 +11,192 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
-
+<body class="bg-gray-100 min-h-screen">
+<main class="pb-16 h-full flex flex-column lg:flex-row justify-start relative">
+  <div class="w-96 flex-shrink-0 relative">
+<!--    <div class="sticky w-64 h-full"></div>-->
+    <div class="sticky inset-x-0 top-0 p-8 pt-16 sidebar">
+      <ol>
+        <li class="text-sm mt-2">
+          <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Locales</a>
+          <ol class="pl-4 relative text-xs">
+            <li class="text-sm mt-2">
+              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Countries</a>
+              <ol class="pl-4 relative text-xs resource-list">
+                <li class="font-normal mt-1 px-3 rounded bg-gray-200">
+                  <a href="#javascript-client-library" class="text-gray-700 hover:text-blue-400 font-semibold inline-block py-1 resource-active relative"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Retrieve Countries</a>
+                </li>
+                <li class="font-normal mt-1 px-3">
+                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-orange-500 font-black inline-block">Post</span>Create Country</a>
+                </li>
+              </ol>
+            </li>
+            <li class="text-sm mt-2">
+              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Country</a>
+              <ol class="pl-4 relative text-xs resource-list">
+                <li class="font-normal mt-1 px-3">
+                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Show Country</a>
+                </li>
+                <li class="font-normal mt-1 px-3">
+                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-blue-500 font-black inline-block">Patch</span>Update Country</a>
+                </li>
+                <li class="font-normal mt-1 px-3">
+                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-pink-500 font-black inline-block">Delete</span>Delete Country</a>
+                </li>
+              </ol>
+            </li>
+            <li class="text-sm mt-2">
+              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Languages</a>
+            </li>
+            <li class="text-sm mt-2">
+              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Language</a>
+            </li>
+          </ol>
+        </li>
+        <li class="text-sm mt-2">
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Authors</a>
+        </li>
+        <li class="text-sm mt-2">
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Author</a>
+        </li>
+        <li class="text-sm mt-2">
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Books</a>
+        </li>
+        <li class="text-sm mt-2">
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Book</a>
+        </li>
+      </ol>
+    </div>
+  </div>
+  <div class="w-full flex">
+    <div class="w-3/5 bg-white shadow-md">
+      <article class="flex-auto p-24 relative">
+        <section class="w-full relative">
+          <h1 id="travel-books-api">Travel Books API</h1>
+          <p>This project contains the implementation of a simple Laravel example RESTful API for travel books. We have several different models: countries, languages, authors and books. Travel books are written by one author, in one language, for one country. For this relatively simple API with 20 endpoints, Comet is able to generate 112 test-cases.</p>
+          <h2 id="json-api">JSON API</h2>
+          <p>In the following section, a short overview of the general capabilities of the API will be given.</p>
+          <p><strong>Note:</strong> This documentation will display parameters with brackets (<code>[</code> and <code>]</code>) for readability, but actual URLs will need to be percent-encoded (<code>%5B</code> and <code>%5D</code>).</p>
+          <h3 id="filtering-and-search">Filtering and Search</h3>
+          <p>Filtering lets you query data that contains certain matching attributes or relationships. These take the form of <code>filter[attribute]=value</code>. For example, you can request all the books by a certain publisher:</p>
+          <pre class="http"><code>/books?filter[publisher]=ABC</code></pre>
+          <h3 id="includes">Includes</h3>
+          <p>For some resources (e.g. books), you can also include related resources with <code>include=[relationship]</code>. A comma-delimited list can be used to request multiple relationships.</p>
+          <pre><code>/books?include=author,country</code></pre>
+          <h2 id="status-codes">Status Codes</h2>
+          <table>
+            <thead>
+            <tr class="header">
+              <th>Code</th>
+              <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="odd">
+              <td><code>200</code></td>
+              <td>OK</td>
+            </tr>
+            <tr class="even">
+              <td><code>204</code></td>
+              <td>No Content - successful request with no response content</td>
+            </tr>
+            <tr class="odd">
+              <td><code>400</code></td>
+              <td>Bad Request - malformed request</td>
+            </tr>
+            <tr class="even">
+              <td><code>401</code></td>
+              <td>Unauthorized - invalid or no authentication details provided</td>
+            </tr>
+            <tr class="odd">
+              <td><code>404</code></td>
+              <td>Not Found - resource does not exist</td>
+            </tr>
+            <tr class="even">
+              <td><code>405</code></td>
+              <td>Method Not Allowed</td>
+            </tr>
+            <tr class="odd">
+              <td><code>5xx</code></td>
+              <td>Server Error</td>
+            </tr>
+            </tbody>
+          </table>
+        </section>
+      </article>
+    </div>
+    <div class="w-2/5 p-6">
+      <article class="rounded-lg py-6 px-10 bg-gray-800">
+        <section class="w-full relative">
+          <pre class="text-gray-100 text-xs">
+"schema": {
+  "description": "My Pet",
+  "required": [
+    "name",
+    "photoUrls"
+  ],
+  "title": "Pettie",
+  "xml": {
+    "name": "Pet"
+  },
+  "type": "object",
+  "discriminator": "petType",
+  "properties": {
+    "category": {
+      "description": "Categories this pet belongs to",
+      "xml": {
+        "name": "Category"
+      },
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Category ID",
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Category name",
+          "minLength": 1,
+          "type": "string"
+        },
+        "sub": {
+          "description": "Test Sub Category",
+          "type": "object",
+            "properties": {
+              "prop1": {
+                "description": "Dumb Property",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+    }
+    "name": {
+      "description": "The name given to a pet",
+      "example": "Guru",
+      "type": "string"
+    },
+    "photoUrls": {
+      "description": "The list of URL to a cute photos featuring pet",
+      "maxItems": 20,
+      "xml": {
+        "name": "photoUrl",
+        "wrapped": true
+      },
+      "type": "array",
+      "items": {
+        "format": "url",
+        "type": "string"
+      }
+    },
+  }
+}
+          </pre>
+        </section>
+      </article>
+    </div>
+  </div>
+</main>
 </body>
 </html>

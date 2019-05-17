@@ -1,5 +1,5 @@
 let mix = require('laravel-mix');
-const glob = require('glob-all')
+const glob = require('glob-all');
 const tailwind = require('tailwindcss');
 const cssImport = require('postcss-import');
 const cssPresetEnv = require('postcss-preset-env');
@@ -23,19 +23,19 @@ mix.postCss('src/css/main.css', 'dist/css', [
   tailwind('./tailwind.config.js'),
   cssNested(),
   cssPresetEnv(),
-  purgeCss({
-    content: glob.sync([
-      path.join(__dirname, 'dist/index.html'),
-      // Add any other files that reference class names here
-    ]),
-    extractors: [{
-      extractor: class {
-        static extract (content) {
-          return content.match(/[A-z0-9-:\/]+/g) || [];
-        }
-      },
-      extensions: ['html', 'js', 'php'],
-    }]
-  }),
+  // purgeCss({
+  //   content: glob.sync([
+  //     path.join(__dirname, 'dist/index.html'),
+  //     Add any other files that reference class names here
+    // ]),
+    // extractors: [{
+    //   extractor: class {
+    //     static extract (content) {
+    //       return content.match(/[A-z0-9-:\/]+/g) || [];
+    //     }
+    //   },
+    //   extensions: ['html', 'js', 'php'],
+    // }]
+  // }),
 ])
   .setPublicPath('dist');
