@@ -12,65 +12,68 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen">
-<main class="pb-16 h-full flex flex-column lg:flex-row justify-start relative">
+<main class="h-full flex flex-column lg:flex-row justify-start relative">
   <div class="w-96 flex-shrink-0 relative">
 <!--    <div class="sticky w-64 h-full"></div>-->
     <div class="sticky inset-x-0 top-0 p-8 pt-16 sidebar">
-      <ol>
+      <ol class="list-none">
         <li class="text-sm mt-2">
-          <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Locales</a>
-          <ol class="pl-4 relative text-xs">
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Overview</a>
+        </li>
+        <li class="text-sm mt-2">
+          <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Locales</a>
+          <ol class="list-none pl-4 relative text-xs">
             <li class="text-sm mt-2">
-              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Countries</a>
-              <ol class="pl-4 relative text-xs resource-list">
+              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Countries</a>
+              <ol class="list-none pl-4 relative text-xs resource-list">
                 <li class="font-normal mt-1 px-3 rounded bg-gray-200">
-                  <a href="#javascript-client-library" class="text-gray-700 hover:text-blue-400 font-semibold inline-block py-1 resource-active relative"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Retrieve Countries</a>
+                  <a href="#javascript-client-library" class="text-gray-750 hover:text-blue-400 font-semibold inline-block py-1 resource-active relative"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Retrieve Countries</a>
                 </li>
                 <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-orange-500 font-black inline-block">Post</span>Create Country</a>
+                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-orange-500 font-black inline-block">Post</span>Create Country</a>
                 </li>
               </ol>
             </li>
             <li class="text-sm mt-2">
-              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-700 hover:text-blue-400">Country</a>
-              <ol class="pl-4 relative text-xs resource-list">
+              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Country</a>
+              <ol class="list-none pl-4 relative text-xs resource-list">
                 <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Show Country</a>
+                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Show Country</a>
                 </li>
                 <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-blue-500 font-black inline-block">Patch</span>Update Country</a>
+                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-blue-500 font-black inline-block">Patch</span>Update Country</a>
                 </li>
                 <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-700 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-pink-500 font-black inline-block">Delete</span>Delete Country</a>
+                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-pink-500 font-black inline-block">Delete</span>Delete Country</a>
                 </li>
               </ol>
             </li>
             <li class="text-sm mt-2">
-              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Languages</a>
+              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Languages</a>
             </li>
             <li class="text-sm mt-2">
-              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Language</a>
+              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Language</a>
             </li>
           </ol>
         </li>
         <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Authors</a>
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Authors</a>
         </li>
         <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Author</a>
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Author</a>
         </li>
         <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Books</a>
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Books</a>
         </li>
         <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-700">Book</a>
+          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Book</a>
         </li>
       </ol>
     </div>
   </div>
-  <div class="w-full flex">
-    <div class="w-3/5 bg-white shadow-md">
-      <article class="flex-auto p-24 relative">
+  <div class="w-full h-full flex">
+    <div class="w-3/5 h-full xl:max-w-5xl bg-white shadow-content">
+      <article class="flex-auto p-24 xl:max-w-4xl mx-auto relative">
         <section class="w-full relative">
           <h1 id="travel-books-api">Travel Books API</h1>
           <p>This project contains the implementation of a simple Laravel example RESTful API for travel books. We have several different models: countries, languages, authors and books. Travel books are written by one author, in one language, for one country. For this relatively simple API with 20 endpoints, Comet is able to generate 112 test-cases.</p>
@@ -128,7 +131,7 @@
     <div class="w-2/5 p-6">
       <article class="rounded-lg py-6 px-10 bg-gray-800">
         <section class="w-full relative">
-          <pre class="text-gray-100 text-xs">
+          <pre class="text-gray-100 text-xs bg-transparent border-none">
 "schema": {
   "description": "My Pet",
   "required": [

@@ -1,0 +1,74 @@
+strong {
+  @apply font-bold;
+}
+
+em {
+  @apply italic;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold;
+  @apply text-blue-950;
+  @apply mb-2;
+  @apply mt-0;
+}
+
+h1 {
+  @apply text-3xl;
+}
+
+h2 {
+  @apply text-2xl;
+}
+
+h3 {
+  @apply text-xl;
+}
+
+h4 {
+  @apply text-lg;
+}
+
+h5 {
+  @apply text-base;
+}
+
+h6 {
+  @apply text-sm;
+}
+
+p {
+  @apply mb-4;
+  @apply mt-0;
+  @apply text-gray-700;
+  @apply leading-relaxed;
+}
+
+a {
+  @apply text-blue-400;
+  @apply cursor-pointer;
+  transition: color 150ms ease-in;
+
+  &:hover,
+  &:focus {
+    @apply text-blue-600;
+  }
+}
+
+blockquote {
+  @apply border-gray-700;
+  @apply border-solid;
+  @apply border-l-2;
+  @apply py-2;
+  @apply px-4;
+
+  &:last-child,
+  > *:last-child {
+    @apply mb-0;
+  }
+}

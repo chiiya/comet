@@ -1,0 +1,29 @@
+pre {
+  @apply bg-gray-100;
+  @apply border-solid;
+  @apply border-gray-300;
+  @apply border;
+  @apply overflow-y-hidden;
+
+  &>code {
+    @apply bg-transparent;
+    @apply block;
+    @apply py-2;
+    @apply px-3;
+    @apply text-base;
+    @apply whitespace-pre-wrap;
+    @apply text-gray-700;
+    line-height: inherit;
+  }
+}
+
+code {
+  @apply bg-gray-100;
+  @apply text-red-600;
+  @apply text-sm;
+  @apply leading-tight;
+  @apply py-1;
+  @apply px-2;
+  @apply whitespace-no-wrap;
+  tab-size: 4;
+}

@@ -2,37 +2,45 @@ const { colors } = require('tailwindcss/defaultTheme');
 
 module.exports = {
   theme: {
-    fontFamily: {
-      sans: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        'Oxygen',
-        'Ubuntu',
-        'Cantarell',
-        'Open Sans',
-        '"Helvetica Neue"',
-        'Arial',
-        '"Noto Sans"',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-        '"Noto Color Emoji"',
-      ],
-    },
+    // fontFamily: {
+    //   sans: [
+    //     '-apple-system',
+    //     'BlinkMacSystemFont',
+    //     '"Segoe UI"',
+    //     'Roboto',
+    //     'Oxygen',
+    //     'Ubuntu',
+    //     'Cantarell',
+    //     'Open Sans',
+    //     '"Helvetica Neue"',
+    //     'Arial',
+    //     '"Noto Sans"',
+    //     'sans-serif',
+    //     '"Apple Color Emoji"',
+    //     '"Segoe UI Emoji"',
+    //     '"Segoe UI Symbol"',
+    //     '"Noto Color Emoji"',
+    //   ],
+    // },
     extend: {
       colors: {
         gray: {
           ...colors.gray,
           '100': '#f8fafc',
-          '700': '#738a94',
+          '750': '#738a94',
+        },
+        blue: {
+          ...colors.blue,
+          '950': '#003c57',
         }
+
       },
       width: {
         96: '24rem',
       },
+      boxShadow: {
+        content: '0 0 5px rgba(0, 0, 0, .02), 0 5px 22px -8px rgba(0, 0, 0, .1)',
+      }
     }
   },
   variants: {
