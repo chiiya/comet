@@ -1,4 +1,4 @@
-import { ApiModel, Body, Operation, Parameter, Resource } from '@comet-cli/types';
+import { ApiModel, Body, Dict, Operation, Parameter, Resource } from '@comet-cli/types';
 import {
   PostmanFolder,
   PostmanHeader,
@@ -9,38 +9,103 @@ import {
   PostmanVariable,
 } from '../../types';
 import { Node, Trie } from '../trie';
-import { prettifyOperationName } from '@comet-cli/helper-utils';
+import {
+  getAllOperationsWithUris,
+  getAllResources,
+  prettifyOperationName,
+} from '@comet-cli/helper-utils';
+
+export type EnhancedOperation = Operation & {
+  uri: string;
+  resourceParameters: Parameter[];
+};
 
 export const createItems = (model: ApiModel): (PostmanItem | PostmanFolder)[] => {
   const folders: (PostmanItem | PostmanFolder)[] = [];
-  // Group by resource groups, then resource trie
-  if (model.groups && model.groups.length > 0) {
-    for (const group of model.groups) {
-      const items = [];
-      const trie = createResourceTrie(group.resources);
-      for (const node of Object.values(trie.root.children)) {
-        if (node.requestCount > 0) {
-          const folderOrItem = convertNodeToFolderOrItem(node);
-          if (folderOrItem !== undefined) {
-            items.push(folderOrItem);
+  const tagGroups = groupByTags(model);
+  // Tags are set, group operations by tags
+  if (Object.keys(tagGroups).length > 1) {
+    const tags = Object.keys(tagGroups);
+    for (const tag of tags) {
+      // Add untagged operations at root level
+      if (tag === 'x-comet-untagged') {
+        const operations = tagGroups[tag];
+        for (const operation of operations) {
+          folders.push(createRequestItem(operation.uri, operation.resourceParameters, operation));
+        }
+      } else {
+        const items = [];
+        const operations = tagGroups[tag];
+        for (const operation of operations) {
+          items.push(createRequestItem(operation.uri, operation.resourceParameters, operation));
+        }
+        folders.push({
+          name: tag,
+          item: items,
+        });
+      }
+    }
+  } else {
+    // Group by resource groups, then resource trie
+    if (model.groups && model.groups.length > 0) {
+      for (const group of model.groups) {
+        const items = [];
+        const trie = createResourceTrie(group.resources);
+        for (const node of Object.values(trie.root.children)) {
+          if (node.requestCount > 0) {
+            const folderOrItem = convertNodeToFolderOrItem(node);
+            if (folderOrItem !== undefined) {
+              items.push(folderOrItem);
+            }
           }
         }
+        folders.push({
+          name: group.name,
+          description: group.description,
+          item: items,
+        });
       }
-      folders.push({
-        name: group.name,
-        description: group.description,
-        item: items,
-      });
     }
-  }
-  const trie = createResourceTrie(model.resources);
-  // await writeFile('trie.json', JSON.stringify(trie, null, 2));
-  for (const node of Object.values(trie.root.children)) {
-    if (node.requestCount > 0) {
-      folders.push(convertNodeToFolderOrItem(node));
+    const trie = createResourceTrie(model.resources);
+    // await writeFile('trie.json', JSON.stringify(trie, null, 2));
+    for (const node of Object.values(trie.root.children)) {
+      if (node.requestCount > 0) {
+        folders.push(convertNodeToFolderOrItem(node));
+      }
     }
   }
   return folders;
+};
+
+const groupByTags = (model: ApiModel): Dict<EnhancedOperation[]> => {
+  const tags: Dict<EnhancedOperation[]> = {
+    'x-comet-untagged': [],
+  };
+  const resources = getAllResources(model);
+  for (const resource of resources) {
+    for (const operation of resource.operations) {
+      const enhancedOperation = {
+        ...operation,
+        uri: resource.path,
+        resourceParameters: resource.parameters,
+      };
+      if (operation.tags && operation.tags.length > 0) {
+        const tag = operation.tags[0];
+        if (tags[tag]) {
+          tags[tag].push(enhancedOperation);
+        } else {
+          tags[tag] = [enhancedOperation];
+        }
+      } else {
+        tags['x-comet-untagged'].push(enhancedOperation);
+      }
+    }
+  }
+  const operations = getAllOperationsWithUris(model);
+  for (const operation of operations) {
+
+  }
+  return tags;
 };
 
 const createResourceTrie = (resources: Resource[]): Trie => {
@@ -68,7 +133,7 @@ const createResourceTrie = (resources: Resource[]): Trie => {
       currentNode.requestCount += resource.operations.length;
     }
     for (const operation of resource.operations) {
-      currentNode.addRequest(createRequestItem(resource, operation));
+      currentNode.addRequest(createRequestItem(resource.path, resource.parameters, operation));
     }
   }
   return trie;
@@ -100,7 +165,7 @@ const convertNodeToFolderOrItem = (node: Node): PostmanFolder | PostmanItem => {
   return node.requests[0];
 };
 
-const createRequestItem = (resource: Resource, operation: Operation): PostmanItem => {
+const createRequestItem = (path: string, resourceParameters: Parameter[], operation: Operation): PostmanItem => {
   let headers: PostmanHeader[] = [];
   if (operation.request && operation.request.headers.length > 0) {
     for (const header of operation.request.headers) {
@@ -111,7 +176,7 @@ const createRequestItem = (resource: Resource, operation: Operation): PostmanIte
       });
     }
   }
-  const uri = resolveUri(resource, operation);
+  const uri = resolveUri(path, resourceParameters, operation);
   const request: PostmanRequest = {
     method: operation.method,
     description: operation.request ? operation.request.description : undefined,
@@ -147,7 +212,7 @@ const createRequestItem = (resource: Resource, operation: Operation): PostmanIte
     request.header = headers;
   }
   return {
-    name: operation.name || prettifyOperationName(resource.path, operation.method),
+    name: operation.name || prettifyOperationName(path, operation.method),
     description: operation.description,
     request: request,
   };
@@ -162,8 +227,8 @@ const setContentTypeHeader = (headers: PostmanHeader[], type: string): PostmanHe
   return excludedContentType;
 };
 
-const resolveUri = (resource: Resource, operation: Operation): PostmanUrl => {
-  let uri = resource.path;
+const resolveUri = (path: string, resourceParameters: Parameter[], operation: Operation): PostmanUrl => {
+  let uri = path;
   uri = replaceParameterNotation(uri);
   const requiredQueryParams = [];
   const foundQueryParams = {};
@@ -173,7 +238,7 @@ const resolveUri = (resource: Resource, operation: Operation): PostmanUrl => {
       foundQueryParams[param.name] = true;
     }
   }
-  for (const param of resource.parameters) {
+  for (const param of resourceParameters) {
     if (param.location === 'query' && param.required && foundQueryParams[param.name] === undefined) {
       requiredQueryParams.push(param);
     }
@@ -188,21 +253,21 @@ const resolveUri = (resource: Resource, operation: Operation): PostmanUrl => {
     uri += queryString;
   }
 
-  const path = uri.split('/');
+  const pathSegments = uri.split('/');
 
   return {
     raw: `{{url}}${uri}`,
     host: '{{url}}',
-    path: path,
-    query: resolveQueryParameters(resource, operation),
-    variable: resolvePathParameters(resource, operation),
+    path: pathSegments,
+    query: resolveQueryParameters(resourceParameters, operation),
+    variable: resolvePathParameters(resourceParameters, operation),
   };
 };
 
-const resolveQueryParameters = (resource: Resource, operation: Operation): PostmanQueryParam[] => {
+const resolveQueryParameters = (resourceParameters: Parameter[], operation: Operation): PostmanQueryParam[] => {
   const params: PostmanQueryParam[] = [];
   const queryParams: {[name: string]: Parameter} = {};
-  for (const param of resource.parameters) {
+  for (const param of resourceParameters) {
     if (param.location === 'query') {
       queryParams[param.name] = param;
     }
@@ -222,10 +287,10 @@ const resolveQueryParameters = (resource: Resource, operation: Operation): Postm
   return params;
 };
 
-const resolvePathParameters = (resource: Resource, operation: Operation): PostmanVariable[] => {
+const resolvePathParameters = (resourceParameters: Parameter[], operation: Operation): PostmanVariable[] => {
   const params: PostmanVariable[] = [];
   const pathParams: {[name: string]: Parameter} = {};
-  for (const param of resource.parameters) {
+  for (const param of resourceParameters) {
     if (param.location === 'path') {
       pathParams[param.name] = param;
     }
