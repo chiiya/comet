@@ -7799,7 +7799,6 @@ h6 {
 p {
   margin-bottom: 1rem;
   margin-top: 0;
-  color: #4a5568;
   line-height: 1.625;
 }
 
@@ -7920,7 +7919,7 @@ code.theme-dark .token.null,
   }
 
 code.theme-dark .token.property, pre.theme-dark .token.property {
-    color: #fdcc59;
+    color: #b9b5b8;
   }
 
 code.theme-dark .token.tag, pre.theme-dark .token.tag {
@@ -7928,7 +7927,7 @@ code.theme-dark .token.tag, pre.theme-dark .token.tag {
   }
 
 code.theme-dark .token.string, pre.theme-dark .token.string {
-    color: #149b93;
+    color: whitesmoke;
   }
 
 code.theme-dark .token.selector, pre.theme-dark .token.selector {
@@ -8078,7 +8077,7 @@ code.theme-light code.language-css,
   pre.theme-light .token.statement,
   pre.theme-light .token.regex,
   pre.theme-light .token.atrule {
-    color: #728fcb;
+    color: #718096;
   }
 
 code.theme-light .token.placeholder,
