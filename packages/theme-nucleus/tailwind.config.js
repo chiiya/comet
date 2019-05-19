@@ -33,6 +33,7 @@ module.exports = {
         },
         blue: {
           ...colors.blue,
+          '600': '#3273dc',
           '950': '#003c57',
         }
 
@@ -42,6 +43,7 @@ module.exports = {
       },
       boxShadow: {
         content: '0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1)',
+        operation: '0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1)',
       }
     }
   },

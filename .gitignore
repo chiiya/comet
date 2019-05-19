@@ -8,6 +8,8 @@ package-lock.json
 /tmp
 .idea/
 result.json
+/helper.js
+/string.txt
 result-*.json
 exports/
 examples/blueprint.apib

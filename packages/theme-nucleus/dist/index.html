@@ -140,6 +140,53 @@
         </article>
       </div>
       <div class="w-6/12 max-w-4xl p-6 pt-12 text-sm">
+      </div>
+    </div>
+    <div class="w-full flex">
+      <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-operation">
+        <article class="flex-auto min-h-full px-12 py-0 xl:max-w-4xl mx-auto relative">
+          <section class="w-full relative">
+            <div class="bg-gray-850 w-full p-2 rounded-lg flex items-center mb-4">
+              <div class="bg-green-500 rounded py-1 px-2 uppercase text-white text-xs mr-4">Get</div>
+              <div class="text-sm font-mono text-white text-icon">/authors - Retrieve authors</div>
+            </div>
+            <p>Retrieve a list of all authors. The following relationships can optionally be included in the response:</p>
+            <table>
+              <thead>
+              <tr class="header">
+                <th>Name</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="odd">
+                <td><code>books</code></td>
+              </tr>
+              <tr class="even">
+                <td><code>country</code></td>
+              </tr>
+              </tbody>
+            </table>
+            <p>Available filters</p>
+            <table>
+              <thead>
+              <tr class="header">
+                <th style="text-align: left;">Filter</th>
+                <th style="text-align: left;">Example</th>
+                <th style="text-align: left;">Notes</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="odd">
+                <td style="text-align: left;"><code>name</code></td>
+                <td style="text-align: left;"><code>Tony</code></td>
+                <td style="text-align: left;">Filter by author name (first name and/or last name)</td>
+              </tr>
+              </tbody>
+            </table>
+          </section>
+        </article>
+      </div>
+      <div class="w-6/12 max-w-4xl p-6 pt-0 text-sm">
         <div class="bg-gray-850 py-1 w-full flex items-center justify-end">
           <a class="mr-1 text-gray-500 hover:text-gray-100 flex flex-row items-center">
             <span class="text-sm font-mono text-icon">cURL</span>
@@ -150,57 +197,101 @@
         </div>
         <pre class="border-none bg-gray-950"><code class="language-bash theme-dark">curl http://local.comet-demo.test/api/authors</code></pre>
         <div class="shadow-md rounded-lg mb-4">
-          <div class="bg-gray-300 rounded-tl-lg rounded-tr-lg w-full pt-1 px-3 flex">
-            <div class="py-2 uppercase font-bold text-blue-900 text-tiny h-full mr-4">Example Request</div>
-          </div>
-          <div class="w-full">
-        <pre class="border-none rounded-bl-lg rounded-br-lg bg-gray-100 m-0"><code class="language-json theme-light">[
-  {
-    "id": 1,
-    "last_name": "Wehner",
-    "first_name": "Tony",
-    "date_of_birth": "2002-08-20 00:00:00",
-    "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
-    "country_code": "DE"
-  },
-  {
-    "id": 2,
-    "last_name": "Jakubowski",
-    "first_name": "Beryl",
-    "date_of_birth": "1949-08-16 00:00:00",
-    "homepage": "http://murphy.biz/sit-non-accusantium-sunt-rerum-et-et-nisi-qui.html",
-    "country_code": "DE"
-  }
-]
-        </code></pre>
-          </div>
-        </div>
-        <div class="shadow-md rounded-lg mb-4">
-          <div class="bg-gray-700 rounded-tl-lg rounded-tr-lg w-full pt-1 px-3 flex">
-            <div class="py-2 uppercase font-bold text-gray-200 text-tiny h-full mr-4">Example Response</div>
+          <div class="bg-gray-850 rounded-tl-lg rounded-tr-lg w-full pt-1 px-3 flex">
+            <div class="py-2 uppercase font-bold text-gray-400 text-tiny h-full mr-4">Example Response</div>
           </div>
           <div class="w-full">
         <pre class="border-none rounded-bl-lg rounded-br-lg bg-gray-950"><code class="language-json theme-dark">[
-  {
+    {
+        "id": 1,
+        "last_name": "Wehner",
+        "first_name": "Tony",
+        "date_of_birth": "2002-08-20 00:00:00",
+        "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
+        "country_code": "DE"
+    },
+    {
+        "id": 2,
+        "last_name": "Jakubowski",
+        "first_name": "Beryl",
+        "date_of_birth": "1949-08-16 00:00:00",
+        "homepage": "http://murphy.biz/sit-non-accusantium-sunt-rerum-et-et-nisi-qui.html",
+        "country_code": "DE"
+    }
+]</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="w-full flex">
+      <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-operation">
+        <article class="flex-auto min-h-full px-12 py-0 xl:max-w-4xl mx-auto relative">
+          <section class="w-full relative">
+            <div class="bg-gray-850 w-full p-2 rounded-lg flex items-center mb-4">
+              <div class="bg-orange-500 rounded py-1 px-2 uppercase text-white text-xs mr-4">Post</div>
+              <div class="text-sm font-mono text-white text-icon">/authors - Create author</div>
+            </div>
+            <p>Endpoint for creating a new author.</p>
+          </section>
+        </article>
+      </div>
+      <div class="w-6/12 max-w-4xl p-6 pt-0 text-sm">
+        <div class="bg-gray-850 py-1 w-full flex items-center justify-end">
+          <a class="mr-1 text-gray-500 hover:text-gray-100 flex flex-row items-center">
+            <span class="text-sm font-mono text-icon">cURL</span>
+            <i data-feather="chevron-down" class="h-4"></i>
+          </a>
+          <a class="mr-1 text-gray-500 hover:text-gray-100 flex items-center"><i data-feather="clipboard" class="h-4"></i></a>
+          <span class="mr-1 text-gray-500 flex items-center"><i data-feather="code" class="h-4"></i></span>
+        </div>
+        <pre class="border-none bg-gray-950"><code class="language-bash theme-dark">curl http://local.comet-demo.test/api/authors \
+  -d last_name="Rau" \
+  -d first_name="Gage" \
+  -d date_of_birth="2011-10-30 00:00:00" \
+  -d homepage="http://www.lowe.biz/fugiat-doloribus-in-beatae-aut-alias" \
+  -d country_code="US" \
+        </code></pre>
+        <div class="shadow-md rounded-lg mb-4">
+          <div class="bg-gray-300 rounded-tl-lg rounded-tr-lg w-full pt-1 px-3 flex">
+            <div class="py-2 uppercase font-bold text-gray-600 text-tiny h-full mr-4">Example Request</div>
+          </div>
+          <div class="w-full">
+        <pre class="border-none rounded-bl-lg rounded-br-lg bg-gray-100 m-0"><code class="language-json theme-light">{
+    "last_name": "Rau",
+    "first_name": "Gage",
+    "date_of_birth": "2011-10-30 00:00:00",
+    "homepage": "http://www.lowe.biz/fugiat-doloribus-in-beatae-aut-alias",
+    "country_code": "US"
+}</code></pre>
+          </div>
+        </div>
+        <div class="shadow-md rounded-lg mb-4">
+          <div class="bg-gray-850 rounded-tl-lg rounded-tr-lg w-full pt-1 px-3 flex">
+            <div class="py-2 uppercase font-bold text-gray-400 text-tiny h-full mr-4">Example Response</div>
+          </div>
+          <div class="w-full">
+        <pre class="border-none rounded-bl-lg rounded-br-lg bg-gray-950"><code class="language-json theme-dark">{
     "id": 1,
     "last_name": "Wehner",
     "first_name": "Tony",
     "date_of_birth": "2002-08-20 00:00:00",
     "homepage": "https://morar.com/facilis-labore-hic-minus-sunt-maiores-cupiditate.html",
     "country_code": "DE"
-  },
-  {
-    "id": 2,
-    "last_name": "Jakubowski",
-    "first_name": "Beryl",
-    "date_of_birth": "1949-08-16 00:00:00",
-    "homepage": "http://murphy.biz/sit-non-accusantium-sunt-rerum-et-et-nisi-qui.html",
-    "country_code": "DE"
-  }
-]
-        </code></pre>
+}</code></pre>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="w-full flex">
+      <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-content">
+        <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
+          <section class="w-full relative">
+            <h1 id="author">Author</h1>
+            <p>Resource representing a single author.</p>
+          </section>
+        </article>
+      </div>
+      <div class="w-6/12 max-w-4xl p-6 pt-12 text-sm">
       </div>
     </div>
   </div>
