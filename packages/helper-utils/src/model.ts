@@ -77,6 +77,7 @@ export const getResolvedServerUrl = (server: Server): string => {
       }
     }
   }
+  uri = uri.replace(/^\/\//, 'http://');
 
   return uri;
 };

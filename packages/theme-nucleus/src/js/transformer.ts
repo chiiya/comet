@@ -147,7 +147,11 @@ export default class Transformer {
       if (typeof example === 'object') {
         example = JSON.stringify(example, null, 2);
       } else {
-        example = JSON.stringify(JSON.parse(example), null, 2);
+        try {
+          example = JSON.stringify(JSON.parse(example), null, 2);
+        } catch (error) {
+          return undefined;
+        }
       }
       return {
         lang: 'json',
