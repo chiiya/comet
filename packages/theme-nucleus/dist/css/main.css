@@ -6003,7 +6003,7 @@ video {
 }
 
 .shadow-content {
-  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
 }
 
 .shadow-operation {
@@ -6043,7 +6043,7 @@ video {
 }
 
 .hover\:shadow-content:hover {
-  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
 }
 
 .hover\:shadow-operation:hover {
@@ -6083,7 +6083,7 @@ video {
 }
 
 .focus\:shadow-content:focus {
-  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
 }
 
 .focus\:shadow-operation:focus {
@@ -13587,7 +13587,7 @@ textarea {
   }
 
   .sm\:shadow-content {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .sm\:shadow-operation {
@@ -13627,7 +13627,7 @@ textarea {
   }
 
   .sm\:hover\:shadow-content:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .sm\:hover\:shadow-operation:hover {
@@ -13667,7 +13667,7 @@ textarea {
   }
 
   .sm\:focus\:shadow-content:focus {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .sm\:focus\:shadow-operation:focus {
@@ -20685,7 +20685,7 @@ textarea {
   }
 
   .md\:shadow-content {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .md\:shadow-operation {
@@ -20725,7 +20725,7 @@ textarea {
   }
 
   .md\:hover\:shadow-content:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .md\:hover\:shadow-operation:hover {
@@ -20765,7 +20765,7 @@ textarea {
   }
 
   .md\:focus\:shadow-content:focus {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .md\:focus\:shadow-operation:focus {
@@ -27783,7 +27783,7 @@ textarea {
   }
 
   .lg\:shadow-content {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .lg\:shadow-operation {
@@ -27823,7 +27823,7 @@ textarea {
   }
 
   .lg\:hover\:shadow-content:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .lg\:hover\:shadow-operation:hover {
@@ -27863,7 +27863,7 @@ textarea {
   }
 
   .lg\:focus\:shadow-content:focus {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .lg\:focus\:shadow-operation:focus {
@@ -34881,7 +34881,7 @@ textarea {
   }
 
   .xl\:shadow-content {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .xl\:shadow-operation {
@@ -34921,7 +34921,7 @@ textarea {
   }
 
   .xl\:hover\:shadow-content:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .xl\:hover\:shadow-operation:hover {
@@ -34961,7 +34961,7 @@ textarea {
   }
 
   .xl\:focus\:shadow-content:focus {
-    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
   }
 
   .xl\:focus\:shadow-operation:focus {

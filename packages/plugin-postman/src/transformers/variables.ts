@@ -1,6 +1,6 @@
-import { ApiModel, Authentication } from '@comet-cli/types';
+import { ApiModel } from '@comet-cli/types';
 import { PostmanVariable } from '../../types';
-import { ucfirst } from '@comet-cli/helper-utils';
+import { ucfirst, getResolvedServerUrl } from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 
 /**
@@ -37,18 +37,7 @@ const createServerVariables = (model: ApiModel): PostmanVariable[] => {
   }
   // Add configured URLs as variables
   for (const [index, server] of (model.info.servers || []).entries()) {
-    let uri = server.uri;
-    // Replace variables with a default or enum value, if possible.
-    if (server.variables) {
-      for (const name of Object.keys(server.variables)) {
-        const variable = server.variables[name];
-        if (variable.default !== undefined) {
-          uri = uri.replace(`{${name}}`, variable.default);
-        } else if (variable.enum && variable.enum.length > 0) {
-          uri = uri.replace(`{${name}}`, variable.enum[0]);
-        }
-      }
-    }
+    const uri = getResolvedServerUrl(server);
     variables.push({
       id: uuidv4(),
       key: `url_${index}`,

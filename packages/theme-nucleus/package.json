@@ -29,8 +29,11 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "devDependencies": {
+    "@comet-cli/types": "^0.1.1",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "cross-env": "^5.2.0",
+    "css-loader": "^2.1.1",
+    "fs-extra": "^8.0.1",
     "glob-all": "^3.1.0",
     "laravel-mix": "^4.0.15",
     "laravel-mix-tailwind": "^0.1.0",
@@ -41,9 +44,23 @@
     "sass": "^1.19.0",
     "sass-loader": "7.*",
     "tailwindcss": "^1.0.1",
-    "vue-template-compiler": "^2.6.10"
+    "ts-loader": "^6.0.1",
+    "typescript": "^3.4.5",
+    "uuid": "^3.3.2",
+    "vue-class-component": "^7.1.0",
+    "vue-loader": "^15.7.0",
+    "vue-property-decorator": "^8.1.1",
+    "vue-template-compiler": "^2.6.10",
+    "vuex-class": "^0.3.2",
+    "vuex-module-decorators": "^0.9.9",
+    "webpack": "^4.31.0"
   },
   "dependencies": {
-    "feather-icons": "^4.21.0"
+    "@comet-cli/helper-utils": "^0.1.1",
+    "feather-icons": "^4.21.0",
+    "httpsnippet": "^1.19.1",
+    "showdown": "^1.9.0",
+    "vue": "^2.6.10",
+    "vuex": "^3.1.1"
   }
 }

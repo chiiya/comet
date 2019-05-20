@@ -1,4 +1,13 @@
-import { ApiModel, Operation, Resource } from '@comet-cli/types';
+import {
+  ApiModel,
+  Bodies,
+  Body,
+  Dict,
+  Operation,
+  Parameter,
+  Resource,
+  Server,
+} from '@comet-cli/types';
 
 export type EnhancedOperation = Operation & {
   uri: string;
@@ -53,4 +62,59 @@ export const groupOperationsByTags = (model: ApiModel): {[tag: string]: Enhanced
     return tags;
   }
   return undefined;
+};
+
+export const getResolvedServerUrl = (server: Server): string => {
+  let uri = server.uri;
+  // Replace variables with a default or enum value, if possible.
+  if (server.variables) {
+    for (const name of Object.keys(server.variables)) {
+      const variable = server.variables[name];
+      if (variable.default !== undefined) {
+        uri = uri.replace(`{${name}}`, variable.default);
+      } else if (variable.enum && variable.enum.length > 0) {
+        uri = uri.replace(`{${name}}`, variable.enum[0]);
+      }
+    }
+  }
+
+  return uri;
+};
+
+export const getJsonBody = (bodies: Bodies): Body | undefined => {
+  const types = Object.keys(bodies);
+  const jsonType = types.find(type => type.includes('json'));
+  if (jsonType !== undefined) {
+    return bodies[jsonType];
+  }
+};
+
+export const resolveExampleUri = (
+  uri: string,
+  resourceParams: Parameter[],
+  operationParams: Parameter[],
+): string => {
+  let url = uri;
+  const foundParams: Dict<Parameter> = {};
+  for (const param of resourceParams) {
+    if (param.location === 'path') {
+      foundParams[param.name] = param;
+    }
+  }
+  for (const param of operationParams) {
+    if (param.location === 'path') {
+      foundParams[param.name] = param;
+    }
+  }
+  for (const name of Object.keys(foundParams)) {
+    const param = foundParams[name];
+    const regex = new RegExp(`{${name}}`, 'gi');
+    if (param.example !== undefined) {
+      url = url.replace(regex, param.example);
+    } else {
+      url = url.replace(regex, ':$1');
+    }
+  }
+
+  return url;
 };

@@ -38,5 +38,5 @@ mix.postCss('src/css/main.css', 'dist/css', [
     // }]
   // }),
 ])
-  .js('src/js/index.js', 'dist/js')
+  .ts('src/js/index.ts', 'dist/js')
   .setPublicPath('dist');

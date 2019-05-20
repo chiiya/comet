@@ -38,19 +38,7 @@ Resource representing a list of all authors.
 
 ### Retrieve authors [GET /authors{?include,filter%5bname%5d}]
 
-Retrieve a list of all authors. The following relationships can optionally be included
-in the response:
-
-|Name        |
-|----------- |
-|`books`     |
-|`country`   |
-
-Available filters
-
-Filter | Example | Notes
-:----- | :------ | :----
-`name` | `Tony`  | Filter by author name (first name and/or last name)
+Retrieve a list of all authors. The following relationships can optionally be included in the response: `books`, `country`.
 
 + Parameters
     + include: `books,country` (array[string], optional) - Comma-separated list of relationships to include
