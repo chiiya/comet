@@ -31,6 +31,8 @@ Currently, the following commands are available:
 `comet make:postman` will generate a Postman Collection for your API.
 #### Make Documentation
 `comet make:documentation` will generate an API documentation.
+The (WIP) documentation can be inspected by running `yarn run dev` inside the `packages/theme-nucleus` folder,
+which will generate a demo documentation under `dist/index.html`.
 
 For usage, see the [core package](https://github.com/chiiya/comet/tree/master/packages/core).
 
