@@ -1,6 +1,6 @@
 <template>
   <li class="block">
-    <a :class="classes">
+    <a :class="classes" @click="$emit('tab-changed', name)">
       <span class="h-4 w-4 flex items-center justify-center mr-2">
         <i :data-feather="icon"></i>
       </span>
