@@ -40,7 +40,7 @@ export default class AuthenticationTransformer {
         refreshUri,
         authorizationUri,
         tokenUri,
-        scopes: [],
+        scopes: {},
       };
     }
 
