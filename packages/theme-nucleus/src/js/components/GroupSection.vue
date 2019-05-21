@@ -4,7 +4,7 @@
       <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-content">
         <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
           <section class="w-full relative">
-            <h1 id="authors">{{ group.name }}</h1>
+            <h1 :id="group.link">{{ group.name }}</h1>
             <p v-if="group.description" v-html="group.description"></p>
           </section>
         </article>
@@ -18,7 +18,7 @@
 <script lang="ts">
   import { Vue, Component, Prop } from "vue-property-decorator";
   import ResourceSection from './ResourceSection.vue';
-  import { EnhancedGroup, Resources } from "../types/api";
+  import { DocGroup, Resources } from "../types/api";
   import { namespace } from 'vuex-class';
 
   const Api = namespace('Api');
@@ -37,7 +37,7 @@
       return this.group.resources;
     }
 
-    get group(): EnhancedGroup {
+    get group(): DocGroup {
       return this.$store.getters['Api/group'](this.id);
     }
   }

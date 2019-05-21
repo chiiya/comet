@@ -1,29 +1,46 @@
 import { Omit, Operation, Resource, ResourceGroup } from '@comet-cli/types';
 
-export interface EnhancedResource extends Omit<Resource, 'operations'> {
+export interface DocResource extends Omit<Resource, 'operations'> {
+  id: string;
+  link: string;
   operations: string[];
 }
 
-export interface EnhancedGroup extends Omit<ResourceGroup, 'resources'> {
+export interface DocGroup extends Omit<ResourceGroup, 'resources'> {
+  link: string;
   resources: string[];
 }
 
+export interface Example {
+  lang: string;
+  example: string | any;
+}
+
+export interface DocOperation extends Omit<Operation, 'transactions'> {
+  snippet: string;
+  link: string;
+  exampleRequest?: Example;
+  exampleResponse?: Example;
+}
+
 export interface Resources {
-  [id: string]: EnhancedResource;
+  [id: string]: DocResource;
 }
 
 export interface Groups {
-  [id: string]: EnhancedGroup;
+  [id: string]: DocGroup;
 }
 
 export interface Operations {
-  [id: string]: Operation;
+  [id: string]: DocOperation;
 }
 
 export interface ApiState {
   name: string;
   description: string;
   resources: Resources;
+  resourceIds: string[];
   operations: Operations;
   groups: Groups;
+  groupIds: string[];
 }

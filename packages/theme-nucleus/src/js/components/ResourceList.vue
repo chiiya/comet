@@ -1,7 +1,7 @@
 <template>
   <div>
     <group-section v-for="id in groupIds" :key="id" :id="id"></group-section>
-    <resource-section v-for="id in ids" :key="id" :id="id" :in-group="false"></resource-section>
+    <resource-section v-for="id in resourceIds" :key="id" :id="id" :in-group="false"></resource-section>
   </div>
 </template>
 
@@ -9,7 +9,6 @@
   import { Vue, Component } from "vue-property-decorator";
   import GroupSection from './GroupSection.vue';
   import ResourceSection from './ResourceSection.vue';
-  import { Groups, Resources } from "../types/api";
   import { namespace } from 'vuex-class';
 
   const Api = namespace('Api');
@@ -22,16 +21,8 @@
   })
   export default class ResourceList extends Vue {
     @Api.State
-    private resources!: Resources;
+    private resourceIds!: string[];
     @Api.State
-    private groups!: Groups;
-
-    get ids(): string[] {
-      return Object.keys(this.resources);
-    }
-
-    get groupIds(): string[] {
-      return Object.keys(this.groups);
-    }
+    private groupIds!: string[];
   }
 </script>

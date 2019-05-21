@@ -1,69 +1,88 @@
-import { ApiState, EnhancedGroup, Groups, Operations, Resources } from './types/api';
+import {
+  ApiState,
+  DocOperation,
+  Example,
+  Groups,
+  Operations,
+  Resources,
+  DocResource,
+} from './types/api';
 import { ApiModel, Bodies, Operation, Resource } from '@comet-cli/types';
 import data from '../../../../result.json';
-import { getResolvedServerUrl, getJsonBody, resolveExampleUri } from '@comet-cli/helper-utils';
+import {
+  getResolvedServerUrl,
+  getJsonBody,
+  resolveExampleUri,
+  getOperationName,
+  getResourceName, slugify,
+} from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
 const httpSnippet = require('httpsnippet');
 
 const converter = new showdown.Converter({ tables: true });
 
-interface Example {
-  lang: string;
-  example: string | any;
-}
-
 export default class Transformer {
   public static execute(): ApiState {
     const resources: Resources = {};
+    const resourceIds: string[] = [];
     let operations: Operations = {};
     const groups: Groups = {};
+    const groupIds: string[] = [];
     const api: ApiModel = <ApiModel>data;
-    const dataResources: Resource[] = api.resources;
-    for (const resource of dataResources) {
-      const id = uuidv4();
-      if (resource.description) {
-        resource.description = converter.makeHtml(resource.description);
-      }
+    for (const resource of api.resources) {
       const transformedOperations = this.transformOperations(api, resource);
       const keys = Object.keys(transformedOperations);
-      resources[id] = { ...resource, operations: keys };
+      const transformedResource = this.transformResource(resource, keys);
+      resources[transformedResource.id] = transformedResource;
+      resourceIds.push(transformedResource.id);
       operations = { ...operations, ...transformedOperations };
     }
     for (const group of api.groups) {
       const id = uuidv4();
-      const resourceIds: string[] = [];
+      const ids: string[] = [];
       for (const resource of group.resources) {
-        const id = uuidv4();
-        if (resource.description) {
-          resource.description = converter.makeHtml(resource.description);
-        }
         const transformedOperations = this.transformOperations(api, resource);
         const keys = Object.keys(transformedOperations);
-        resources[id] = { ...resource, operations: keys };
+        const transformedResource = this.transformResource(resource, keys);
+        resources[transformedResource.id] = transformedResource;
         operations = { ...operations, ...transformedOperations };
-        resourceIds.push(id);
+        ids.push(transformedResource.id);
       }
-      groups[id] = { ...group, resources: resourceIds };
+      groups[id] = { ...group, resources: ids, link: slugify(group.name) };
+      groupIds.push(id);
     }
 
     const name = api.info.name;
     const description = api.info.description ? converter.makeHtml(api.info.description) : '';
 
-    return { name, description, resources, operations, groups };
+    return { name, description, resources, resourceIds, operations, groups, groupIds };
+  }
+
+  protected static transformResource(resource: Resource, operationIds: string[]): DocResource {
+    return {
+      ... resource,
+      id: uuidv4(),
+      link: getResourceName(resource.path),
+      description: resource.description ? converter.makeHtml(resource.description) : undefined,
+      operations: operationIds,
+    };
   }
 
   protected static transformOperations(api: ApiModel, resource: Resource): Operations {
     const operations: Operations = {};
     for (const operation of resource.operations) {
+      const snippet = this.createSnippet(api, resource, operation);
+      const link = getOperationName(resource.path, operation.method);
+      const op: DocOperation = { ...operation, snippet, link };
+      delete op.transactions;
       const id = uuidv4();
       if (operation.description) {
-        operation.description = converter.makeHtml(operation.description);
+        op.description = converter.makeHtml(operation.description);
       }
-      operation.snippet = this.createSnippet(api, resource, operation);
-      operation.exampleResponse = this.getExampleResponse(operation);
-      operation.exampleRequest = this.getExampleRequest(operation);
-      operations[id] = operation;
+      op.exampleResponse = this.getExampleResponse(operation);
+      op.exampleRequest = this.getExampleRequest(operation);
+      operations[id] = op;
     }
     return operations;
   }
