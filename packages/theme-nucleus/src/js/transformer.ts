@@ -7,14 +7,17 @@ import {
   Resources,
   DocResource,
 } from './types/api';
-import { ApiModel, Bodies, Operation, Resource } from '@comet-cli/types';
+import { ApiModel, Bodies, Operation, Parameter, Resource, Schema } from '@comet-cli/types';
 import data from '../../../../result.json';
 import {
   getResolvedServerUrl,
   getJsonBody,
   resolveExampleUri,
   getOperationName,
-  getResourceName, slugify,
+  getResourceName,
+  slugify,
+  getOperationParameters,
+  isPrimitiveType,
 } from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
@@ -62,6 +65,7 @@ export default class Transformer {
   protected static transformResource(resource: Resource, operationIds: string[]): DocResource {
     return {
       ... resource,
+      parameters: undefined,
       id: uuidv4(),
       link: getResourceName(resource.path),
       description: resource.description ? converter.makeHtml(resource.description) : undefined,
@@ -82,9 +86,41 @@ export default class Transformer {
       }
       op.exampleResponse = this.getExampleResponse(operation);
       op.exampleRequest = this.getExampleRequest(operation);
+      const parameters = getOperationParameters(resource, operation);
+      for (const parameter of parameters) {
+        parameter.displayType = this.getHumanReadableParameterType(parameter.schema);
+      }
+      op.parameters = parameters;
       operations[id] = op;
     }
     return operations;
+  }
+
+  protected static getHumanReadableParameterType(schema: Schema | undefined): string | undefined {
+    if (schema === undefined || schema.type === undefined) {
+      return undefined;
+    }
+    const type = schema.type;
+    if (isPrimitiveType(schema)) {
+      if (Array.isArray(type)) {
+        return type.join(' | ');
+      }
+      return type;
+    }
+    if (schema.anyOf !== undefined) {
+      return schema.anyOf.map(schema => this.getHumanReadableParameterType(schema)).join(' | ');
+    }
+    if (schema.oneOf !== undefined) {
+      return schema.oneOf.map(schema => this.getHumanReadableParameterType(schema)).join(' | ');
+    }
+    if (type === 'array' && schema.items && schema.items.type) {
+      return `Array of ${this.getHumanReadableParameterType(schema.items)}s`;
+    }
+    if (type === 'object') {
+      return type;
+    }
+
+    return Array.isArray(type) ? type.join(' | ') : type;
   }
 
   protected static createSnippet(api: ApiModel, resource: Resource, operation: Operation): string {

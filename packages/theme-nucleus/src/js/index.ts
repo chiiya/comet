@@ -3,7 +3,6 @@ import Overview from './components/Overview.vue';
 import ResourceList from './components/ResourceList.vue';
 import store from './store';
 import Transformer from './transformer';
-const feather = require('feather-icons');
 
 const api = Transformer.execute();
 store.commit('Api/UPDATE_NAME', api.name);
@@ -19,5 +18,3 @@ const app = new Vue({
   el: '#app',
   components: { Overview, ResourceList },
 });
-
-feather.replace();

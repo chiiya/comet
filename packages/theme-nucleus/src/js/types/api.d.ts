@@ -1,6 +1,6 @@
 import { Omit, Operation, Resource, ResourceGroup } from '@comet-cli/types';
 
-export interface DocResource extends Omit<Resource, 'operations'> {
+export interface DocResource extends Omit<Resource, 'operations' | 'parameters'> {
   id: string;
   link: string;
   operations: string[];
