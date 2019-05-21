@@ -9,7 +9,8 @@
       </ul>
     </div>
     <section class="relative overflow-visible flex flex-col">
-      <parameters :operation-id="operationId"></parameters>
+<!--      <parameters :operation-id="operationId"></parameters>-->
+      <request-tab :operation-id="operationId"></request-tab>
     </section>
   </div>
 </template>
@@ -19,11 +20,13 @@
   import { Component, Prop, Vue } from "vue-property-decorator";
   import TabHeader from './TabHeader.vue';
   import Parameters from './Parameters.vue';
+  import RequestTab from './RequestTab.vue';
 
   @Component({
     components: {
       TabHeader,
       Parameters,
+      RequestTab,
     }
   })
   export default class OperationSection extends Vue {

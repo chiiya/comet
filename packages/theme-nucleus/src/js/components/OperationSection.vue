@@ -7,7 +7,7 @@
             <div :class="this.class">{{ operation.method }}</div>
             <div class="text-sm font-mono text-white text-icon">{{ resource.path }}{{ operation.name ? ` - ${operation.name}` : ''}}</div>
           </div>
-          <p v-if="operation.description" v-html="operation.description"></p>
+          <div v-if="operation.description" class="content-md" v-html="operation.description"></div>
           <operation-tabs :operation-id="operationId"></operation-tabs>
         </section>
       </article>

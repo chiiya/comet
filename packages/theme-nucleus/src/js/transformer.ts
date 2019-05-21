@@ -5,9 +5,9 @@ import {
   Groups,
   Operations,
   Resources,
-  DocResource,
+  DocResource, DocHeader,
 } from './types/api';
-import { ApiModel, Bodies, Operation, Parameter, Resource, Schema } from '@comet-cli/types';
+import { ApiModel, Bodies, Operation, Resource } from '@comet-cli/types';
 import data from '../../../../result.json';
 import {
   getResolvedServerUrl,
@@ -17,7 +17,7 @@ import {
   getResourceName,
   slugify,
   getOperationParameters,
-  isPrimitiveType,
+  getHumanReadableType,
 } from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
@@ -78,7 +78,13 @@ export default class Transformer {
     for (const operation of resource.operations) {
       const snippet = this.createSnippet(api, resource, operation);
       const link = getOperationName(resource.path, operation.method);
-      const op: DocOperation = { ...operation, snippet, link };
+      const requestHeaders: DocHeader[] = [];
+      if (operation.request && operation.request.headers) {
+        for (const header of operation.request.headers) {
+          requestHeaders.push({ ...header, displayName: getHumanReadableType(header.schema) });
+        }
+      }
+      const op: DocOperation = { ...operation, snippet, link, requestHeaders };
       delete op.transactions;
       const id = uuidv4();
       if (operation.description) {
@@ -88,39 +94,12 @@ export default class Transformer {
       op.exampleRequest = this.getExampleRequest(operation);
       const parameters = getOperationParameters(resource, operation);
       for (const parameter of parameters) {
-        parameter.displayType = this.getHumanReadableParameterType(parameter.schema);
+        parameter.displayType = getHumanReadableType(parameter.schema);
       }
       op.parameters = parameters;
       operations[id] = op;
     }
     return operations;
-  }
-
-  protected static getHumanReadableParameterType(schema: Schema | undefined): string | undefined {
-    if (schema === undefined || schema.type === undefined) {
-      return undefined;
-    }
-    const type = schema.type;
-    if (isPrimitiveType(schema)) {
-      if (Array.isArray(type)) {
-        return type.join(' | ');
-      }
-      return type;
-    }
-    if (schema.anyOf !== undefined) {
-      return schema.anyOf.map(schema => this.getHumanReadableParameterType(schema)).join(' | ');
-    }
-    if (schema.oneOf !== undefined) {
-      return schema.oneOf.map(schema => this.getHumanReadableParameterType(schema)).join(' | ');
-    }
-    if (type === 'array' && schema.items && schema.items.type) {
-      return `Array of ${this.getHumanReadableParameterType(schema.items)}s`;
-    }
-    if (type === 'object') {
-      return type;
-    }
-
-    return Array.isArray(type) ? type.join(' | ') : type;
   }
 
   protected static createSnippet(api: ApiModel, resource: Resource, operation: Operation): string {

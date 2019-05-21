@@ -115,7 +115,7 @@ their respective languages.
 + country_code: `DE` (string, required) - ISO 3166-1 alpha-2 code of the country
 + language_code: `de` (string, required) - ISO 639-1 code of the language
 
-## BookRequest (object, fixed)
+## BookRequest (object, fixed-type)
 
 + title: `Reprehenderit quod enim` (string, required)
 + description: `Quas dicta itaque iure ut consequatur laborum voluptatibus.` (string, required)
@@ -123,7 +123,10 @@ their respective languages.
 + price: `24` (number, required) - Personal homepage of the author
 + author_id: `1` (number, required) - ID of the author
 + country_code: `DE` (string, required) - ISO 3166-1 alpha-2 code of the country
-+ language_code: `de` (string, required) - ISO 639-1 code of the language
++ language_code: `de` (enum[string], required) - ISO 639-1 code of the language
+  + de
+  + ch
+  + fr
 
 ## Error422 (object)
 + title: `Invalid Request` (required, string) - Short, human-readable summary of the error

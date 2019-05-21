@@ -1,4 +1,4 @@
-import { Omit, Operation, Resource, ResourceGroup } from '@comet-cli/types';
+import { Header, Omit, Operation, Resource, ResourceGroup } from '@comet-cli/types';
 
 export interface DocResource extends Omit<Resource, 'operations' | 'parameters'> {
   id: string;
@@ -21,6 +21,11 @@ export interface DocOperation extends Omit<Operation, 'transactions'> {
   link: string;
   exampleRequest?: Example;
   exampleResponse?: Example;
+  requestHeaders: DocHeader[];
+}
+
+export interface DocHeader extends Header {
+  displayName: string | undefined;
 }
 
 export interface Resources {

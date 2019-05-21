@@ -5,7 +5,7 @@
         <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
           <section class="w-full relative">
             <h2 :id="resource.link">{{ resource.name || resource.path }}</h2>
-            <p v-if="resource.description" v-html="resource.description"></p>
+            <div v-if="resource.description" class="content-md" v-html="resource.description"></div>
           </section>
         </article>
       </div>

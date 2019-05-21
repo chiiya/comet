@@ -1,4 +1,5 @@
 {
     "/js/index.js": "/js/index.js",
-    "/css/main.css": "/css/main.css"
+    "/css/main.css": "/css/main.css",
+    "/js/prism.js": "/js/prism.js"
 }

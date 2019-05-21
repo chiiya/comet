@@ -39,4 +39,5 @@ mix.postCss('src/css/main.css', 'dist/css', [
   // }),
 ])
   .ts('src/js/index.ts', 'dist/js')
+  .copy('src/vendor/prism.js', 'dist/js/prism.js')
   .setPublicPath('dist');

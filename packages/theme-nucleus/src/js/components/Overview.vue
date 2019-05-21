@@ -4,7 +4,7 @@
       <article class="flex-auto p-12 xl:max-w-4xl mx-auto relative">
         <section class="w-full relative">
           <h1 id="overview">{{ name }}</h1>
-          <div v-if="description" v-html="description"></div>
+          <div v-if="description" class="content-md" v-html="description"></div>
         </section>
       </article>
     </div>

@@ -101,6 +101,39 @@ export const getOperationParameters = (resource: Resource, operation: Operation)
   return Object.values(parameters);
 };
 
+export const getHumanReadableType = (schema: Schema | undefined): string | undefined => {
+  if (schema === undefined || schema.type === undefined) {
+    return undefined;
+  }
+  const type = schema.type;
+  if (isPrimitiveType(schema)) {
+    if (Array.isArray(type)) {
+      return type.join(' | ');
+    }
+    return type;
+  }
+  if (schema.anyOf !== undefined) {
+    return schema.anyOf.map(schema => getHumanReadableType(schema)).join(' | ');
+  }
+  if (schema.oneOf !== undefined) {
+    return schema.oneOf.map(schema => getHumanReadableType(schema)).join(' | ');
+  }
+  if (type === 'array' && schema.items && schema.items.type) {
+    return `Array of ${getHumanReadableType(schema.items)}s`;
+  }
+  if (type === 'object') {
+    return type;
+  }
+  if (schema.enum !== undefined && schema.enum.length > 0) {
+    if (Array.isArray(type)) {
+      return `Enum of ${type.join(' | ')}`;
+    }
+    return `Enum of ${type}s`;
+  }
+
+  return Array.isArray(type) ? type.join(' | ') : type;
+};
+
 export const resolveExampleUri = (
   uri: string,
   resourceParams: Parameter[],
@@ -148,6 +181,9 @@ export const isPrimitiveType = (schema: Schema) => {
       if (type === 'array') {
         isPrimitive = schema.items === undefined;
       }
+      if (schema.enum && schema.enum.length > 0) {
+        return false;
+      }
     }
     return isPrimitive;
   }
@@ -160,6 +196,10 @@ export const isPrimitiveType = (schema: Schema) => {
 
   if (schema.type === 'array') {
     return schema.items === undefined;
+  }
+
+  if (schema.enum && schema.enum.length > 0) {
+    return false;
   }
 
   return true;

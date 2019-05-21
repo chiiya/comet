@@ -5,7 +5,7 @@
         <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
           <section class="w-full relative">
             <h1 :id="group.link">{{ group.name }}</h1>
-            <p v-if="group.description" v-html="group.description"></p>
+            <div v-if="group.description" class="content-md" v-html="group.description"></div>
           </section>
         </article>
       </div>
