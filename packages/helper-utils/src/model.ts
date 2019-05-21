@@ -5,7 +5,7 @@ import {
   Dict,
   Operation,
   Parameter,
-  Resource,
+  Resource, Schema,
   Server,
 } from '@comet-cli/types';
 
@@ -90,6 +90,17 @@ export const getJsonBody = (bodies: Bodies): Body | undefined => {
   }
 };
 
+export const getOperationParameters = (resource: Resource, operation: Operation): Parameter[] => {
+  const parameters: Dict<Parameter> = {};
+  for (const param of resource.parameters) {
+    parameters[`${param.location}-${param.name}`] = param;
+  }
+  for (const param of operation.parameters) {
+    parameters[`${param.location}-${param.name}`] = param;
+  }
+  return Object.values(parameters);
+};
+
 export const resolveExampleUri = (
   uri: string,
   resourceParams: Parameter[],
@@ -118,4 +129,38 @@ export const resolveExampleUri = (
   }
 
   return url;
+};
+
+export const isPrimitiveType = (schema: Schema) => {
+  if (schema.oneOf !== undefined || schema.anyOf !== undefined) {
+    return false;
+  }
+
+  if (Array.isArray(schema.type)) {
+    const types = schema.type;
+    let isPrimitive = true;
+    for (const type of types) {
+      if (type === 'object') {
+        isPrimitive = schema.properties !== undefined
+          ? Object.keys(schema.properties).length === 0
+          : schema.additionalProperties === undefined;
+      }
+      if (type === 'array') {
+        isPrimitive = schema.items === undefined;
+      }
+    }
+    return isPrimitive;
+  }
+
+  if (schema.type === 'object') {
+    return schema.properties !== undefined
+      ? Object.keys(schema.properties).length === 0
+      : schema.additionalProperties === undefined;
+  }
+
+  if (schema.type === 'array') {
+    return schema.items === undefined;
+  }
+
+  return true;
 };
