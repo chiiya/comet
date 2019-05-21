@@ -28,9 +28,13 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       const auth = AuthenticationTransformer.execute(specification);
       const spec = {
         info: InformationTransformer.execute(specification),
-        auth: { default: auth },
-        groups: ResourceGroupTransformer.execute(specification, config, auth),
-        resources: ResourceTransformer.transformFromDefaultGroup(specification, config, auth),
+        auth: auth,
+        groups: ResourceGroupTransformer.execute(specification, config, auth ? auth.default : undefined),
+        resources: ResourceTransformer.transformFromDefaultGroup(
+          specification,
+          config,
+          auth ? auth.default : undefined,
+        ),
         securedBy: [],
       };
       logger.succeed('API Blueprint model transformed');

@@ -1,5 +1,5 @@
 import Specification from '../Specification';
-import { ApiKeyLocation, Authentication, AuthType } from '@comet-cli/types';
+import { ApiKeyLocation, Authentication, AuthType, Dict } from '@comet-cli/types';
 import ParsingException from '../ParsingException';
 
 export default class AuthenticationTransformer {
@@ -7,15 +7,15 @@ export default class AuthenticationTransformer {
    * Parse authentication metadata. Throw error if value is not supported.
    * @param spec
    */
-  public static execute(spec: Specification): Authentication {
-    const type = <AuthType>spec.metadata['AUTH_TYPE'] || null;
+  public static execute(spec: Specification): Dict<Authentication> | undefined {
+    const type = <AuthType>spec.metadata['AUTH_TYPE'] || undefined;
     const description = spec.metadata['AUTH_DESCRIPTION'] || undefined;
     const name = spec.metadata['AUTH_NAME'] || undefined;
-    const location = <ApiKeyLocation>spec.metadata['AUTH_LOCATION'] || null;
-    const flowType = spec.metadata['AUTH_FLOW_TYPE'] || null;
-    const refreshUri = spec.metadata['AUTH_REFRESH_URI'] || null;
-    const authorizationUri = spec.metadata['AUTH_AUTHORIZATION_URI'] || null;
-    const tokenUri = spec.metadata['AUTH_TOKEN_URI'] || null;
+    const location = <ApiKeyLocation>spec.metadata['AUTH_LOCATION'] || undefined;
+    const flowType = spec.metadata['AUTH_FLOW_TYPE'] || undefined;
+    const refreshUri = spec.metadata['AUTH_REFRESH_URI'] || undefined;
+    const authorizationUri = spec.metadata['AUTH_AUTHORIZATION_URI'] || undefined;
+    const tokenUri = spec.metadata['AUTH_TOKEN_URI'] || undefined;
 
     if (type && ['basic', 'digest', 'jwt', 'key', 'oauth2'].includes(type) === false) {
       throw new ParsingException(`Invalid AUTH_TYPE:  ${type}. Requires one of [basic, digest, jwt, key, oauth2]`);
@@ -44,12 +44,18 @@ export default class AuthenticationTransformer {
       };
     }
 
-    return {
-      type,
-      description,
-      name,
-      location,
-      flows,
-    };
+    if (type !== undefined) {
+      return {
+        default: {
+          type,
+          description,
+          name,
+          location,
+          flows,
+        },
+      };
+    }
+
+    return undefined;
   }
 }

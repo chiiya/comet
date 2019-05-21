@@ -13,7 +13,7 @@ export default class OperationTransformer {
    * @param action
    * @param auth
    */
-  public static execute(resourceUri: string, action: ApiBlueprintAction, auth: Authentication): Operation {
+  public static execute(resourceUri: string, action: ApiBlueprintAction, auth: Authentication | undefined): Operation {
     const uri = _.get(action, 'attributes.uriTemplate', resourceUri);
     const parsedTransactions = TransactionTransformer.execute(action.examples);
     const parsedParameters = ParameterTransformer.execute(uri, action.parameters);
@@ -41,9 +41,9 @@ export default class OperationTransformer {
   protected static getSecuredByFromRequestHeadersOrParameters(
     transactions: Transaction[],
     parameters: Parameter[],
-    auth: Authentication,
+    auth: Authentication | undefined,
   ): Dict<string[]> | undefined {
-    if (auth.type === null) {
+    if (auth === undefined || auth.type === undefined) {
       return undefined;
     }
     // Handle case where auth key / token is passed via query parameter

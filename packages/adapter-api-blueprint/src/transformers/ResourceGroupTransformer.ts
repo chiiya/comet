@@ -11,7 +11,7 @@ export default class ResourceGroupTransformer {
    * @param config
    * @param auth
    */
-  public static execute(spec: Specification, config: CommandConfig, auth: Authentication): ResourceGroup[] {
+  public static execute(spec: Specification, config: CommandConfig, auth: Authentication | undefined): ResourceGroup[] {
     const resourceGroups: ResourceGroup[] = [];
     // Only resource groups will have the `attributes` property. Unnamed resource groups
     // will not have a name. To allow mixing grouped resources and non-grouped resources,

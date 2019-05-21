@@ -13,7 +13,7 @@ export default class ResourceTransformer {
    */
   public static transformFromResourceGroup(
     content: (ApiBlueprintResource | ApiBlueprintCopy)[],
-    auth: Authentication,
+    auth: Authentication | undefined,
   ): Resource[] {
     const resources: Resource[] = [];
     const resourceActions = [];
@@ -81,7 +81,7 @@ export default class ResourceTransformer {
   public static transformFromDefaultGroup(
     spec: Specification,
     config: CommandConfig,
-    auth: Authentication,
+    auth: Authentication | undefined,
   ): Resource[] {
     let resources: Resource[] = [];
 
