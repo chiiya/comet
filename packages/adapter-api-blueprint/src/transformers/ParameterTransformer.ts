@@ -1,6 +1,7 @@
 import { ApiBlueprintParameter } from '../../types/blueprint';
-import {Schema, Parameter, ParameterLocation} from '@comet-cli/types';
+import { Schema, Parameter, ParameterLocation } from '@comet-cli/types';
 import ParsingException from '../ParsingException';
+import { isNumber } from '@comet-cli/helper-utils';
 
 export default class ParameterTransformer {
   /**
@@ -45,6 +46,7 @@ export default class ParameterTransformer {
    */
   protected static transformToJsonSchema(data: ApiBlueprintParameter): Schema {
     const isNestedArrayType = this.isNestedArrayType(data.type);
+    console.log(JSON.stringify(data, null, 2));
 
     if (this.isValidType(data.type) === false && isNestedArrayType === false) {
       throw new ParsingException(`Invalid type definition: ${data.type}`);
@@ -61,22 +63,32 @@ export default class ParameterTransformer {
     // If it's an enum (values array present), adjust the schema
     if (data.values && data.values.length > 0) {
       const values = data.values ? data.values.map(item => item.value) : [];
-      schema.type = 'array';
-      schema.items = {
-        type: data.type,
-        enum: values,
-      };
+      schema.type = data.type;
+      schema.enum = values;
     }
 
     // If it's a nested array type definition (e.g. array[string]), adjust the schema
     if (isNestedArrayType) {
-      // @ts-ignore
-      const nestedType = /array\[(\w+)]/g.exec(data.type)[1];
       schema.type = 'array';
-      if (this.isValidType(nestedType)) {
-        schema.items = {
-          type: nestedType,
-        };
+      const nestedTypes = /array\[(\w+)(?:,\s*(\w+))*]/g.exec(data.type);
+      if (nestedTypes !== null) {
+        nestedTypes.shift();
+        // Only one item
+        if (nestedTypes.length === 1 && this.isValidType(nestedTypes[0])) {
+          schema.items = {
+            type: nestedTypes[0],
+          };
+        } else {
+          schema.type = undefined;
+          schema.anyOf = [];
+          for (const subType of nestedTypes) {
+            if (this.isValidType(subType)) {
+              schema.anyOf.push({
+                type: subType,
+              });
+            }
+          }
+        }
       }
     }
 
