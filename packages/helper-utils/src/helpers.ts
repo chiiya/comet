@@ -4,23 +4,20 @@
  * `GET countries` -> `countries-index.json`
  * `GET countries/{id}` -> `countries-show.json`
  * `POST countries` -> `countries-store.json`
- * @param apiPath
+ * @param path
  * @param method
  */
-export const getOperationName = (apiPath: string, method: string): string  => {
+export const getOperationName = (path: string, method: string): string  => {
   const parameterEndsPath = /(\/?{.+}\/?$)/g;
   let isSingleResourceOperation = false;
-  if (parameterEndsPath.test(apiPath) === true) {
+  if (parameterEndsPath.test(path)) {
     isSingleResourceOperation = true;
   }
-  const base = apiPath
-    .replace(/^\//, '')
-    .replace(/(\/?{.+}(?:\/$)?)/g, '')
-    .replace('/', '-');
+  const base = getResourceName(path);
   let suffix;
   switch (method.toLowerCase()) {
     case 'get':
-      if (isSingleResourceOperation === true) {
+      if (isSingleResourceOperation) {
         suffix = 'show';
       } else {
         suffix = 'index';
@@ -40,6 +37,13 @@ export const getOperationName = (apiPath: string, method: string): string  => {
   return `${base}-${suffix}`;
 };
 
+export const getResourceName = (path: string): string => {
+  return path
+    .replace(/^\//, '')
+    .replace(/(\/?{.+}(?:\/$)?)/g, '')
+    .replace('/', '-');
+};
+
 /**
  * Transform any string into a slug:
  * `Find Pets TestCase` -> `find-pets-operation`
@@ -50,7 +54,7 @@ export const slugify = (text: string): string => {
   return text
     .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase() // camelCase to camel-case
     .toLowerCase()
-    .replace(/[\s+_\[]/g, '-')      // Replace spaces, underscores and `[` with -
+    .replace(/[\s+_\[/]/g, '-')      // Replace spaces, underscores, slashes and `[` with -
     .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
     .replace(/\-\-+/g, '-')         // Replace multiple - with single -
     .replace(/^-+/, '')             // Trim - from start of text
