@@ -111,11 +111,16 @@ export default class AuthenticationTransformer {
         throw new ParsingException(`Unsupported OAuth2 grant-type: ${grant}`);
     }
 
+    const scopes: Dict<string> = {};
+    for (const scope of settings.scopes()) {
+      scopes[scope] = '';
+    }
+
     flows[flowType] = {
-      refreshUri: null,
-      authorizationUri: settings.authorizationUri() ? settings.authorizationUri().value() : null,
-      tokenUri: settings.accessTokenUri() ? settings.accessTokenUri().value() : null,
-      scopes: settings.scopes(),
+      scopes,
+      refreshUri: undefined,
+      authorizationUri: settings.authorizationUri() ? settings.authorizationUri().value() : undefined,
+      tokenUri: settings.accessTokenUri() ? settings.accessTokenUri().value() : undefined,
     };
 
     return flows;

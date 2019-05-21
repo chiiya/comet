@@ -24,7 +24,7 @@ export default class OperationTransformer {
       const responses = method.responses() || [];
       operations.push({
         method: method.method(),
-        name: method.displayName(),
+        name: method.displayName() || undefined,
         description: description ? description.value() : undefined,
         securedBy: SecuredByTransformer.execute(spec, method.securedBy(), auth),
         parameters: parameters,
