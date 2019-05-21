@@ -16,6 +16,7 @@ export default class ResourceTransformer {
     auth: Authentication,
   ): Resource[] {
     const resources: Resource[] = [];
+    const resourceActions = [];
     const astResources = <ApiBlueprintResource[]>content.filter((item) => {
       return item.element === 'resource';
     });
@@ -40,7 +41,7 @@ export default class ResourceTransformer {
           existingResource.operations.push(OperationTransformer.execute(existingResource.path, action, auth));
         } else {
           const operation = OperationTransformer.execute(trimmedUri, action, auth);
-          resources.push({
+          resourceActions.push({
             path: trimmedUri,
             name: undefined,
             description: undefined,
@@ -65,6 +66,9 @@ export default class ResourceTransformer {
         });
       }
     }
+    // Finally, append the resource actions
+    resources.push(...resourceActions);
+
     return resources;
   }
 
