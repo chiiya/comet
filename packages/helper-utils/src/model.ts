@@ -119,7 +119,8 @@ export const getHumanReadableType = (schema: Schema | undefined): string | undef
     return schema.oneOf.map(schema => getHumanReadableType(schema)).join(' | ');
   }
   if (type === 'array' && schema.items && schema.items.type) {
-    return `Array of ${getHumanReadableType(schema.items)}s`;
+    const subType = getHumanReadableType(schema.items);
+    return `Array of ${subType}${subType && !subType.endsWith('s') ? 's' : ''}`;
   }
   if (type === 'object') {
     return type;
