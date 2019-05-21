@@ -25,14 +25,14 @@
     <div v-if="this.items.length" :class="`ml-${3 + depth}`">
       <body-item v-for="item in items" :key="item.id" :schema="item" :property-name="item.name" :required="item.isRequired" :depth="depth + 1"></body-item>
     </div>
-    <div v-if="this.schema.anyOf && this.schema.anyOf.length" :class="`ml-${3 + depth}`">
+    <div v-if="schema && schema.anyOf && schema.anyOf.length" :class="`ml-${3 + depth}`">
       <span class="block mb-3 text-gray-600 text-tiny uppercase font-bold">Any of</span>
       <div v-for="(val, index) in schema.anyOf">
         <span v-if="index !== 0" class="block my-3 text-gray-600 text-tiny uppercase font-bold">Or</span>
         <body-item :schema="val" :is-root="true" :depth="depth + 1"></body-item>
       </div>
     </div>
-    <div v-if="this.schema.oneOf && this.schema.oneOf.length" :class="`ml-${3 + depth}`">
+    <div v-if="schema && schema.oneOf && schema.oneOf.length" :class="`ml-${3 + depth}`">
       <span class="block mb-3 text-gray-600 text-tiny uppercase font-bold">One of</span>
       <div v-for="(val, index) in schema.oneOf">
         <span v-if="index !== 0" class="block my-3 text-gray-600 text-tiny uppercase font-bold">Or</span>
@@ -58,24 +58,29 @@
 
   @Component
   export default class BodyItem extends Vue {
-    @Prop() schema!: Schema;
+    @Prop() schema!: Schema | undefined;
     @Prop({ default: false }) isRoot!: boolean;
     @Prop() propertyName: string | undefined;
     @Prop({ default: false }) required!: boolean;
     @Prop({ default: 0 }) depth!: number;
-    private items: ItemSchema = [];
-    private enum: any[] = [];
     public name = 'body-item';
 
     get displayName() {
       return getHumanReadableType(this.schema)
     }
 
-    created() {
-      this.items = this.getItems(this.schema);
-      if (this.schema.enum && this.schema.enum.length > 0) {
-        this.enum = this.schema.enum;
+    get enum(): any[] {
+      if (this.schema && this.schema.enum) {
+        return this.schema.enum;
       }
+      return [];
+    }
+
+    get items(): ItemSchema[] {
+      if (this.schema) {
+        return this.getItems(this.schema);
+      }
+      return [];
     }
 
     getItems(schema: Schema): ItemSchema[] {

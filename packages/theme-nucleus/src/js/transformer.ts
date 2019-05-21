@@ -5,9 +5,9 @@ import {
   Groups,
   Operations,
   Resources,
-  DocResource, DocHeader,
+  DocResource, DocHeader, DocResponses,
 } from './types/api';
-import { ApiModel, Bodies, Operation, Resource } from '@comet-cli/types';
+import { ApiModel, Bodies, Operation, Resource, Responses } from '@comet-cli/types';
 import data from '../../../../result.json';
 import {
   getResolvedServerUrl,
@@ -84,7 +84,19 @@ export default class Transformer {
           requestHeaders.push({ ...header, displayName: getHumanReadableType(header.schema) });
         }
       }
-      const op: DocOperation = { ...operation, snippet, link, requestHeaders };
+      const responses: DocResponses = {};
+      if (operation.responses && Object.keys(operation.responses).length > 0) {
+        const codes = Object.keys(operation.responses);
+        for (const code of codes) {
+          const response = operation.responses[code];
+          const headers: DocHeader[] = [];
+          for (const header of response.headers) {
+            headers.push({ ...header, displayName: getHumanReadableType(header.schema) });
+          }
+          responses[code] = { ...response, headers };
+        }
+      }
+      const op: DocOperation = { ...operation, snippet, link, requestHeaders, responses };
       delete op.transactions;
       const id = uuidv4();
       if (operation.description) {

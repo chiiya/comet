@@ -10,7 +10,8 @@
     </div>
     <section class="relative overflow-visible flex flex-col">
 <!--      <parameters :operation-id="operationId"></parameters>-->
-      <request-tab :operation-id="operationId"></request-tab>
+<!--      <request-tab :operation-id="operationId"></request-tab>-->
+      <response-tab :operation-id="operationId"></response-tab>
     </section>
   </div>
 </template>
@@ -21,12 +22,14 @@
   import TabHeader from './TabHeader.vue';
   import Parameters from './Parameters.vue';
   import RequestTab from './RequestTab.vue';
+  import ResponseTab from './ResponseTab.vue';
 
   @Component({
     components: {
       TabHeader,
       Parameters,
       RequestTab,
+      ResponseTab,
     }
   })
   export default class OperationSection extends Vue {
