@@ -14,7 +14,7 @@ import {
   slugify,
   prettifyOperationName,
   Folders,
-  groupOperationsByTagsOrTrie,
+  groupOperations,
 } from '@comet-cli/helper-utils';
 import OperationTransformer from './transformers/OperationTransformer';
 import GroupTransformer from './transformers/GroupTransformer';
@@ -33,7 +33,7 @@ export default class Transformer {
     const slugs: Dict<number> = {};
     const model: ApiModel = <ApiModel>data;
 
-    const folders: Folders = groupOperationsByTagsOrTrie(model, { group_by: 'resources' });
+    const folders: Folders = groupOperations(model, { group_by: 'resources' });
 
     for (const operation of folders.operations) {
       const transformedOperation = OperationTransformer.execute(model, operation);

@@ -173,7 +173,7 @@ export const groupOperationsByTrie = (model: ApiModel, options: GroupOptions = {
  * @param model
  * @param options
  */
-export const groupOperationsByTagsOrTrie = (model: ApiModel, options: GroupOptions = {}): Folders => {
+export const groupOperations = (model: ApiModel, options: GroupOptions = {}): Folders => {
   if (options.group_by !== undefined) {
     switch (options.group_by) {
       case 'resources':

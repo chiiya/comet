@@ -31,6 +31,8 @@ module.exports = {
         ],
         output: 'exports',
         ungroupRoot: true,
+        group_by: undefined,
+        flatten: true,
       },
     },
   },
