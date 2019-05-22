@@ -33,7 +33,7 @@ export default class Transformer {
     const slugs: Dict<number> = {};
     const model: ApiModel = <ApiModel>data;
 
-    const folders: Folders = groupOperationsByTagsOrTrie(model, { flatten: false });
+    const folders: Folders = groupOperationsByTagsOrTrie(model, { group_by: 'resources' });
 
     for (const operation of folders.operations) {
       const transformedOperation = OperationTransformer.execute(model, operation);

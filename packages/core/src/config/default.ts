@@ -22,6 +22,8 @@ module.exports = {
         ],
         output: 'exports/documentation',
         ungroupRoot: true,
+        group_by: undefined,
+        flatten: false,
       },
       postman: {
         plugins: [

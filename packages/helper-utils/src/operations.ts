@@ -1,6 +1,7 @@
 import { ApiModel, Dict, Operation, Parameter, Resource } from '@comet-cli/types';
 import { getAllResources, getOperationParameters } from './model';
 import { Node, Trie } from './trie';
+import { getResourceName } from './helpers';
 
 export type EnhancedOperation = Operation & {
   uri: string;
@@ -19,7 +20,8 @@ export interface Folders {
   operations: EnhancedOperation[];
 }
 
-export interface TrieOptions {
+export interface GroupOptions {
+  group_by?: 'resources' | 'tags' | 'trie';
   flatten?: boolean;
 }
 
@@ -49,6 +51,50 @@ export const getEnhancedOperation = (resource: Resource, operation: Operation): 
     ...operation,
     parameters: getOperationParameters(resource, operation),
     uri: resource.path,
+  };
+};
+
+/**
+ * Group operations by resources (and resource groups).
+ * @param model
+ */
+export const groupOperationsByResources = (model: ApiModel): Folders => {
+  const folders: Folders = {
+    groups: [],
+    operations: [],
+  };
+  for (const group of model.groups) {
+    const items: Group[] = [];
+    for (const resource of group.resources) {
+      items.push(getGroupForResource(resource));
+    }
+    folders.groups.push({
+      name: group.name,
+      description: group.description,
+      groups: items,
+      operations: [],
+    });
+  }
+  for (const resource of model.resources) {
+    folders.groups.push(getGroupForResource(resource));
+  }
+  return folders;
+};
+
+/**
+ * Get folder group for a given resource.
+ * @param resource
+ */
+const getGroupForResource = (resource: Resource): Group => {
+  const operations: EnhancedOperation[] = [];
+  for (const operation of resource.operations) {
+    operations.push(getEnhancedOperation(resource, operation));
+  }
+  return {
+    name: resource.name || resource.path,
+    description: resource.description,
+    groups: [],
+    operations: operations,
   };
 };
 
@@ -89,8 +135,13 @@ export const groupOperationsByTags = (model: ApiModel): Folders => {
   return folders;
 };
 
-export const groupOperationsByTrie = (model: ApiModel, options: TrieOptions = {}): Folders => {
-  const config: TrieOptions = Object.assign({
+/**
+ * Group operations by trie structure.
+ * @param model
+ * @param options
+ */
+export const groupOperationsByTrie = (model: ApiModel, options: GroupOptions = {}): Folders => {
+  const config: GroupOptions = Object.assign({
     flatten: false,
   }, options);
   const folders: Folders = {
@@ -122,7 +173,17 @@ export const groupOperationsByTrie = (model: ApiModel, options: TrieOptions = {}
  * @param model
  * @param options
  */
-export const groupOperationsByTagsOrTrie = (model: ApiModel, options: TrieOptions = {}): Folders => {
+export const groupOperationsByTagsOrTrie = (model: ApiModel, options: GroupOptions = {}): Folders => {
+  if (options.group_by !== undefined) {
+    switch (options.group_by) {
+      case 'resources':
+        return groupOperationsByResources(model);
+      case 'tags':
+        return groupOperationsByTags(model);
+      case 'trie':
+        return groupOperationsByTrie(model, options);
+    }
+  }
   const tagFolders = groupOperationsByTags(model);
   if (tagFolders.groups.length > 0) {
     return tagFolders;
@@ -197,7 +258,7 @@ const convertNodeToGroupOrOperation = (node: Node): { group?: Group, operation?:
   };
 };
 
-const getFoldersFromResources = (resources: Resource[], options: TrieOptions): Folders => {
+const getFoldersFromResources = (resources: Resource[], options: GroupOptions): Folders => {
   const groups: Group[] = [];
   const operations: EnhancedOperation[] = [];
   const trie = createResourceTrie(resources);
