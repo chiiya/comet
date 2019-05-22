@@ -38,8 +38,14 @@ module.exports = {
         }
 
       },
+      minWidth: {
+        'xs': '20rem',
+      },
+      inset: {
+        '96': '24rem',
+      },
       width: {
-        96: '24rem',
+        '80': '20rem',
       },
       boxShadow: {
         // content: '0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1)',

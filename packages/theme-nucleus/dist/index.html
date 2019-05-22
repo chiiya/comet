@@ -12,65 +12,8 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen antialiased text-gray-700">
-<main id="app" class="h-full flex flex-column lg:flex-row justify-start relative">
-  <div class="max-w-sm flex-shrink-0 relative">
-    <!--    <div class="sticky w-64 h-full"></div>-->
-    <div class="sticky inset-x-0 top-0 p-8 pt-16 sidebar">
-      <ol class="list-none leading-loose">
-        <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Overview</a>
-        </li>
-        <li class="text-sm mt-2">
-          <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Locales</a>
-          <ol class="list-none pl-4 relative text-xs">
-            <li class="text-sm mt-2">
-              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Countries</a>
-              <ol class="list-none pl-4 relative text-xs resource-list">
-                <li class="font-normal mt-1 px-3 rounded bg-gray-200">
-                  <a href="#javascript-client-library" class="text-gray-750 hover:text-blue-400 font-semibold inline-block py-1 resource-active relative"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Retrieve Countries</a>
-                </li>
-                <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-orange-500 font-black inline-block">Post</span>Create Country</a>
-                </li>
-              </ol>
-            </li>
-            <li class="text-sm mt-2">
-              <a href="#api-clients" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400">Country</a>
-              <ol class="list-none pl-4 relative text-xs resource-list">
-                <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-green-500 font-black inline-block">Get</span>Show Country</a>
-                </li>
-                <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-blue-500 font-black inline-block">Patch</span>Update Country</a>
-                </li>
-                <li class="font-normal mt-1 px-3">
-                  <a href="#handlebars" class="text-gray-750 hover:text-blue-400 inline-block py-1"><span class="w-12 uppercase text-tiny mr-2 text-pink-500 font-black inline-block">Delete</span>Delete Country</a>
-                </li>
-              </ol>
-            </li>
-            <li class="text-sm mt-2">
-              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Languages</a>
-            </li>
-            <li class="text-sm mt-2">
-              <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Language</a>
-            </li>
-          </ol>
-        </li>
-        <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Authors</a>
-        </li>
-        <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Author</a>
-        </li>
-        <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Books</a>
-        </li>
-        <li class="text-sm mt-2">
-          <a href="#authentication" class="py-1 leading-loose font-semibold text-gray-750">Book</a>
-        </li>
-      </ol>
-    </div>
-  </div>
+<main id="app" class="h-full flex flex-column lg:flex-row justify-start">
+  <navigation-section></navigation-section>
   <div class="w-full">
     <overview></overview>
     <hr>

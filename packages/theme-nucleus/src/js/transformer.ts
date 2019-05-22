@@ -5,9 +5,9 @@ import {
   Groups,
   Operations,
   Resources,
-  DocResource, DocHeader, DocResponses,
+  DocResource, DocHeader, DocResponses, NavGroup, NavOperation, Navigation,
 } from './types/api';
-import { ApiModel, Bodies, Operation, Resource, Responses } from '@comet-cli/types';
+import { ApiModel, Bodies, Operation, Resource } from '@comet-cli/types';
 import data from '../../../../result.json';
 import {
   getResolvedServerUrl,
@@ -17,7 +17,7 @@ import {
   getResourceName,
   slugify,
   getOperationParameters,
-  getHumanReadableType,
+  getHumanReadableType, prettifyOperationName,
 } from '@comet-cli/helper-utils';
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
@@ -58,8 +58,55 @@ export default class Transformer {
 
     const name = api.info.name;
     const description = api.info.description ? converter.makeHtml(api.info.description) : '';
+    const navigation = this.getNavigation(api);
 
-    return { name, description, resources, resourceIds, operations, groups, groupIds };
+    return { name, description, resources, resourceIds, operations, groups, groupIds, navigation };
+  }
+
+  protected static getNavigation(model: ApiModel): Navigation {
+    const navItems: NavGroup[] = [];
+    for (const group of model.groups) {
+      const items: NavGroup[] = [];
+      for (const resource of group.resources) {
+        const subItems: NavOperation[] = [];
+        for (const operation of resource.operations) {
+          subItems.push({
+            name: operation.name || prettifyOperationName(resource.path, operation.method),
+            link: getOperationName(resource.path, operation.method),
+            method: operation.method,
+          });
+        }
+        items.push({
+          name: resource.name || resource.path,
+          link: getResourceName(resource.path),
+          items: [],
+          operations: subItems,
+        });
+      }
+      navItems.push({
+        name: group.name,
+        link: slugify(group.name),
+        items: items,
+        operations: [],
+      });
+    }
+    for (const resource of model.resources) {
+      const subItems: NavOperation[] = [];
+      for (const operation of resource.operations) {
+        subItems.push({
+          name: operation.name || prettifyOperationName(resource.path, operation.method),
+          link: getOperationName(resource.path, operation.method),
+          method: operation.method,
+        });
+      }
+      navItems.push({
+        name: resource.name || resource.path,
+        link: getResourceName(resource.path),
+        items: [],
+        operations: subItems,
+      });
+    }
+    return { items: navItems, operations: [] };
   }
 
   protected static transformResource(resource: Resource, operationIds: string[]): DocResource {

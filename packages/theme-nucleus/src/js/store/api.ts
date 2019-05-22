@@ -1,6 +1,6 @@
 /* tslint:disable:function-name */
 import { VuexModule, Module, Mutation } from 'vuex-module-decorators';
-import { Groups, Operations, Resources } from '../types/api';
+import { Groups, NavGroup, Navigation, NavOperation, Operations, Resources } from '../types/api';
 
 @Module({
   namespaced: true,
@@ -13,6 +13,10 @@ export default class Api extends VuexModule {
   public operations: Operations = {};
   public groups: Groups = {};
   public groupIds: string[] = [];
+  public navigation: Navigation = {
+    items: [],
+    operations: [],
+  };
 
   @Mutation
   UPDATE_NAME(name: string) {
@@ -47,6 +51,11 @@ export default class Api extends VuexModule {
   @Mutation
   UPDATE_GROUP_IDS(ids: string[]) {
     this.groupIds = ids;
+  }
+
+  @Mutation
+  UPDATE_NAVIGATION(navigation: Navigation) {
+    this.navigation = navigation;
   }
 
   get resource() {

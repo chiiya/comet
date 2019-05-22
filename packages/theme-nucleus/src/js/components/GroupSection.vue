@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full">
+  <div :id="group.link" class="w-full">
     <div class="w-full flex">
       <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-content">
-        <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
-          <section class="w-full relative">
-            <h1 :id="group.link">{{ group.name }}</h1>
+        <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto">
+          <section class="w-full">
+            <h1>{{ group.name }}</h1>
             <div v-if="group.description" class="content-md" v-html="group.description"></div>
           </section>
         </article>

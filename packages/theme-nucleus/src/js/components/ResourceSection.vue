@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full">
+  <div :id="resource.link" class="w-full">
     <div class="w-full flex">
       <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-content">
-        <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto relative">
-          <section class="w-full relative">
-            <h2 :id="resource.link">{{ resource.name || resource.path }}</h2>
+        <article class="flex-auto min-h-full p-12 xl:max-w-4xl mx-auto">
+          <section class="w-full">
+            <h2>{{ resource.name || resource.path }}</h2>
             <div v-if="resource.description" class="content-md" v-html="resource.description"></div>
           </section>
         </article>

@@ -8,7 +8,7 @@
         <tab-header name="Try it out" icon="play" :is-active="activeTab === 'Try it out'" v-on:tab-changed="changeTab"></tab-header>
       </ul>
     </div>
-    <section class="relative overflow-visible flex flex-col">
+    <section class="overflow-visible flex flex-col">
       <parameters v-show="activeTab === 'Parameters'" :operation-id="operationId"></parameters>
       <request-tab v-show="activeTab === 'Request'" :operation-id="operationId"></request-tab>
       <response-tab v-show="activeTab === 'Response'" :operation-id="operationId"></response-tab>

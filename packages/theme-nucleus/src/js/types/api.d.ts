@@ -57,6 +57,24 @@ export interface Operations {
   [id: string]: DocOperation;
 }
 
+export interface Navigation {
+  items: NavGroup[];
+  operations: NavOperation[];
+}
+
+export interface NavGroup {
+  name: string;
+  link: string;
+  items: NavGroup[];
+  operations: NavOperation[];
+}
+
+export interface NavOperation {
+  name: string;
+  link: string;
+  method: string;
+}
+
 export interface ApiState {
   name: string;
   description: string;
@@ -65,4 +83,5 @@ export interface ApiState {
   operations: Operations;
   groups: Groups;
   groupIds: string[];
+  navigation: Navigation;
 }

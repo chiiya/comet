@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full flex">
+  <div :id="operation.link" class="w-full flex">
     <div class="w-6/12 min-h-full max-w-5xl bg-white shadow-operation">
-      <article class="flex-auto min-h-full px-12 pt-0 pb-32 xl:max-w-4xl mx-auto relative">
-        <section class="w-full relative">
-          <div :id="operation.link" class="bg-gray-850 w-full p-2 rounded-lg flex items-center mb-4">
+      <article class="flex-auto min-h-full px-12 pt-0 pb-32 xl:max-w-4xl mx-auto">
+        <section class="w-full">
+          <div class="bg-gray-850 w-full p-2 rounded-lg flex items-center mb-4">
             <div :class="this.class">{{ operation.method }}</div>
             <div class="text-sm font-mono text-white text-icon">{{ resource.path }}{{ operation.name ? ` - ${operation.name}` : ''}}</div>
           </div>
