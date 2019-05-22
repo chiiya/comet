@@ -46,7 +46,6 @@ export default class ParameterTransformer {
    */
   protected static transformToJsonSchema(data: ApiBlueprintParameter): Schema {
     const isNestedArrayType = this.isNestedArrayType(data.type);
-    console.log(JSON.stringify(data, null, 2));
 
     if (this.isValidType(data.type) === false && isNestedArrayType === false) {
       throw new ParsingException(`Invalid type definition: ${data.type}`);
