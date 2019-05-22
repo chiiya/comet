@@ -1,8 +1,8 @@
 <template>
   <li class="text-sm mt-2">
     <a :href="`#${group.link}`" class="py-1 leading-loose font-semibold text-gray-750 hover:text-blue-400 nav-item">{{ group.name }}</a>
-    <ol v-if="group.items.length" class="list-none pl-4 text-xs relative">
-      <group-item v-for="item in group.items" :key="item.link" :group="item"></group-item>
+    <ol v-if="group.groups.length" class="list-none pl-4 text-xs relative">
+      <group-item v-for="item in group.groups" :key="item.link" :group="item"></group-item>
     </ol>
     <ol v-if="group.operations.length" class="list-none pl-4 text-xs resource-list relative">
       <operation-item v-for="operation in group.operations" :key="operation.link" :operation="operation"></operation-item>

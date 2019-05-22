@@ -1,11 +1,9 @@
 import {
-  Bodies,
   Header,
   Omit,
   Operation,
   Resource,
-  ResourceGroup,
-  Response
+  Response,
 } from '@comet-cli/types';
 
 export interface DocResource extends Omit<Resource, 'operations' | 'parameters'> {
@@ -14,9 +12,13 @@ export interface DocResource extends Omit<Resource, 'operations' | 'parameters'>
   operations: string[];
 }
 
-export interface DocGroup extends Omit<ResourceGroup, 'resources'> {
+export interface DocGroup {
+  id: string;
   link: string;
-  resources: string[];
+  name: string;
+  description?: string;
+  groups: string[];
+  operations: string[];
 }
 
 export interface Example {
@@ -25,6 +27,7 @@ export interface Example {
 }
 
 export interface DocOperation extends Omit<Operation, 'transactions'> {
+  id: string;
   snippet: string;
   link: string;
   exampleRequest?: Example;
@@ -45,10 +48,6 @@ export interface DocHeader extends Header {
   displayName: string | undefined;
 }
 
-export interface Resources {
-  [id: string]: DocResource;
-}
-
 export interface Groups {
   [id: string]: DocGroup;
 }
@@ -58,14 +57,14 @@ export interface Operations {
 }
 
 export interface Navigation {
-  items: NavGroup[];
+  groups: NavGroup[];
   operations: NavOperation[];
 }
 
 export interface NavGroup {
   name: string;
   link: string;
-  items: NavGroup[];
+  groups: NavGroup[];
   operations: NavOperation[];
 }
 
@@ -78,9 +77,8 @@ export interface NavOperation {
 export interface ApiState {
   name: string;
   description: string;
-  resources: Resources;
-  resourceIds: string[];
   operations: Operations;
+  operationIds: string[];
   groups: Groups;
   groupIds: string[];
   navigation: Navigation;

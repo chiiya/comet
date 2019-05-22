@@ -1,6 +1,6 @@
 /* tslint:disable:function-name */
 import { VuexModule, Module, Mutation } from 'vuex-module-decorators';
-import { Groups, NavGroup, Navigation, NavOperation, Operations, Resources } from '../types/api';
+import { Groups, Navigation, Operations } from '../types/api';
 
 @Module({
   namespaced: true,
@@ -8,13 +8,12 @@ import { Groups, NavGroup, Navigation, NavOperation, Operations, Resources } fro
 export default class Api extends VuexModule {
   public name: string = '';
   public description: string = '';
-  public resources: Resources = {};
-  public resourceIds: string[] = [];
-  public operations: Operations = {};
   public groups: Groups = {};
   public groupIds: string[] = [];
+  public operations: Operations = {};
+  public operationIds: string[] = [];
   public navigation: Navigation = {
-    items: [],
+    groups: [],
     operations: [],
   };
 
@@ -29,18 +28,13 @@ export default class Api extends VuexModule {
   }
 
   @Mutation
-  UPDATE_RESOURCES(resources: Resources) {
-    this.resources = resources;
-  }
-
-  @Mutation
-  UPDATE_RESOURCE_IDS(ids: string[]) {
-    this.resourceIds = ids;
-  }
-
-  @Mutation
   UPDATE_OPERATIONS(operations: Operations) {
     this.operations = operations;
+  }
+
+  @Mutation
+  UPDATE_OPERATION_IDS(ids: string[]) {
+    this.operationIds = ids;
   }
 
   @Mutation
@@ -56,10 +50,6 @@ export default class Api extends VuexModule {
   @Mutation
   UPDATE_NAVIGATION(navigation: Navigation) {
     this.navigation = navigation;
-  }
-
-  get resource() {
-    return (id: string) => this.resources[id];
   }
 
   get operation() {

@@ -32,7 +32,7 @@
       ResponseTab,
     }
   })
-  export default class OperationSection extends Vue {
+  export default class OperationTabs extends Vue {
     @Prop() operationId!: string;
     private activeTab: string = 'Parameters';
 

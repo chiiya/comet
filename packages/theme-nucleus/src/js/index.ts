@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import NavigationSection from './components/NavigationSection.vue';
 import Overview from './components/Overview.vue';
-import ResourceList from './components/ResourceList.vue';
+import ItemList from './components/ItemList.vue';
 import store from './store';
 import Transformer from './transformer';
 const throttle = require('lodash.throttle');
@@ -9,17 +9,33 @@ const throttle = require('lodash.throttle');
 const api = Transformer.execute();
 store.commit('Api/UPDATE_NAME', api.name);
 store.commit('Api/UPDATE_DESCRIPTION', api.description);
-store.commit('Api/UPDATE_RESOURCES', api.resources);
-store.commit('Api/UPDATE_RESOURCE_IDS', api.resourceIds);
-store.commit('Api/UPDATE_OPERATIONS', api.operations);
 store.commit('Api/UPDATE_GROUPS', api.groups);
 store.commit('Api/UPDATE_GROUP_IDS', api.groupIds);
+store.commit('Api/UPDATE_OPERATIONS', api.operations);
+store.commit('Api/UPDATE_OPERATION_IDS', api.operationIds);
 store.commit('Api/UPDATE_NAVIGATION', api.navigation);
+
+Vue.component('heading', {
+  render: function (createElement) {
+    return createElement(
+      // @ts-ignore
+      // tslint:disable-next-line:prefer-template
+      `h${this.level > 6 ? 6 : this.level}`,
+      this.$slots.default,
+    );
+  },
+  props: {
+    level: {
+      type: Number,
+      required: true,
+    },
+  },
+});
 
 const app = new Vue({
   store,
   el: '#app',
-  components: { NavigationSection, Overview, ResourceList },
+  components: { NavigationSection, Overview, ItemList },
 });
 
 const mainNavLinks = <NodeListOf<HTMLAnchorElement>>document.querySelectorAll('.nav-item');

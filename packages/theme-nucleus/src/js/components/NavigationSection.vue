@@ -6,7 +6,7 @@
         <li class="text-sm mt-2">
           <a href="#overview" class="py-1 font-semibold text-gray-750 nav-item">Overview</a>
         </li>
-        <group-item v-for="item in this.navigation.items" :key="item.link" :group="item"></group-item>
+        <group-item v-for="group in this.navigation.groups" :key="group.link" :group="group"></group-item>
       </ol>
       <ol v-if="this.navigation.operations.length" class="list-none pl-4 text-xs resource-list relative">
         <operation-item v-for="operation in navigation.operations" :key="operation.link" :operation="operation"></operation-item>
@@ -23,7 +23,6 @@
   import { Navigation } from "../types/api";
 
   const Api = namespace('Api');
-
 
   @Component({
     components: {

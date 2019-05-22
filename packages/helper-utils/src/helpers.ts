@@ -13,10 +13,7 @@ export const getOperationName = (path: string, method: string): string  => {
   if (parameterEndsPath.test(path)) {
     isSingleResourceOperation = true;
   }
-  const base = path
-    .replace(/^\//, '')
-    .replace(/(\/?{.+}(?:\/$)?)/g, '')
-    .replace('/', '-');
+  const base = getResourceName(path);
   let suffix;
   switch (method.toLowerCase()) {
     case 'get':

@@ -10,6 +10,7 @@ import { join } from 'path';
 import { transformInformation } from './transformers/information';
 import { transformVariables } from './transformers/variables';
 import { createItems } from './transformers/operations';
+import { groupOperationsByTrie } from '@comet-cli/helper-utils';
 
 export default class PostmanPlugin implements PluginInterface {
   async execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<void> {
@@ -18,6 +19,9 @@ export default class PostmanPlugin implements PluginInterface {
       variable: transformVariables(model),
       item: createItems(model),
     };
+
+    const folders = groupOperationsByTrie(model, { flatten: false });
+    await writeFile('folders.json', JSON.stringify(folders, null, 2));
 
     const path = join(config.output, 'postman.json');
     await ensureDir(config.output);

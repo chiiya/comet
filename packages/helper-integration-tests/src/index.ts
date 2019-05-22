@@ -1,5 +1,5 @@
 import { ApiModel, Parameter } from '@comet-cli/types';
-import { camelize, EnhancedOperation, getAllOperationsWithUris, slugify } from '@comet-cli/helper-utils';
+import { camelize, EnhancedOperation, getAllEnhancedOperations, slugify } from '@comet-cli/helper-utils';
 import Combination from './Combination';
 import MissingExampleException from './MissingExampleException';
 import { buildTestCaseName, getResolvedUrl } from './helpers';
@@ -41,7 +41,7 @@ export default class TestSuiteCreator {
       url: uri,
       testCases: [],
     };
-    const operations: EnhancedOperation[] = getAllOperationsWithUris(model);
+    const operations: EnhancedOperation[] = getAllEnhancedOperations(model);
     for (const operation of operations) {
       testSuite.testCases.push(...this.buildOperation(operation, uri));
     }
