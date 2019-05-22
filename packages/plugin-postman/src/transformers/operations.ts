@@ -10,7 +10,6 @@ import {
 } from '../../types';
 import { Node, Trie } from '../trie';
 import {
-  getAllOperationsWithUris,
   getAllResources,
   prettifyOperationName,
 } from '@comet-cli/helper-utils';
@@ -67,7 +66,6 @@ export const createItems = (model: ApiModel): (PostmanItem | PostmanFolder)[] =>
       }
     }
     const trie = createResourceTrie(model.resources);
-    // await writeFile('trie.json', JSON.stringify(trie, null, 2));
     for (const node of Object.values(trie.root.children)) {
       if (node.requestCount > 0) {
         folders.push(convertNodeToFolderOrItem(node));
@@ -100,10 +98,6 @@ const groupByTags = (model: ApiModel): Dict<EnhancedOperation[]> => {
         tags['x-comet-untagged'].push(enhancedOperation);
       }
     }
-  }
-  const operations = getAllOperationsWithUris(model);
-  for (const operation of operations) {
-
   }
   return tags;
 };
