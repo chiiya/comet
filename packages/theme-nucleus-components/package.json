@@ -1,0 +1,61 @@
+{
+  "name": "@comet-cli/theme-nucleus-components",
+  "version": "0.1.5",
+  "description": "Vue components for the nucleus theme",
+  "keywords": [
+    "comet",
+    "nucleus",
+    "api",
+    "documentation",
+    "rest",
+    "swagger",
+    "openapi",
+    "api-blueprint",
+    "raml"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/theme-nucleus-components#readme",
+  "license": "MIT",
+  "scripts": {
+    "lint": "node_modules/.bin/vue-cli-service lint",
+    "build": "bili"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/*",
+    "src/*",
+    "*.json",
+    "*.js"
+  ],
+  "dependencies": {
+    "@comet-cli/helper-utils": "^0.1.1",
+    "core-js": "^2.6.5",
+    "feather-icons": "^4.21.0",
+    "lodash.throttle": "^4.1.1",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.0.2",
+    "vue-property-decorator": "^8.1.0",
+    "vuex": "^3.1.1",
+    "vuex-class": "^0.3.2",
+    "vuex-module-decorators": "^0.9.9"
+  },
+  "devDependencies": {
+    "@comet-cli/types": "^0.1.1",
+    "@types/feather-icons": "^4.7.0",
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-typescript": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
+    "bili": "^4.8.0",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.1.2",
+    "postcss-preset-env": "^6.6.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-vue": "^5.0.0",
+    "sass": "^1.18.0",
+    "sass-loader": "^7.1.0",
+    "typescript": "^3.4.3",
+    "vue-template-compiler": "^2.5.21"
+  }
+}

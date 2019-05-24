@@ -82,7 +82,7 @@ export default class Resolver {
         pluginClasses.push(new pluginClass());
       } catch (error) {
         error.message =
-          `Could not find module \`${plugin}\`. Run \`npm install ${plugin}\` to install`;
+          `Could not find module \`${plugin}\`. Run \`npm install ${plugin}\` to install\n${error.message}`;
         throw error;
       }
     }

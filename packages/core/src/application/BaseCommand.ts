@@ -4,8 +4,8 @@ import ConfigRepository from '../config/ConfigRepository';
 import Resolver from '../services/Resolver';
 import {
   ApiModel,
-  CommandConfig,
-  AdapterInterface, PluginInterface,
+  AdapterInterface,
+  PluginInterface,
 } from '@comet-cli/types';
 import { identify } from '@comet-cli/helper-identify';
 import Logger from '../helpers/Logger';
@@ -17,8 +17,7 @@ export default abstract class BaseCommand extends Command {
   protected configRepository: ConfigRepository;
 
   /** Resolved adapter instance */
-  // @ts-ignore
-  protected adapter: AdapterInterface;
+  protected adapter!: AdapterInterface;
 
   /** Resolved plugin instances */
   protected plugins: PluginInterface[] = [];
@@ -97,9 +96,10 @@ export default abstract class BaseCommand extends Command {
 
     try {
       await this.resolve(file);
+      const adapter = this.adapter.name();
       spec = await this.adapter.execute(
         file.path(),
-        this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
+        this.configRepository.get(`adapters.${adapter}`),
         this.logger,
       );
     } catch (error) {
@@ -119,9 +119,10 @@ export default abstract class BaseCommand extends Command {
   protected async runPlugins(model: ApiModel) {
     try {
       for (let i = 0; i < this.plugins.length; i = i + 1) {
+        const plugin = this.plugins[i].name();
         await this.plugins[i].execute(
           model,
-          this.configRepository.get(`commands.${this.configKey}`) as CommandConfig,
+          this.configRepository.get(`plugins.${plugin}`),
           this.logger,
         );
       }

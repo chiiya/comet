@@ -1,5 +1,6 @@
-import { ApiModel, CommandConfig, LoggerInterface } from '..';
+import { ApiModel, Config, LoggerInterface } from '../index';
 
 export interface PluginInterface {
-  execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<any>;
+  execute(model: ApiModel, config: Config, logger: LoggerInterface): Promise<any>;
+  name(): string;
 }

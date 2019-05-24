@@ -193,7 +193,6 @@ export const groupOperations = (model: ApiModel, options: GroupOptions = {}): Fo
 
 export const createResourceTrie = (resources: Resource[]): Trie => {
   const trie = new Trie(new Node({
-    type: 'item',
     path: '/',
     operations: [],
   }));
@@ -205,7 +204,6 @@ export const createResourceTrie = (resources: Resource[]): Trie => {
     for (const segment of segments) {
       if (!currentNode.children[segment]) {
         currentNode.addChildren(segment, new Node({
-          type: 'group',
           path: segment.replace(/{([a-zA-Z0-9\-_]+)}/g, ':$1'),
           name: resource.name,
           description: resource.description,

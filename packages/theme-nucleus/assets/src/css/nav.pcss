@@ -1,0 +1,21 @@
+.sidebar {
+  .item-group > ol {
+    @apply hidden;
+  }
+  .item-group.is-active {
+    > a {
+      @apply text-blue-500;
+    }
+    > ol {
+      @apply block;
+    }
+  }
+  .item-operation.is-active {
+    @apply rounded;
+    @apply bg-gray-200;
+
+    > a {
+      @apply font-semibold;
+    }
+  }
+}

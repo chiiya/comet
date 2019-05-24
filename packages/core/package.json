@@ -45,6 +45,7 @@
   },
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
@@ -60,6 +61,7 @@
     "@comet-cli/adapter-raml": "^0.1.5",
     "@comet-cli/plugin-json-schemas": "^0.1.5",
     "@comet-cli/plugin-postman": "^0.1.5",
+    "@comet-cli/plugin-documentation": "^0.1.5",
     "@comet-cli/plugin-tests-laravel": "^0.1.5",
     "@comet-cli/helper-identify": "^0.1.5",
     "@comet-cli/helper-utils": "^0.1.1",

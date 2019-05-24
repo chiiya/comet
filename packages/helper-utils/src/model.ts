@@ -59,7 +59,7 @@ export const getOperationParameters = (resource: Resource, operation: Operation)
   return Object.values(parameters);
 };
 
-export const getHumanReadableType = (schema: Schema | undefined): string | undefined => {
+export const getHumanReadableType = (schema?: Schema): string | undefined => {
   if (schema === undefined || schema.type === undefined) {
     return undefined;
   }

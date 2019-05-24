@@ -1,4 +1,4 @@
-import { CometConfig, CommandConfig, ConfigValue } from '@comet-cli/types';
+import { CometConfig, CommandConfig, Config, ConfigValue } from '@comet-cli/types';
 import ConfigResolver from './ConfigResolver';
 const dotProp = require('dot-prop');
 
@@ -27,7 +27,7 @@ export default class ConfigRepository {
    * @param key {string}
    * @return {ConfigValue}
    */
-  get(key: string): ConfigValue | CommandConfig | undefined {
+  get(key: string): Config {
     let result = dotProp.get(this.config, key);
     // If not found (undefined), try to fetch a default value
     if (result == null) {

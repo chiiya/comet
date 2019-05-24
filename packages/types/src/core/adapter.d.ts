@@ -1,5 +1,6 @@
-import { ApiModel, CommandConfig, LoggerInterface } from '..';
+import { ApiModel, Config, LoggerInterface } from '../';
 
 export interface AdapterInterface {
-  execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel>;
+  execute(path: string, config: Config, logger: LoggerInterface): Promise<ApiModel>;
+  name(): string;
 }

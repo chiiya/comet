@@ -1,7 +1,7 @@
 import {
   AdapterInterface,
   ApiModel,
-  CommandConfig,
+  Config,
   LoggerInterface,
 } from '@comet-cli/types';
 import Parser from './Parser';
@@ -11,7 +11,7 @@ import AuthenticationTransformer from './transformers/AuthenticationTransformer'
 import ResourceTransformer from './transformers/ResourceTransformer';
 
 export default class OpenApiAdapter implements AdapterInterface {
-  async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
+  async execute(path: string, config: Config, logger: LoggerInterface): Promise<ApiModel> {
     // Parse input file
     try {
       const result = await Parser.load(path);
@@ -32,5 +32,9 @@ export default class OpenApiAdapter implements AdapterInterface {
       }
       throw error;
     }
+  }
+
+  public name(): string {
+    return 'openapi';
   }
 }

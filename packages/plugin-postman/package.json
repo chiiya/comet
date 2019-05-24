@@ -31,7 +31,8 @@
     "url": "git+https://github.com/chiiya/comet.git"
   },
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "build": "tsc"
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"

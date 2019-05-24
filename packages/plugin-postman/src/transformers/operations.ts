@@ -2,7 +2,7 @@ import {
   ApiModel,
   Body,
   CommandConfig,
-  Parameter,
+  Parameter, PostmanPluginConfig,
 } from '@comet-cli/types';
 import {
   PostmanFolder,
@@ -19,7 +19,7 @@ import {
   prettifyOperationName,
 } from '@comet-cli/helper-utils';
 
-export const createItems = (model: ApiModel, config: CommandConfig): (PostmanItem | PostmanFolder)[] => {
+export const createItems = (model: ApiModel, config: PostmanPluginConfig): (PostmanItem | PostmanFolder)[] => {
   const items: (PostmanItem | PostmanFolder)[] = [];
   const options: GroupOptions = {
     group_by: config.group_by,

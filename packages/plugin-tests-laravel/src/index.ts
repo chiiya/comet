@@ -1,4 +1,9 @@
-import { ApiModel, CommandConfig, LoggerInterface, PluginInterface } from '@comet-cli/types';
+import {
+  ApiModel,
+  LoggerInterface,
+  PluginInterface,
+  TestLaravelPluginConfig,
+} from '@comet-cli/types';
 import { ensureDir, readFile, writeFile, writeJson } from 'fs-extra';
 import { xml2js, js2xml } from 'xml-js';
 import TestSuiteCreator, { TestCase } from '@comet-cli/helper-integration-tests';
@@ -13,9 +18,9 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * @param config
    * @param logger
    */
-  async execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<void> {
+  async execute(model: ApiModel, config: TestLaravelPluginConfig, logger: LoggerInterface): Promise<void> {
     const warnings: string[] = [];
-    const outputDir = config.output;
+    const outputDir = config.output || './';
     await ensureDir(outputDir);
     // Step 1: Update the PHPUnit configuration file
     try {
@@ -47,12 +52,16 @@ export default class LaravelTestsPlugin implements PluginInterface {
     this.printWarnings(warnings, logger);
   }
 
+  public name(): string {
+    return 'tests-laravel';
+  }
+
   /**
    * Get the base URL.
    * @param model
    * @param config
    */
-  protected getUrl(model: ApiModel, config: CommandConfig): string {
+  protected getUrl(model: ApiModel, config: TestLaravelPluginConfig): string {
     if (config.base_url) {
       return config.base_url;
     }
@@ -120,12 +129,13 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * @param testCases
    * @param config
    */
-  protected async writeJsonSchemaFiles(model: ApiModel, testCases: TestCase[], config: CommandConfig) {
+  protected async writeJsonSchemaFiles(model: ApiModel, testCases: TestCase[], config: TestLaravelPluginConfig) {
     const schemas = testCases.filter((testCase: TestCase) => testCase.action !== undefined);
     for (const schema of schemas) {
       const action: Action = <Action>schema.action;
-      await ensureDir(path.join(config.output, 'schemas'));
-      const file = path.join(config.output, 'schemas', `${action.name}.json`);
+      const output = config.output || './';
+      await ensureDir(path.join(output, 'schemas'));
+      const file = path.join(output, 'schemas', `${action.name}.json`);
       await writeJson(file, action.schema, { spaces: 4 });
     }
   }
@@ -134,9 +144,10 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * Create the template php hook trait file.
    * @param config
    */
-  protected async createHookTraitFile(config: CommandConfig) {
+  protected async createHookTraitFile(config: TestLaravelPluginConfig) {
     const source = await readFile(path.join(__dirname, 'stubs', 'hooks.hbs'), 'utf8');
-    await writeFile(path.join(config.output, 'HasHooks.php'), source);
+    const output = config.output || './';
+    await writeFile(path.join(output, 'HasHooks.php'), source);
   }
 
   /**
@@ -144,11 +155,11 @@ export default class LaravelTestsPlugin implements PluginInterface {
    * @param testCases
    * @param config
    */
-  protected async createTestCases(testCases: TestCase[], config: CommandConfig) {
+  protected async createTestCases(testCases: TestCase[], config: TestLaravelPluginConfig) {
     const data = {
       testCases: testCases,
     };
-    const outputDir = config.output;
+    const outputDir = config.output || './';
     handlebars.registerHelper('getTestCaseName', (testCase: TestCase) => {
       // @ts-ignore
       return testCase.name.charAt(0).toUpperCase() + testCase.name.slice(1);

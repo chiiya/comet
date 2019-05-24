@@ -16,3 +16,5 @@ examples/blueprint.apib
 node_modules
 lerna-debug.log
 packages/*/lib
+.rpt2_cache
+packages/*/dist
