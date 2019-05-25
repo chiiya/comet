@@ -1,5 +1,9 @@
 import Specification from '../Specification';
-import { Authentication, CommandConfig, ResourceGroup } from '@comet-cli/types';
+import {
+  ApiBlueprintAdapterConfig,
+  Authentication,
+  ResourceGroup,
+} from '@comet-cli/types';
 import { ApiBlueprintCopy } from '../../types/blueprint';
 import ResourceTransformer from './ResourceTransformer';
 
@@ -11,7 +15,11 @@ export default class ResourceGroupTransformer {
    * @param config
    * @param auth
    */
-  public static execute(spec: Specification, config: CommandConfig, auth: Authentication | undefined): ResourceGroup[] {
+  public static execute(
+    spec: Specification,
+    config: ApiBlueprintAdapterConfig,
+    auth: Authentication | undefined,
+  ): ResourceGroup[] {
     const resourceGroups: ResourceGroup[] = [];
     // Only resource groups will have the `attributes` property. Unnamed resource groups
     // will not have a name. To allow mixing grouped resources and non-grouped resources,
@@ -22,7 +30,7 @@ export default class ResourceGroupTransformer {
         && item.attributes
         && item.attributes.name !== '';
 
-      return config.ungroupRoot === true ? (isGroup && item.attributes && item.attributes.name !== 'Root') : isGroup;
+      return config.ungroup_root === true ? (isGroup && item.attributes && item.attributes.name !== 'Root') : isGroup;
     });
     for (const group of astGroups) {
       const description = <ApiBlueprintCopy>group.content.find((item) => {

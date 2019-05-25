@@ -1,0 +1,88 @@
+{
+  "name": "@comet-cli/plugin-documentation",
+  "version": "0.1.5",
+  "description": "Plugin for generating API documentation",
+  "keywords": [
+    "comet",
+    "api",
+    "documentation",
+    "rest",
+    "swagger",
+    "openapi",
+    "api-blueprint",
+    "raml"
+  ],
+  "author": "Elisha Witte <elishawitte@gmail.com>",
+  "homepage": "https://github.com/chiiya/comet/tree/master/packages/plugin-documentation#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "config",
+    "dist",
+    "src",
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiiya/comet.git"
+  },
+  "scripts": {
+    "build": "bili --config config/bili.config.js",
+    "build:client": "webpack --config config/webpack.client.config.js --progress --hide-modules",
+    "build:server": "webpack --config config/webpack.test.config.js --progress --hide-modules"
+  },
+  "bugs": {
+    "url": "https://github.com/chiiya/comet/issues"
+  },
+  "dependencies": {
+    "@comet-cli/helper-utils": "^0.1.1",
+    "feather-icons": "^4.21.0",
+    "fs-extra": "^8.0.1",
+    "httpsnippet": "^1.19.1",
+    "lodash.throttle": "^4.1.1",
+    "showdown": "^1.9.0",
+    "uuid": "^3.3.2",
+    "vue": "^2.6.10",
+    "vuex": "^3.1.1"
+  },
+  "devDependencies": {
+    "@comet-cli/types": "^0.1.1",
+    "@fullhuman/postcss-purgecss": "^1.2.0",
+    "@types/feather-icons": "^4.7.0",
+    "@types/webpack": "^4.4.32",
+    "bili": "^4.8.0",
+    "css-loader": "^2.1.1",
+    "glob-all": "^3.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.1.2",
+    "postcss-preset-env": "^6.6.0",
+    "resolve-url-loader": "2.3.1",
+    "rollup-plugin-copy": "^2.0.1",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "rollup-plugin-vue": "^5.0.0",
+    "sass": "^1.19.0",
+    "sass-loader": "7.*",
+    "tailwindcss": "^1.0.1",
+    "ts-loader": "^6.0.1",
+    "typescript": "^3.4.5",
+    "vue-class-component": "^7.1.0",
+    "vue-loader": "^15.7.0",
+    "vue-property-decorator": "^8.1.1",
+    "vue-server-renderer": "^2.6.10",
+    "vue-template-compiler": "^2.6.10",
+    "vuex-class": "^0.3.2",
+    "vuex-module-decorators": "^0.9.9",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
+    "webpack-merge": "^4.2.1",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

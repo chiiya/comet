@@ -1,4 +1,9 @@
-import { AdapterInterface, ApiModel, CommandConfig, LoggerInterface } from '@comet-cli/types';
+import {
+  AdapterInterface,
+  ApiModel,
+  Config,
+  LoggerInterface,
+} from '@comet-cli/types';
 import Parser from './Parser';
 import InformationTransformer from './transformers/InformationTransformer';
 import { writeFile } from 'fs-extra';
@@ -8,7 +13,7 @@ import SecuredByTransformer from './transformers/SecuredByTransformer';
 import ResourceTransformer from './transformers/ResourceTransformer';
 
 export default class RamlAdapter implements AdapterInterface {
-  async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
+  async execute(path: string, config: Config, logger: LoggerInterface): Promise<ApiModel> {
     // Parse input file
     try {
       const result = await Parser.load(path, logger);
@@ -32,5 +37,9 @@ export default class RamlAdapter implements AdapterInterface {
       }
       throw error;
     }
+  }
+
+  public name(): string {
+    return 'raml';
   }
 }

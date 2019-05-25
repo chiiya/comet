@@ -2,7 +2,7 @@ import {
   AdapterInterface,
   ApiModel,
   CommandConfig,
-  LoggerInterface,
+  LoggerInterface, SecurityRequirement,
 } from '@comet-cli/types';
 import Parser from './Parser';
 import Specification from './Specification';
@@ -11,6 +11,7 @@ import InformationTransformer from './transformers/InformationTransformer';
 import ResourceGroupTransformer from './transformers/ResourceGroupTransformer';
 import ResourceTransformer from './transformers/ResourceTransformer';
 import { writeFile } from 'fs-extra';
+import { ApiBlueprintAdapterConfig } from '@comet-cli/types/src/config/config';
 
 export default class ApiBlueprintAdapter implements AdapterInterface {
   /**
@@ -19,13 +20,14 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
    * @param config
    * @param logger
    */
-  async execute(path: string, config: CommandConfig, logger: LoggerInterface): Promise<ApiModel> {
+  async execute(path: string, config: ApiBlueprintAdapterConfig, logger: LoggerInterface): Promise<ApiModel> {
     try {
       // Parse input file
       const result = await Parser.load(path, logger);
       await writeFile('./result-parsed.json', JSON.stringify(result, null, 2));
       const specification = new Specification(result);
       const auth = AuthenticationTransformer.execute(specification);
+      const securedBy: SecurityRequirement[] = [];
       const spec = {
         info: InformationTransformer.execute(specification),
         auth: auth,
@@ -35,7 +37,7 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
           config,
           auth ? auth.default : undefined,
         ),
-        securedBy: [],
+        securedBy: securedBy,
       };
       logger.succeed('API Blueprint model transformed');
       return spec;
@@ -46,5 +48,9 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
       }
       throw error;
     }
+  }
+
+  public name(): string {
+    return 'api-blueprint';
   }
 }

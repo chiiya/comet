@@ -13,14 +13,14 @@
   "author": "Elisha Witte <elishawitte@gmail.com>",
   "homepage": "https://github.com/chiiya/comet/tree/master/packages/identify#readme",
   "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "dist": "dist"
   },
   "files": [
-    "lib"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
@@ -30,12 +30,14 @@
     "url": "git+https://github.com/chiiya/comet.git"
   },
   "scripts": {
-    "tsc": "tsc"
+    "build": "bili"
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"
   },
   "devDependencies": {
+    "bili": "^4.8.0",
+    "rollup-plugin-typescript2": "^0.21.1",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   }

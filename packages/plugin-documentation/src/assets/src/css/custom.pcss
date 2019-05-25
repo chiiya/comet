@@ -1,0 +1,79 @@
+@import "typography.pcss";
+@import "code.pcss";
+@import "tables.pcss";
+@import "lists.pcss";
+@import "nav.pcss";
+
+html {
+  height: 100%;
+
+  body {
+    min-height: 100%;
+  }
+}
+
+blockquote,
+dl,
+figure,
+form,
+ol,
+pre,
+table,
+ul {
+  @apply mb-4;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.resource-list {
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    background: #e5eff5;
+  }
+}
+
+.resource-active {
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: .25rem;
+    left: -1.7rem;
+    bottom: .25rem;
+    width: 4px;
+    background: #3eb0ef;
+  }
+}
+
+.text-tiny {
+  font-size: 10px;
+}
+
+.border-b-transparent {
+  border-bottom-color: transparent;
+}
+
+.hover\:border-b-gray-300:hover {
+  border-bottom-color: #e2e8f0;
+}
+
+.sidebar {
+  a {
+    transition: font-weight 150ms ease-in-out;
+  }
+}
+
+/**
+.operation:last-of-type {
+  min-height: calc(1px + 100vh);
+}
+ */
+

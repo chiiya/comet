@@ -1,5 +1,13 @@
 import {
-  ApiModel, Bodies, CommandConfig, LoggerInterface, PluginInterface, Resource, JsonSchema, Operation,
+  ApiModel,
+  Bodies,
+  CommandConfig,
+  LoggerInterface,
+  PluginInterface,
+  Resource,
+  JsonSchema,
+  Operation,
+  JsonSchemaPluginConfig,
 } from '@comet-cli/types';
 import { getOperationName } from '@comet-cli/helper-utils';
 import JsonSchemaTransformer from '@comet-cli/helper-json-schemas';
@@ -21,7 +29,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
    * @param config
    * @param logger
    */
-  public async execute(model: ApiModel, config: CommandConfig, logger: LoggerInterface): Promise<void> {
+  public async execute(model: ApiModel, config: JsonSchemaPluginConfig, logger: LoggerInterface): Promise<void> {
     const actions: Action[] = [];
     for (const group of model.groups) {
       for (const resource of group.resources) {
@@ -31,12 +39,16 @@ export default class JsonSchemaPlugin implements PluginInterface {
     for (const resource of model.resources) {
       actions.push(...JsonSchemaPlugin.generateSchemas(resource));
     }
-    const outputDir = config.output;
+    const outputDir = config.output || './';
     await ensureDir(join(outputDir, 'requests'));
     await emptyDir(join(outputDir, 'requests'));
     await ensureDir(join(outputDir, 'responses'));
     await emptyDir(join(outputDir, 'responses'));
     await this.exportSchemas(actions, outputDir);
+  }
+
+  public name(): string {
+    return 'json-schemas';
   }
 
   /**
@@ -67,7 +79,7 @@ export default class JsonSchemaPlugin implements PluginInterface {
   public static generateResponseSchemaFromOperation(operation: Operation, path: string): Action | undefined {
     if (operation.responses) {
       for (const code of Object.keys(operation.responses)) {
-        if (code.startsWith('2') === true && operation.responses[code].body) {
+        if (code.startsWith('2') && operation.responses[code].body) {
           const bodies = operation.responses[code].body || {};
           const action = this.createFromMediaTypes(bodies, path, operation.method, 'response');
           if (action) {

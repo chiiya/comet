@@ -7,14 +7,12 @@ export interface NodeOptions {
   description?: string;
   operations?: EnhancedOperation[];
   operationCount?: number;
-  type?: 'item' | 'group';
 }
 
 export class Node implements NodeOptions {
   public path: string;
   public name?: string;
   public description?: string;
-  public type: 'item' | 'group';
   public operations: EnhancedOperation[];
   public operationCount: number;
   public children: Dict<Node>;
@@ -23,7 +21,6 @@ export class Node implements NodeOptions {
     this.path = options.path || '/';
     this.name = options.name;
     this.description = options.description;
-    this.type = options.type || 'group';
     this.operations = options.operations || [];
     this.operationCount = options.operationCount || 0;
     this.children = {};

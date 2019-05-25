@@ -14,14 +14,15 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "tsc": "tsc"
+  },
   "main": "src/index.d.ts",
   "typings": "src/index.d.ts",
+  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chiiya/comet.git"
-  },
-  "scripts": {
-    "tsc": "tsc"
   },
   "bugs": {
     "url": "https://github.com/chiiya/comet/issues"

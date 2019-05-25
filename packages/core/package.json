@@ -15,27 +15,27 @@
   "bin": {
     "comet": "./bin/run"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "/bin",
+    "dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
   "oclif": {
-    "commands": "./lib/commands",
+    "commands": "./dist/commands",
     "bin": "comet",
     "plugins": [
       "@oclif/plugin-help"
     ]
   },
-  "directories": {
-    "lib": "lib"
-  },
   "engines": {
     "node": ">=8.0.0"
   },
-  "files": [
-    "/bin",
-    "/lib",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chiiya/comet.git"
@@ -44,7 +44,7 @@
     "access": "public"
   },
   "scripts": {
-    "tsc": "tsc",
+    "build": "tsc",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
@@ -60,6 +60,7 @@
     "@comet-cli/adapter-raml": "^0.1.5",
     "@comet-cli/plugin-json-schemas": "^0.1.5",
     "@comet-cli/plugin-postman": "^0.1.5",
+    "@comet-cli/plugin-documentation": "^0.1.5",
     "@comet-cli/plugin-tests-laravel": "^0.1.5",
     "@comet-cli/helper-identify": "^0.1.5",
     "@comet-cli/helper-utils": "^0.1.1",
@@ -87,6 +88,8 @@
     "@types/ora": "^1.3.4",
     "@types/signale": "^1.2.0",
     "globby": "^8",
+    "bili": "^4.8.0",
+    "rollup-plugin-typescript2": "^0.21.1",
     "ts-node": "^7",
     "tslint": "^5.16.0",
     "tslint-config-airbnb": "^5.11.1",

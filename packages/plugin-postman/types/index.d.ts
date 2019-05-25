@@ -219,12 +219,3 @@ export interface PostmanCertificate {
   };
   passphrase?: string;
 }
-
-export interface NodeOptions {
-  path: string;
-  name?: string;
-  description?: string;
-  requests?: PostmanItem[];
-  requestCount?: number;
-  type?: 'item' | 'folder';
-}

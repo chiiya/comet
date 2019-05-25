@@ -1,5 +1,10 @@
 import { ApiBlueprintCopy, ApiBlueprintResource } from '../../types/blueprint';
-import { Authentication, CommandConfig, Operation, Resource } from '@comet-cli/types';
+import {
+  ApiBlueprintAdapterConfig,
+  Authentication,
+  Operation,
+  Resource,
+} from '@comet-cli/types';
 import ParameterTransformer from './ParameterTransformer';
 import OperationTransformer from './OperationTransformer';
 import Specification from '../Specification';
@@ -80,7 +85,7 @@ export default class ResourceTransformer {
    */
   public static transformFromDefaultGroup(
     spec: Specification,
-    config: CommandConfig,
+    config: ApiBlueprintAdapterConfig,
     auth: Authentication | undefined,
   ): Resource[] {
     let resources: Resource[] = [];
@@ -103,7 +108,7 @@ export default class ResourceTransformer {
     }
     // To allow mixing grouped resources and non-grouped resources, we will ungroup the `Root`
     // resource group, if present.
-    if (config.ungroupRoot === true && rootGroup !== undefined) {
+    if (config.ungroup_root === true && rootGroup !== undefined) {
       resources = [...resources, ...this.transformFromResourceGroup(rootGroup.content, auth)];
     }
 

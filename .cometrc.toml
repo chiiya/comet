@@ -1,0 +1,9 @@
+[plugins.postman]
+output = "exports/postman"
+group_by = "trie"
+
+[plugins.json-schemas]
+output = "exports/schemas"
+
+[plugins.documentation]
+output = "docs/"

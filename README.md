@@ -51,19 +51,32 @@ The default configuration (in `.cometrc.toml`) looks like the following:
 # No default adapter configured. Instead, we will try to auto-detect the input format.
 # adapter = "@comet-cli/adapter-openapi"
 
-[commands.make.schemas]
-plugins = ["@comet-cli/plugin-json-schemas"]
-output = "exports/schemas"
+[adapters.api-blueprint]
+ungroup_root = false # Will un-group resource groups in API Blueprint named `Root`
 
-[commands.make.tests]
-plugins = ["@comet-cli/decorator-tests", "@comet-cli/factory-tests-laravel"] # Order matters!
-output = "tests/Comet"
-base_url = "/api" # Base url to which the endpoints get appended.
+[plugins.postman]
+output = "./"
+group_by = "resources" # Other options are: `tags`, `trie`
+flatten = false # Flatten first level of trie
 
-[commands.make.documentation]
-plguins = []
-output = "exports/documentation"
-ungroup_root = true # Will un-group resource groups in API Blueprint named `Root`
+[plugins.json-schemas]
+output = "./"
+
+[plugins.tests-laravel]
+output = "./"
+base_url = "/api" # Base URL prepended to resources for test calls
+
+[plugins.documentation]
+output = "./"
+group_by = "resources" # Other options are: `tags`, `trie`
+flatten = false # Flatten first level of trie
+theme = "@comet-cli/theme-nucleus"
+# template = "src/index.template.html" - Custom base template
+# css = "src/css/main.css" - Custom, additional CSS
+  [plugins.documentation.data]
+  title = "API Reference"
+  # description = "API Reference for XYZ" - Custom description metadata
+  asset_src = "" # Change to reflect your asset file source path, e.g. "/"
 ```
 
 ## Examples

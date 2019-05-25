@@ -8,31 +8,51 @@ module.exports = {
         plugins: [
           '@comet-cli/plugin-tests-laravel',
         ],
-        output: 'tests/Comet',
-        base_url: '/api',
       },
       schemas: {
         plugins: [
           '@comet-cli/plugin-json-schemas',
         ],
-        output: 'exports/schemas',
       },
       documentation: {
         plugins: [
+          '@comet-cli/plugin-documentation',
         ],
-        output: 'exports/documentation',
-        ungroupRoot: true,
-        group_by: undefined,
-        flatten: false,
       },
       postman: {
         plugins: [
           '@comet-cli/plugin-postman',
         ],
-        output: 'exports',
-        ungroupRoot: true,
-        group_by: undefined,
-        flatten: true,
+      },
+    },
+  },
+  adapters: {
+    'api-blueprint': {
+      ungroup_root: false,
+    },
+  },
+  plugins: {
+    postman: {
+      output: './',
+      group_by: undefined,
+      flatten: false,
+    },
+    'json-schemas': {
+      output: './',
+    },
+    'tests-laravel': {
+      output: 'tests/Comet',
+      base_url: '/api',
+    },
+    documentation: {
+      output: './',
+      theme: '@comet-cli/theme-nucleus',
+      template: undefined,
+      css: undefined,
+      data: {
+        title: 'API Reference',
+        description: undefined,
+        asset_src: '',
       },
     },
   },
