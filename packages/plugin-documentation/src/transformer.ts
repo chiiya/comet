@@ -6,7 +6,7 @@ import {
   Operations,
   NavGroup,
   NavOperation,
-  Navigation,
+  Navigation, DocumentationPluginConfig,
 } from '@comet-cli/types';
 import { Folders, groupOperations } from '@comet-cli/helper-utils';
 import OperationTransformer from './transformers/OperationTransformer';
@@ -18,14 +18,14 @@ const showdown = require('showdown');
 const converter = new showdown.Converter({ tables: true });
 
 export default class Transformer {
-  public static execute(model: ApiModel): ApiState {
+  public static execute(model: ApiModel, config: DocumentationPluginConfig): ApiState {
     const operations: Operations = {};
     const operationIds: string[] = [];
     const groups: Groups = {};
     const groupIds: string[] = [];
     const slugs: Dict<number> = {};
 
-    const folders: Folders = groupOperations(model, { group_by: 'trie', flatten: true });
+    const folders: Folders = groupOperations(model, { group_by: config.group_by, flatten: config.flatten });
 
     for (const operation of folders.operations) {
       const transformedOperation = OperationTransformer.execute(model, operation);

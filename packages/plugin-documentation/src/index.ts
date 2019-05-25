@@ -9,16 +9,14 @@ import { resolve } from 'path';
 import { Stats } from 'webpack';
 const { createBundleRenderer } = require('vue-server-renderer');
 const webpack = require('webpack');
-const clientConfig = require('../config/webpack.client.config.js');
-const serverConfig = require('../config/webpack.server.config.js');
 
 export default class DocumentationPlugin implements PluginInterface {
   public async execute(model: ApiModel, config: DocumentationPluginConfig, logger: LoggerInterface): Promise<any> {
     logger.spin('Compiling API documentation');
     const outputDir = resolve(config.output || './');
 
-    // Compile server and client bundles
-    await this.compile([serverConfig, clientConfig]);
+    // Compile server bundles
+    // await this.compile([serverConfig]);
     const serverBundle = require(resolve(__dirname, '../dist/vue-ssr-server-bundle.json'));
     const renderer = createBundleRenderer(serverBundle, {
       runInNewContext: false,
@@ -27,6 +25,7 @@ export default class DocumentationPlugin implements PluginInterface {
 
     const context = {
       model: model,
+      config: config,
     };
     const html = await renderer.renderToString(context);
 
