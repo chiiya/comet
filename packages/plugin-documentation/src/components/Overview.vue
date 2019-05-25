@@ -17,7 +17,9 @@
 
   const Api = namespace('Api');
 
-  @Component
+  @Component({
+    name: 'overview',
+  })
   export default class Overview extends Vue {
     public name: string = 'overview';
     @Api.State

@@ -25,6 +25,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'group-section',
     components: {
       OperationSection,
     },

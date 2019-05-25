@@ -18,7 +18,8 @@ module.exports = {
     },
     copy: {
       targets: [
-        path.resolve(__dirname, '../src/index.template.html')
+        path.resolve(__dirname, '../src/index.template.html'),
+        path.resolve(__dirname, '../src/assets')
       ],
       outputFolder: path.resolve(__dirname, '../dist')
     }

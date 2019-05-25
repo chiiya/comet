@@ -25,6 +25,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'resource-section',
     components: {
       OperationSection,
     },

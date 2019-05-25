@@ -22,7 +22,9 @@
   import { Vue, Component, Prop } from 'vue-property-decorator';
   import { DocHeader } from '@comet-cli/types';
 
-  @Component
+  @Component({
+    name: 'header-item',
+  })
   export default class HeaderItem extends Vue {
     public name: string = 'header-item';
     @Prop(Object) public readonly header!: DocHeader;

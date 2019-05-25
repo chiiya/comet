@@ -26,6 +26,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'navigation-section',
     components: {
       GroupItem,
       OperationItem,

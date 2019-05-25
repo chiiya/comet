@@ -56,7 +56,9 @@
     name?: string;
   }
 
-  @Component
+  @Component({
+    name: 'body-item',
+  })
   export default class BodyItem extends Vue {
     public name: string = 'body-item';
     @Prop(Object) public readonly schema!: Schema | undefined;

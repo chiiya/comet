@@ -27,7 +27,9 @@
   import { Vue, Component, Prop } from 'vue-property-decorator';
   import { Parameter } from '@comet-cli/types';
 
-  @Component
+  @Component({
+    name: 'parameter-item',
+  })
   export default class ParameterItem extends Vue {
     public name: string = 'parameter-item';
     @Prop(Object) public readonly parameter!: Parameter;

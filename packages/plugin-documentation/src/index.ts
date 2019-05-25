@@ -28,11 +28,11 @@ export default class DocumentationPlugin implements PluginInterface {
     const html = await renderer.renderToString(context);
     await ensureDir(outputDir);
     await writeFile(resolve(outputDir, 'documentation.html'), html);
-    // const cssSource = await readFile(css, 'utf-8');
-    // const jsSource = await readFile(js, 'utf-8');
-    // const jsBundle = await readFile(resolve(__dirname, '../dist/app.js'), 'utf-8');
-    // await writeFile(resolve(outputDir, 'style.css'), cssSource);
-    // await writeFile(resolve(outputDir, 'bundle.js'), `${jsSource}${jsBundle}`);
+    const cssSource = await readFile(resolve(__dirname, 'assets/dist/style.css'), 'utf-8');
+    const jsSource = await readFile(resolve(__dirname, 'assets/dist/bundle.js'), 'utf-8');
+    const jsBundle = await readFile(resolve(__dirname, '../dist/app.js'), 'utf-8');
+    await writeFile(resolve(outputDir, 'style.css'), cssSource);
+    await writeFile(resolve(outputDir, 'bundle.js'), `${jsSource}${jsBundle}`);
 
     logger.succeed('API documentation compiled');
   }

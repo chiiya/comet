@@ -22,6 +22,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'parameters',
     components: {
       ParameterItem,
     },

@@ -12,7 +12,9 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
 
-  @Component
+  @Component({
+    name: 'request-sample',
+  })
   export default class RequestSample extends Vue {
     public name: string = 'request-sample';
     @Prop(String) public readonly lang!: string;

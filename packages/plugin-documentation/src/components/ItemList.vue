@@ -14,6 +14,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'item-list',
     components: {
       GroupSection,
       OperationSection,

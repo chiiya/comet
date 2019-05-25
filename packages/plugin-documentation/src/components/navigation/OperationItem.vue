@@ -10,7 +10,9 @@
   import { Vue, Component, Prop } from 'vue-property-decorator';
   import { NavOperation } from '@comet-cli/types';
 
-  @Component
+  @Component({
+    name: 'group-item',
+  })
   export default class GroupItem extends Vue {
     public name: string = 'group-item';
     @Prop(Object) public readonly operation!: NavOperation;

@@ -15,7 +15,9 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
 
-  @Component
+  @Component({
+    name: 'code-sample',
+  })
   export default class CodeSample extends Vue {
     public name: string = 'code-sample';
     @Prop(String) public readonly snippet!: string;

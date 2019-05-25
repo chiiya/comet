@@ -12,7 +12,9 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
 
-  @Component
+  @Component({
+    name: 'tab-header',
+  })
   export default class TabHeader extends Vue {
     public name: string = 'tab-header';
     @Prop(String) public readonly title!: string;

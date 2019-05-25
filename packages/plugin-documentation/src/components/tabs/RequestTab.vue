@@ -38,6 +38,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'request-tab',
     components: {
       HeaderItem,
       BodyItem,

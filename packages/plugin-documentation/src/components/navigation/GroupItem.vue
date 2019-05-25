@@ -16,6 +16,7 @@
   import OperationItem from './OperationItem.vue';
 
   @Component({
+    name: 'group-item',
     components: {
       OperationItem,
     },

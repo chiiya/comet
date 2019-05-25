@@ -25,6 +25,7 @@
   import ResponseTab from './ResponseTab.vue';
 
   @Component({
+    name: 'operation-tabs',
     components: {
       TabHeader,
       Parameters,

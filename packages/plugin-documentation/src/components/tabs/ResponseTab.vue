@@ -49,6 +49,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'response-tab',
     components: {
       HeaderItem,
       BodyItem,

@@ -16,6 +16,7 @@
   import ItemList from './components/ItemList.vue';
 
   @Component({
+    name: 'app',
     components: {
       NavigationSection,
       Overview,

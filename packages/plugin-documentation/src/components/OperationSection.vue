@@ -32,6 +32,7 @@
   const Api = namespace('Api');
 
   @Component({
+    name: 'operation-section',
     components: {
       CodeSample,
       RequestSample,
