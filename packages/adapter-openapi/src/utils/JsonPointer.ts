@@ -25,9 +25,11 @@
 
  */
 
-import * as JsonPointerLib from 'json-pointer';
+const jsonPointer = require('json-pointer');
 
-const origParse = JsonPointerLib.parse;
+const origParse = jsonPointer.parse;
+const lib = jsonPointer;
+
 /**
  * Wrapper for JsonPointer. Provides common operations
  */
@@ -58,7 +60,7 @@ export class JsonPointer {
    */
   static dirName(pointer: string, level = 1) {
     const tokens = JsonPointer.parse(pointer);
-    return JsonPointerLib.compile(tokens.slice(0, tokens.length - level));
+    return jsonPointer.compile(tokens.slice(0, tokens.length - level));
   }
 
   /**
@@ -88,9 +90,9 @@ export class JsonPointer {
   }
 
   static get(object: object, pointer: string) {
-    return JsonPointerLib.get(object, pointer);
+    return jsonPointer.get(object, pointer);
   }
 }
-const parse = JsonPointer.parse;
-Object.assign(JsonPointer, JsonPointerLib, parse);
+lib.parse = JsonPointer.parse;
+Object.assign(JsonPointer, lib);
 export default JsonPointer;
