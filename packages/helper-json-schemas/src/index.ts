@@ -19,6 +19,7 @@ export default class JsonSchemaTransformer {
     const transformed = { ...schema };
     delete transformed.discriminator;
     delete transformed.xml;
+    delete transformed.example;
     // Transform nested schema definitions
     const nested: (keyof Schema)[] = ['allOf', 'oneOf', 'anyOf', 'not', 'items', 'additionalProperties'];
     for (const struct of nested) {
