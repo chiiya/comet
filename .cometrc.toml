@@ -12,3 +12,5 @@ output = "exports/schemas"
 output = "docs/"
 group_by = "trie"
 flatten = true
+  [plugins.documentation.data]
+  title = "Travel Books API"
