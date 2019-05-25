@@ -154,9 +154,19 @@ export default class OperationTransformer {
     }
     const body = Object.values(bodies).find(item => item.examples.length > 0);
     if (body) {
+      let example = body.examples[0];
+      if (typeof example === 'object') {
+        example = JSON.stringify(example, null, 2);
+      } else {
+        try {
+          example = JSON.stringify(JSON.parse(example), null, 2);
+        } catch (error) {
+          return undefined;
+        }
+      }
       return {
         lang: body.mediaType ? body.mediaType.replace('application/', '') : '',
-        example: body.examples[0],
+        example: example,
       };
     }
     return undefined;
