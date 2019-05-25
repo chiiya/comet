@@ -16,16 +16,20 @@ export default class DocumentationPlugin implements PluginInterface {
   public async execute(model: ApiModel, config: DocumentationPluginConfig, logger: LoggerInterface): Promise<any> {
     logger.spin('Compiling API documentation');
     const outputDir = resolve(config.output || './');
+
+    // Compile server and client bundles
     await this.compile([serverConfig, clientConfig]);
     const serverBundle = require(resolve(__dirname, '../dist/vue-ssr-server-bundle.json'));
     const renderer = createBundleRenderer(serverBundle, {
       runInNewContext: false,
       template: await readFile(resolve(__dirname, './index.template.html'), 'utf-8'),
     });
+
     const context = {
       model: model,
     };
     const html = await renderer.renderToString(context);
+
     await ensureDir(outputDir);
     await writeFile(resolve(outputDir, 'documentation.html'), html);
     const cssSource = await readFile(resolve(__dirname, 'assets/dist/style.css'), 'utf-8');
