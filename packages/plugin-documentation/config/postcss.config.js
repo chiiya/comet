@@ -26,7 +26,7 @@ module.exports = {
         return contentWithoutStyleBlocks.match(/[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g) || []
       },
       whitelist: [],
-      whitelistPatterns: [/language-.+$/, /ml-\d/],
+      whitelistPatterns: [/language-.+$/, /ml-\d/, /pre/, /code/, /token.*/],
     }),
     autoprefixer(),
   ]
