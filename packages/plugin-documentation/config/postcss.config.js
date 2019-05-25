@@ -20,7 +20,6 @@ module.exports = {
       content: [
         resolve('../src/**/*.html'),
         resolve('../src/**/*.vue'),
-        resolve('../../theme-nucleus-components/src/**/*.vue'),
       ],
       defaultExtractor(content) {
         const contentWithoutStyleBlocks = content.replace(/<style[^]+?<\/style>/gi, '');

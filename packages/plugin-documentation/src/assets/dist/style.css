@@ -882,6 +882,10 @@ object {
   margin-left: 16rem;
 }
 
+.ml-auto {
+  margin-left: auto;
+}
+
 .-ml-1 {
   margin-left: -0.25rem;
 }
