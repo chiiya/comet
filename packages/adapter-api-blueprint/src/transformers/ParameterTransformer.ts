@@ -69,23 +69,30 @@ export default class ParameterTransformer {
     // If it's a nested array type definition (e.g. array[string]), adjust the schema
     if (isNestedArrayType) {
       schema.type = 'array';
-      const nestedTypes = /array\[(\w+)(?:,\s*(\w+))*]/g.exec(data.type);
-      if (nestedTypes !== null) {
-        nestedTypes.shift();
-        // Only one item
-        if (nestedTypes.length === 1 && this.isValidType(nestedTypes[0])) {
-          schema.items = {
-            type: nestedTypes[0],
-          };
-        } else {
-          schema.type = undefined;
-          schema.anyOf = [];
-          for (const subType of nestedTypes) {
-            if (this.isValidType(subType)) {
-              schema.anyOf.push({
-                type: subType,
-              });
-            }
+      const regex = /array\[(\w+)(?:,\s*(\w+))*]/g;
+      let match = regex.exec(data.type);
+      const matches: string[] = [];
+
+      while (match !== null) {
+        const nestedType = match[1];
+        if (nestedType) {
+          matches.push(nestedType);
+        }
+        match = regex.exec(data.type);
+      }
+      if (matches.length === 1 && this.isValidType(matches[0])) {
+        schema.items = {
+          type: matches[0],
+        };
+      } else {
+        schema.items = {
+          anyOf: [],
+        };
+        for (const subType of matches) {
+          if (this.isValidType(subType)) {
+            schema.items.anyOf!.push({
+              type: subType,
+            });
           }
         }
       }
