@@ -1,7 +1,6 @@
 import {
   AdapterInterface,
   ApiModel,
-  CommandConfig,
   LoggerInterface, SecurityRequirement,
 } from '@comet-cli/types';
 import Parser from './Parser';
