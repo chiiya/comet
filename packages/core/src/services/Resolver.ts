@@ -39,17 +39,14 @@ export default class Resolver {
     const adapter = configuredAdapter || detected;
 
     // Try to import the configured adapter
-    let adapterClass;
     try {
-      adapterClass = await import(String(adapter));
-      adapterClass = adapterClass.default;
+      const adapterClass = await import(String(adapter));
+      return new adapterClass();
     } catch (error) {
       error.message =
         `Could not find module \`${adapter}\`. Run \`npm install ${adapter}\` to install`;
       throw error;
     }
-
-    return new adapterClass();
   }
 
   /**
@@ -77,8 +74,7 @@ export default class Resolver {
     const pluginClasses: PluginInterface[] = [];
     for (const plugin of configuredPlugins) {
       try {
-        let pluginClass = await import(plugin);
-        pluginClass = pluginClass.default;
+        const pluginClass = await import(plugin);
         pluginClasses.push(new pluginClass());
       } catch (error) {
         error.message =

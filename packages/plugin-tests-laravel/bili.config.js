@@ -1,5 +1,7 @@
+const path = require("path");
+
 module.exports = {
-  input: 'src/index.ts',
+  input: path.resolve(__dirname, './src/index.ts'),
   banner: true,
   output: {
     format: ['cjs', 'esm'],
@@ -11,8 +13,11 @@ module.exports = {
         include: ['src']
       }
     },
-    vue: {
-      css: true
+    copy: {
+      targets: [
+        'src/stubs'
+      ],
+      outputFolder: 'dist'
     }
   }
 };

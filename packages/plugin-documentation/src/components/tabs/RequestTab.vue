@@ -29,7 +29,7 @@
 
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
-  import { getJsonBody } from '@comet-cli/helper-utils/src';
+  import { getJsonBody } from '@comet-cli/helper-utils';
   import { Body, DocHeader, DocOperation } from '@comet-cli/types';
   import HeaderItem from './HeaderItem.vue';
   import BodyItem from './BodyItem.vue';

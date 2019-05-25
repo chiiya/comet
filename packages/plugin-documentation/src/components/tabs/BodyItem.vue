@@ -23,7 +23,7 @@
       </div>
     </div>
     <div v-if="this.items.length" :class="`ml-${3 + depth}`">
-      <body-item v-for="item in items" :key="item.id" :schema="item" :property-name="item.name" :required="item.isRequired" :depth="depth + 1"></body-item>
+      <body-item v-for="item in this.items" :key="item.id" :schema="item" :property-name="item.name" :required="item.isRequired" :depth="depth + 1"></body-item>
     </div>
     <div v-if="schema && schema.anyOf && schema.anyOf.length" :class="`ml-${3 + depth}`">
       <span class="block mb-3 text-gray-600 text-tiny uppercase font-bold">Any of</span>
@@ -48,7 +48,7 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
   import { Schema } from '@comet-cli/types';
-  import { getHumanReadableType } from '@comet-cli/helper-utils/src';
+  import { getHumanReadableType } from '@comet-cli/helper-utils';
 
   interface ItemSchema extends Schema {
     id?: number;

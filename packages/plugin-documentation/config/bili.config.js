@@ -15,6 +15,12 @@ module.exports = {
     },
     vue: {
       css: true
+    },
+    copy: {
+      targets: [
+        path.resolve(__dirname, '../src/index.template.html')
+      ],
+      outputFolder: path.resolve(__dirname, '../dist')
     }
   }
 };

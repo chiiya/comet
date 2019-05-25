@@ -1,6 +1,7 @@
 import Vue from 'vue';
-import { App } from '@comet-cli/theme-nucleus';
+import App from './App.vue';
 import { createStore } from './store';
+import BodyItem from './components/tabs/BodyItem.vue';
 
 export function createApp() {
   const store = createStore();
@@ -26,6 +27,6 @@ export function createApp() {
       },
     },
   });
-  Vue.config.devtools = true;
+  Vue.component('body-item', BodyItem);
   return { app, store };
 }

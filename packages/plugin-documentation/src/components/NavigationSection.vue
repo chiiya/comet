@@ -42,7 +42,7 @@
       const updateNavStatus = () => {
         const fromTop = window.scrollY;
 
-        mainNavLinks.forEach((link) => {
+        mainNavLinks.forEach((link: HTMLAnchorElement) => {
           const section = <HTMLElement> document.querySelector(link.hash);
           const parent = link.parentElement;
 

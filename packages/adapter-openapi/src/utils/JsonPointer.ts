@@ -91,6 +91,6 @@ export class JsonPointer {
     return JsonPointerLib.get(object, pointer);
   }
 }
-(JsonPointerLib as any).parse = JsonPointer.parse;
-Object.assign(JsonPointer, JsonPointerLib);
+const parse = JsonPointer.parse;
+Object.assign(JsonPointer, JsonPointerLib, parse);
 export default JsonPointer;

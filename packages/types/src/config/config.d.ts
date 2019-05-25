@@ -39,7 +39,6 @@ export interface DocumentationPluginConfig {
   output?: string;
   group_by?: 'resources' | 'tags' | 'trie';
   flatten?: boolean;
-  theme: string;
   template?: string;
   css?: string;
   data?: {

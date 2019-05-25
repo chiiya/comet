@@ -11,7 +11,9 @@
 
 <script lang="ts">
   import { Vue, Component } from 'vue-property-decorator';
-  import { NavigationSection, Overview, ItemList } from '@comet-cli/theme-nucleus-components';
+  import NavigationSection from './components/NavigationSection.vue';
+  import Overview from './components/Overview.vue';
+  import ItemList from './components/ItemList.vue';
 
   @Component({
     components: {
