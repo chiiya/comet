@@ -1,7 +1,6 @@
-import { ApiModel, Dict, Operation, Parameter, Resource } from '@comet-cli/types';
+import { ApiModel, Dict, Operation, Resource } from '@comet-cli/types';
 import { getAllResources, getOperationParameters } from './model';
 import { Node, Trie } from './trie';
-import { getResourceName } from './helpers';
 
 export type EnhancedOperation = Operation & {
   uri: string;
