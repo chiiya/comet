@@ -1,5 +1,5 @@
 <template>
-  <li class="font-normal mt-1 px-3 item-operation">
+  <li :class="`font-normal mt-1 ${isRoot ? 'pr-3' : 'px-3'} item-operation`">
     <a :href="`#${operation.link}`" class="text-gray-750 hover:text-blue-400 inline-block py-1 nav-item relative">
       <span :class="`w-12 uppercase text-tiny mr-2 ${this.color} font-black inline-block`">{{ operation.method }}</span>{{ operation.name }}
     </a>
@@ -16,6 +16,7 @@
   export default class GroupItem extends Vue {
     public name: string = 'group-item';
     @Prop(Object) public readonly operation!: NavOperation;
+    @Prop({ type: Boolean, default: false }) public readonly isRoot!: boolean;
 
     get color() {
       switch (this.operation.method.toUpperCase()) {

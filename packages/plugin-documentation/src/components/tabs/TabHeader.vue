@@ -2,7 +2,7 @@
   <li class="block">
     <a :class="classes" @click="$emit('tab-changed', title)">
       <span class="h-4 w-4 flex items-center justify-center mr-2">
-        <i :data-feather="icon"></i>
+        <component :is="icon" class="h-4"></component>
       </span>
       <span>{{ title }}</span>
     </a>
@@ -11,9 +11,19 @@
 
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
+  import ListIcon from 'vue-feather-icons/icons/ListIcon';
+  import SendIcon from 'vue-feather-icons/icons/SendIcon';
+  import ServerIcon from 'vue-feather-icons/icons/ServerIcon';
+  import PlayIcon from 'vue-feather-icons/icons/PlayIcon';
 
   @Component({
     name: 'tab-header',
+    components: {
+      ListIcon,
+      SendIcon,
+      ServerIcon,
+      PlayIcon,
+    },
   })
   export default class TabHeader extends Vue {
     public name: string = 'tab-header';

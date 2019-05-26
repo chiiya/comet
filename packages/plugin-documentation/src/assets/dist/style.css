@@ -1059,6 +1059,10 @@ object {
   padding-top: 0.25rem;
 }
 
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
 .pl-3 {
   padding-left: 0.75rem;
 }

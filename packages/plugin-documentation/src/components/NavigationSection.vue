@@ -8,8 +8,8 @@
         </li>
         <group-item v-for="group in this.navigation.groups" :key="group.link" :group="group"></group-item>
       </ol>
-      <ol v-if="this.navigation.operations.length" class="list-none pl-4 text-xs resource-list relative">
-        <operation-item v-for="operation in navigation.operations" :key="operation.link" :operation="operation"></operation-item>
+      <ol v-if="this.navigation.operations.length" class="list-none text-xs relative">
+        <operation-item v-for="operation in navigation.operations" :key="operation.link" :operation="operation" :is-root="true"></operation-item>
       </ol>
     </div>
   </div>
