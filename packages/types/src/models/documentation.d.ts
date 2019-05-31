@@ -77,6 +77,7 @@ export interface NavOperation {
 export interface ApiState {
   title: string;
   description: string;
+  uris: string[];
   operations: Operations;
   operationIds: string[];
   groups: Groups;

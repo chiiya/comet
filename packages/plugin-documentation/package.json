@@ -44,7 +44,9 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
+    "@comet-cli/helper-documentation": "^0.1.5",
     "@comet-cli/helper-utils": "^0.1.1",
+    "axios": "^0.19.0",
     "fs-extra": "^8.0.1",
     "httpsnippet": "^1.19.1",
     "lodash.throttle": "^4.1.1",

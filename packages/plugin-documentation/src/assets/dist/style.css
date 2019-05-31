@@ -540,6 +540,12 @@ object {
  * config file.
  */
 
+.appearance-none {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
 .bg-white {
   background-color: #fff;
 }
@@ -584,6 +590,10 @@ object {
   background-color: #4299e1;
 }
 
+.bg-blue-600 {
+  background-color: #3273dc;
+}
+
 .bg-blue-700 {
   background-color: #2b6cb0;
 }
@@ -596,6 +606,10 @@ object {
   background-color: #f8fafc;
 }
 
+.hover\:bg-blue-700:hover {
+  background-color: #2b6cb0;
+}
+
 .hover\:bg-blue-800:hover {
   background-color: #2c5282;
 }
@@ -606,6 +620,10 @@ object {
 
 .border-transparent {
   border-color: transparent;
+}
+
+.border-gray-200 {
+  border-color: #edf2f7;
 }
 
 .border-gray-300 {
@@ -650,6 +668,10 @@ object {
 
 .border-0 {
   border-width: 0;
+}
+
+.border-2 {
+  border-width: 2px;
 }
 
 .border {
@@ -748,8 +770,16 @@ object {
   height: 1rem;
 }
 
+.h-16 {
+  height: 4rem;
+}
+
 .h-full {
   height: 100%;
+}
+
+.leading-tight {
+  line-height: 1.25;
 }
 
 .leading-loose {
@@ -812,6 +842,10 @@ object {
 
 .ml-3 {
   margin-left: 0.75rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .mr-4 {
@@ -978,8 +1012,16 @@ object {
   min-width: 100%;
 }
 
+.focus\:outline-none:focus {
+  outline: 0;
+}
+
 .overflow-visible {
   overflow: visible;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 
 .overflow-x-auto {
@@ -1115,6 +1157,10 @@ object {
 
 .shadow-operation {
   box-shadow: 0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1);
+}
+
+.focus\:shadow-outline:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
 }
 
 .text-left {

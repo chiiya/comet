@@ -12,6 +12,7 @@
       <parameters v-show="activeTab === 'Parameters'" :operation-id="operationId"></parameters>
       <request-tab v-show="activeTab === 'Request'" :operation-id="operationId"></request-tab>
       <response-tab v-show="activeTab === 'Response'" :operation-id="operationId"></response-tab>
+      <trial-tab v-show="activeTab === 'Try it out'" :operation-id="operationId"></trial-tab>
     </section>
   </div>
 </template>
@@ -22,6 +23,7 @@
   import Parameters from './Parameters.vue';
   import RequestTab from './RequestTab.vue';
   import ResponseTab from './ResponseTab.vue';
+  import TrialTab from './TrialTab.vue';
 
   @Component({
     name: 'operation-tabs',
@@ -30,6 +32,7 @@
       Parameters,
       RequestTab,
       ResponseTab,
+      TrialTab
     },
   })
   export default class OperationTabs extends Vue {

@@ -9,6 +9,7 @@ import { Groups, Navigation, Operations } from '@comet-cli/types';
 export default class Api extends VuexModule {
   public title: string = '';
   public description: string = '';
+  public uris: string[] = [];
   public groups: Groups = {};
   public groupIds: string[] = [];
   public operations: Operations = {};
@@ -26,6 +27,11 @@ export default class Api extends VuexModule {
   @Mutation
   UPDATE_DESCRIPTION(description: string) {
     this.description = description;
+  }
+
+  @Mutation
+  UPDATE_URIS(uris: string[]) {
+    this.uris = uris;
   }
 
   @Mutation

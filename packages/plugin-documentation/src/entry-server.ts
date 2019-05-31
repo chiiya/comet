@@ -1,5 +1,5 @@
 import { createApp } from './app';
-import Transformer from './transformer';
+import Transformer from '@comet-cli/helper-documentation';
 
 export default async (context: any): Promise<any> => {
   const { app, store } = await createApp();

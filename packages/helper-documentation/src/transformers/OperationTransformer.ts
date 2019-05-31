@@ -7,6 +7,7 @@ import {
   resolveExampleUri,
 } from '@comet-cli/helper-utils';
 import { ApiModel, Bodies, DocHeader, DocOperation, DocResponses, Example } from '@comet-cli/types';
+const { URL } = require('url');
 const httpSnippet = require('httpsnippet');
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
