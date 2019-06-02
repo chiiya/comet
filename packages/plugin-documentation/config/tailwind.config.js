@@ -47,6 +47,9 @@ module.exports = {
       width: {
         '80': '20rem',
       },
+      height: {
+        '96': '24rem',
+      },
       boxShadow: {
         // content: '0 0 5px rgba(0, 0, 0, .02), 0 -5px 22px -8px rgba(0, 0, 0, .1)',
         content: '0 0 5px rgba(0, 0, 0, .02), 0 50px 22px -8px rgba(0, 0, 0, .1)',

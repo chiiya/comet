@@ -770,8 +770,8 @@ object {
   height: 1rem;
 }
 
-.h-16 {
-  height: 4rem;
+.h-96 {
+  height: 24rem;
 }
 
 .h-full {
@@ -1099,6 +1099,10 @@ object {
 
 .pt-1 {
   padding-top: 0.25rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
 }
 
 .pr-3 {

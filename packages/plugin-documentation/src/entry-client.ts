@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Prism from 'prismjs';
 import { createApp } from './app';
 
 Vue.config.devtools = true;
@@ -16,3 +17,5 @@ if (window.__INITIAL_STATE__) {
 Vue.config.devtools = true;
 // this assumes App.vue template root element has `id="app"`
 app.$mount('#app');
+
+Prism.highlightAll();

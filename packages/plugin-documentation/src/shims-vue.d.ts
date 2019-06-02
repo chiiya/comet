@@ -4,6 +4,8 @@ declare module '*.vue' {
 }
 
 declare module 'vue-feather-icons';
+declare module 'vue-prism-component';
+declare module 'prismjs';
 declare module 'vue-feather-icons/icons/ListIcon';
 declare module 'vue-feather-icons/icons/SendIcon';
 declare module 'vue-feather-icons/icons/ServerIcon';
