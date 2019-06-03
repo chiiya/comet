@@ -12,7 +12,6 @@ result.json
 /string.txt
 result-*.json
 exports/
-examples/blueprint.apib
 node_modules
 lerna-debug.log
 .rpt2_cache
