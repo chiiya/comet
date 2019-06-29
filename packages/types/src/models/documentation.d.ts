@@ -33,6 +33,7 @@ export interface DocOperation extends Omit<Operation, 'transactions'> {
   exampleRequest?: Example;
   exampleResponse?: Example;
   requestHeaders: DocHeader[];
+  requestDescription?: string;
   responses?: DocResponses;
 }
 

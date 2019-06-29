@@ -21,16 +21,19 @@
       <header-item v-for="header in headers" :key="header.name" :header="header"></header-item>
       </tbody>
     </table>
-    <table v-if="body && body.schema" class="min-w-full border-collapse border border-gray-300">
+    <table v-if="bodies" v-for="type in types" :key="type" class="min-w-full border-collapse border border-gray-300">
       <thead class="bg-gray-100 text-left">
       <tr class="flex flex-1 flex-col border-b border-gray-300">
-        <th class="py-3 px-6 border-0">Body</th>
+        <th class="py-3 px-6 border-0 flex">
+          <span>Body</span>
+          <span class="ml-auto font-normal font-mono">{{ type }}</span>
+        </th>
       </tr>
       </thead>
       <tbody class="align-top">
-      <tr class="flex flex-1 flex-col">
+      <tr v-if="bodies[type].schema" class="flex flex-1 flex-col">
         <td class="px-6 pt-4 overflow-x-auto border-0 break-words">
-          <body-item :schema="body.schema" :is-root="true"></body-item>
+          <body-item :schema="bodies[type].schema" :is-root="true"></body-item>
         </td>
       </tr>
       </tbody>
@@ -41,7 +44,7 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
   import { getJsonBody } from '@comet-cli/helper-utils/src';
-  import { Body, DocHeader, DocOperation, DocResponses } from '@comet-cli/types';
+  import { Bodies, Body, DocHeader, DocOperation, DocResponses } from '@comet-cli/types';
   import HeaderItem from './HeaderItem.vue';
   import BodyItem from './BodyItem.vue';
   import { namespace } from 'vuex-class';
@@ -75,15 +78,18 @@
       return this.responses![this.statusCodes[this.activeIndex]].headers;
     }
 
-    get body(): Body | undefined {
+    get bodies(): Bodies | undefined {
       if (
         this.responses !== undefined
         && this.statusCodes.length > 0
-        && this.responses[this.statusCodes[this.activeIndex]].body
       ) {
-        return getJsonBody(this.responses[this.statusCodes[this.activeIndex]].body);
+        return this.responses[this.statusCodes[this.activeIndex]].body
       }
       return undefined;
+    }
+
+    get types(): string[] {
+      return Object.keys(this.bodies || {});
     }
 
     get description(): string | undefined {

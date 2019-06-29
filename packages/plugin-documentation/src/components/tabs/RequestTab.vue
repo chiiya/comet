@@ -1,5 +1,6 @@
 <template>
   <div class="flex-shrink-0">
+    <div class="mb-3" v-html="description"></div>
     <table class="min-w-full border-collapse border border-gray-300">
       <thead class="bg-gray-100 text-left">
       <tr class="flex flex-1 flex-col border-b border-gray-300">
@@ -13,9 +14,10 @@
     <table v-if="bodies" v-for="type in types" :key="type" class="min-w-full border-collapse border border-gray-300">
       <thead class="bg-gray-100 text-left">
       <tr class="flex flex-1 flex-col border-b border-gray-300">
-        <th class="py-3 px-6 border-0 flex flex">
+        <th class="py-3 px-6 border-0 flex">
           <span>Body</span>
-          <span class="ml-auto font-normal font-mono">{{ type }}</span></th>
+          <span class="ml-auto font-normal font-mono">{{ type }}</span>
+        </th>
       </tr>
       </thead>
       <tbody class="align-top">
@@ -59,12 +61,16 @@
       return this.current.requestHeaders;
     }
 
+    get description(): string | undefined {
+      return this.current.requestDescription;
+    }
+
     get types(): string[] {
       return Object.keys(this.bodies || {});
     }
 
     get bodies(): Bodies | undefined {
-      if (this.current.request && this.current.request.body) {
+      if (this.current.request) {
         return this.current.request.body;
       }
       return undefined;

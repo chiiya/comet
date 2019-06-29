@@ -6,7 +6,7 @@
       </div>
     </div>
     <div v-else class="w-full flex flex-row text-sm mt-3">
-      <div class="w-1/3">
+      <div class="w-5/12">
         <strong class="font-mono block">{{ this.propertyName }}</strong>
         <div class="mt-1">
           <span class="text-gray-600 text-tiny uppercase">{{ this.displayName }}</span>
@@ -17,7 +17,7 @@
           <span v-if="required" class="text-red-600 text-tiny uppercase">Required</span>
         </div>
       </div>
-      <div class="w-2/3">
+      <div class="w-7/12">
         <span v-if="schema['x-circular-ref']" class="text-purple-500">Circular Reference</span>
         {{ this.schema.description }}
       </div>
