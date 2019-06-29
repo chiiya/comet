@@ -250,8 +250,21 @@ const convertNodeToGroupOrOperation = (node: Node): { group?: Group, operation?:
   }
 
   // It only has 1 direct operation of its own
+  const operations = [];
+  for (const operation of node.operations) {
+    operations.push(operation);
+  }
+
+  for (const childNode of Object.values(node.children)) {
+    if (childNode.operationCount > 0) {
+      const result = convertNodeToGroupOrOperation(childNode);
+      if (result.operation) {
+        operations.push(result.operation);
+      }
+    }
+  }
   return {
-    operation: node.operations[0],
+    operation: operations[0],
   };
 };
 
