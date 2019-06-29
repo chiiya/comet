@@ -19,9 +19,14 @@ export default class OperationTransformer {
     const snippet = this.createSnippet(model, operation);
     const link = getOperationName(operation.uri, operation.method);
     const requestHeaders: DocHeader[] = [];
+    let requestDescription;
     if (operation.request && operation.request.headers) {
       for (const header of operation.request.headers) {
         requestHeaders.push({ ...header, displayName: getHumanReadableType(header.schema) });
+      }
+      requestDescription = operation.request.description;
+      if (requestDescription) {
+        requestDescription = converter.makeHtml(operation.request.description);
       }
     }
     const responses: DocResponses = {};
@@ -33,7 +38,11 @@ export default class OperationTransformer {
         for (const header of response.headers) {
           headers.push({ ...header, displayName: getHumanReadableType(header.schema) });
         }
-        responses[code] = { ...response, headers };
+        let description = response.description;
+        if (response.description) {
+          description = converter.makeHtml(response.description);
+        }
+        responses[code] = { ...response, description, headers };
       }
     }
     const id = uuidv4();
@@ -57,6 +66,7 @@ export default class OperationTransformer {
       snippet: snippet,
       link: link,
       requestHeaders: requestHeaders,
+      requestDescription: requestDescription,
       responses: responses,
       exampleRequest: exampleRequest,
       exampleResponse: exampleResponse,
