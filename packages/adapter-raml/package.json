@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "datatype-expansion": "^0.3.6",
-    "fs-extra": "^7.0.1",
+    "fs-extra": "^8.1.0",
     "raml-1-parser": "^1.1.52",
     "raml2obj": "^6.2.0",
     "ramldt2jsonschema": "^0.3.1"
