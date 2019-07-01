@@ -37,7 +37,7 @@
   "dependencies": {
     "@comet-cli/helper-utils": "^0.1.1",
     "@comet-cli/helper-json-schemas": "^0.1.5",
-    "fs-extra": "^7.0.1"
+    "fs-extra": "^8.1.0"
   },
   "devDependencies": {
     "@comet-cli/types": "^0.1.1",

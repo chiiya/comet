@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "drafter": "^1.2.0",
-    "fs-extra": "^7.0.1",
+    "fs-extra": "^8.1.0",
     "lodash": "^4.17.11",
     "tty-table": "^2.7.0"
   },
