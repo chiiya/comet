@@ -45,7 +45,7 @@
     "xml-js": "^1.6.9"
   },
   "devDependencies": {
-    "@types/fs-extra": "^7.0.0",
+    "@types/fs-extra": "^8.0.0",
     "bili": "^4.8.0",
     "rollup-plugin-copy": "^2.0.1",
     "rollup-plugin-typescript2": "^0.21.1",
