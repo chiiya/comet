@@ -86,7 +86,7 @@
     "@types/mocha": "^5",
     "@types/node": "^12",
     "@types/signale": "^1.2.0",
-    "globby": "^9",
+    "globby": "^10",
     "bili": "^4.8.0",
     "rollup-plugin-typescript2": "^0.21.1",
     "ts-node": "^8",
