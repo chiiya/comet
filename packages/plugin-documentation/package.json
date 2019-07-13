@@ -66,6 +66,7 @@
   "devDependencies": {
     "@comet-cli/types": "^0.1.1",
     "@fullhuman/postcss-purgecss": "^1.2.0",
+    "@tailwindcss/custom-forms": "^0.2.0",
     "@types/webpack": "^4.4.32",
     "babel-loader": "^8.0.6",
     "bili": "^4.8.0",

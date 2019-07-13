@@ -30,6 +30,7 @@ export interface DocOperation extends Omit<Operation, 'transactions'> {
   id: string;
   snippet: string;
   link: string;
+  uri: string;
   exampleRequest?: Example;
   exampleResponse?: Example;
   requestHeaders: DocHeader[];
@@ -79,6 +80,7 @@ export interface ApiState {
   title: string;
   description: string;
   uris: string[];
+  quasar: string | null;
   operations: Operations;
   operationIds: string[];
   groups: Groups;

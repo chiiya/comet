@@ -36,6 +36,7 @@ export interface TestLaravelPluginConfig {
 }
 
 export interface DocumentationPluginConfig {
+  quasar?: string;
   output?: string;
   group_by?: 'resources' | 'tags' | 'trie';
   flatten?: boolean;

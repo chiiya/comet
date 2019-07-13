@@ -33,7 +33,7 @@ export default class MakeDocumentation extends BaseCommand {
   protected signature = 'make:documentation';
 
   /** Command config key */
-  protected configKey = 'make.documentation';
+  protected configKey = 'documentation';
 
   /**
    * Run the command.
@@ -46,7 +46,7 @@ export default class MakeDocumentation extends BaseCommand {
     const file = await this.loadFile(args);
 
     if (flags.output) {
-      this.configRepository.set(`commands.${this.configKey}.output`, flags.output);
+      this.configRepository.set(`plugins.${this.configKey}.output`, flags.output);
     }
 
     const specification = await this.parseSpec(file);

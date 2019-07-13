@@ -61,6 +61,6 @@ module.exports = {
     // Some useful comment
   },
   plugins: [
-    // Some useful comment
+    require('@tailwindcss/custom-forms'),
   ]
 };

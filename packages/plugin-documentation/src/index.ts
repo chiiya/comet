@@ -35,7 +35,7 @@ export default class DocumentationPlugin implements PluginInterface {
     const html = await renderer.renderToString(context);
 
     await ensureDir(outputDir);
-    await writeFile(resolve(outputDir, 'documentation.html'), html);
+    await writeFile(resolve(outputDir, 'index.html'), html);
     const assets = await this.bundleAssets(config);
     await ensureDir(join(outputDir, 'assets'));
     await writeFile(join(outputDir, 'assets', 'style.css'), assets.css);

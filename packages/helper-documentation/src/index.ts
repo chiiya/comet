@@ -45,12 +45,16 @@ export default class Transformer {
     const description = model.info.description ? converter.makeHtml(model.info.description) : '';
     const navigation = this.getNavigation(folders);
     const uris: string[] = [];
+    let quasar: string | null = null;
+    if (config.quasar) {
+      quasar = config.quasar;
+    }
 
     for (const [index, server] of (model.info.servers || []).entries()) {
       uris.push(getResolvedServerUrl(server));
     }
 
-    return { title, description, uris, groups, groupIds, operations, operationIds, navigation };
+    return { title, description, uris, quasar, groups, groupIds, operations, operationIds, navigation };
   }
 
   protected static getNavigation(folders: Folders): Navigation {

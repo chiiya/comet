@@ -131,7 +131,9 @@ code {
  */
 
 button,
-input {
+input,
+select,
+textarea {
   font-family: inherit; /* 1 */
   font-size: 100%; /* 1 */
   line-height: 1.15; /* 1 */
@@ -153,7 +155,8 @@ input { /* 1 */
  * 1. Remove the inheritance of text transform in Firefox.
  */
 
-button { /* 1 */
+button,
+select { /* 1 */
   text-transform: none;
 }
 
@@ -218,6 +221,10 @@ legend {
 /**
  * Remove the default vertical scrollbar in IE 10+.
  */
+
+textarea {
+  overflow: auto;
+}
 
 /**
  * 1. Add the correct box sizing in IE 10.
@@ -327,6 +334,7 @@ html {
 
 h1,
 h2,
+h4,
 pre {
   margin: 0;
 }
@@ -402,24 +410,8 @@ html {
  * https://github.com/tailwindcss/tailwindcss/issues/362
  */
 
-input::-webkit-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
-}
-
-input::-moz-placeholder {
-  color: inherit;
-  opacity: 0.5;
-}
-
-input:-ms-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
-}
-
-input::-ms-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
+textarea {
+  resize: vertical;
 }
 
 input::-webkit-input-placeholder,
@@ -446,7 +438,8 @@ textarea::-ms-input-placeholder {
   opacity: 0.5;
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: inherit;
   opacity: 0.5;
 }
@@ -461,7 +454,8 @@ table {
 }
 
 h1,
-h2 {
+h2,
+h4 {
   font-size: inherit;
   font-weight: inherit;
 }
@@ -485,7 +479,9 @@ a {
  */
 
 button,
-input {
+input,
+select,
+textarea {
   padding: 0;
   line-height: inherit;
   color: inherit;
@@ -512,6 +508,7 @@ code {
  */
 
 
+svg,
 canvas,
 object {
   display: block;
@@ -528,6 +525,53 @@ object {
 /**
  * This injects any component classes registered by plugins.
  */
+
+.form-textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #fff;
+  border-color: #e2e8f0;
+  border-width: 1px;
+  border-radius: 0.25rem;
+  padding-top: 0.5rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.form-textarea::-webkit-input-placeholder {
+  color: #a0aec0;
+  opacity: 1;
+}
+
+.form-textarea::-moz-placeholder {
+  color: #a0aec0;
+  opacity: 1;
+}
+
+.form-textarea:-ms-input-placeholder {
+  color: #a0aec0;
+  opacity: 1;
+}
+
+.form-textarea::-ms-input-placeholder {
+  color: #a0aec0;
+  opacity: 1;
+}
+
+.form-textarea::placeholder {
+  color: #a0aec0;
+  opacity: 1;
+}
+
+.form-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  border-color: #63b3ed;
+}
 
 /**
  * Here you would add any of your custom component classes; stuff that you'd
@@ -630,6 +674,14 @@ object {
   border-color: #e2e8f0;
 }
 
+.border-blue-600 {
+  border-color: #3273dc;
+}
+
+.focus\:border-gray-500:focus {
+  border-color: #a0aec0;
+}
+
 .rounded {
   border-radius: 0.25rem;
 }
@@ -682,6 +734,10 @@ object {
   border-bottom-width: 1px;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .block {
   display: block;
 }
@@ -691,7 +747,13 @@ object {
 }
 
 .flex {
+  display: -webkit-box;
   display: flex;
+}
+
+.inline-flex {
+  display: -webkit-inline-box;
+  display: inline-flex;
 }
 
 .table {
@@ -699,47 +761,60 @@ object {
 }
 
 .flex-row {
-  flex-direction: row;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+          flex-direction: row;
 }
 
 .flex-col {
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
 }
 
 .items-center {
-  align-items: center;
+  -webkit-box-align: center;
+          align-items: center;
 }
 
 .items-stretch {
-  align-items: stretch;
+  -webkit-box-align: stretch;
+          align-items: stretch;
 }
 
 .justify-start {
-  justify-content: flex-start;
+  -webkit-box-pack: start;
+          justify-content: flex-start;
 }
 
 .justify-end {
-  justify-content: flex-end;
+  -webkit-box-pack: end;
+          justify-content: flex-end;
 }
 
 .justify-center {
-  justify-content: center;
+  -webkit-box-pack: center;
+          justify-content: center;
 }
 
 .justify-between {
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+          justify-content: space-between;
 }
 
 .flex-1 {
-  flex: 1 1 0%;
+  -webkit-box-flex: 1;
+          flex: 1 1 0%;
 }
 
 .flex-auto {
-  flex: 1 1 auto;
+  -webkit-box-flex: 1;
+          flex: 1 1 auto;
 }
 
 .flex-grow {
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+          flex-grow: 1;
 }
 
 .flex-shrink-0 {
@@ -768,6 +843,10 @@ object {
 
 .h-4 {
   height: 1rem;
+}
+
+.h-6 {
+  height: 1.5rem;
 }
 
 .h-96 {
@@ -1121,6 +1200,10 @@ object {
   padding-left: 1rem;
 }
 
+.pr-8 {
+  padding-right: 2rem;
+}
+
 .pt-12 {
   padding-top: 3rem;
 }
@@ -1133,6 +1216,14 @@ object {
   padding-bottom: 8rem;
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.absolute {
+  position: absolute;
+}
+
 .relative {
   position: relative;
 }
@@ -1142,6 +1233,11 @@ object {
   position: sticky;
 }
 
+.inset-y-0 {
+  top: 0;
+  bottom: 0;
+}
+
 .inset-x-0 {
   right: 0;
   left: 0;
@@ -1149,6 +1245,10 @@ object {
 
 .top-0 {
   top: 0;
+}
+
+.right-0 {
+  right: 0;
 }
 
 .shadow-md {
@@ -1167,6 +1267,10 @@ object {
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
 }
 
+.fill-current {
+  fill: currentColor;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1177,6 +1281,10 @@ object {
 
 .text-gray-100 {
   color: #f8fafc;
+}
+
+.text-gray-200 {
+  color: #edf2f7;
 }
 
 .text-gray-400 {
@@ -1296,6 +1404,10 @@ object {
   width: 1rem;
 }
 
+.w-6 {
+  width: 1.5rem;
+}
+
 .w-12 {
   width: 3rem;
 }
@@ -1308,16 +1420,20 @@ object {
   width: 20rem;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
 .w-1\/3 {
-  width: 33.33333%;
+  width: 33.333333%;
 }
 
 .w-2\/3 {
-  width: 66.66667%;
+  width: 66.666667%;
 }
 
 .w-5\/12 {
-  width: 41.66667%;
+  width: 41.666667%;
 }
 
 .w-6\/12 {
@@ -1325,7 +1441,7 @@ object {
 }
 
 .w-7\/12 {
-  width: 58.33333%;
+  width: 58.333333%;
 }
 
 .w-full {
@@ -1346,7 +1462,8 @@ em {
 }
 
 h1,
-h2 {
+h2,
+h4 {
   font-weight: 700;
   color: #003c57;
   margin-bottom: 0.5rem;
@@ -1361,6 +1478,10 @@ h2 {
   font-size: 1.5rem;
 }
 
+h4 {
+  font-size: 1.125rem;
+}
+
 .text-icon {
   padding-top: .2em;
 }
@@ -1368,6 +1489,7 @@ h2 {
 a {
   color: #63b3ed;
   cursor: pointer;
+  -webkit-transition: color 150ms ease-in;
   transition: color 150ms ease-in;
 }
 
@@ -1762,6 +1884,10 @@ ul {
   margin-bottom: 1rem;
 }
 
+textarea {
+  resize: vertical;
+}
+
 .resource-list::before {
     content: '';
     display: block;
@@ -1786,6 +1912,7 @@ ul {
 }
 
 .sidebar a {
+    -webkit-transition: font-weight 150ms ease-in-out;
     transition: font-weight 150ms ease-in-out;
   }
 
@@ -2108,7 +2235,9 @@ ul {
 @media (min-width: 1024px) {
 
   .lg\:flex-row {
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+            flex-direction: row;
   }
 
   .lg\:ml-0 {

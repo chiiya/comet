@@ -9,6 +9,7 @@ import { Groups, Navigation, Operations } from '@comet-cli/types';
 export default class Api extends VuexModule {
   public title: string = '';
   public description: string = '';
+  public quasar: string | null = null;
   public uris: string[] = [];
   public groups: Groups = {};
   public groupIds: string[] = [];

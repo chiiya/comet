@@ -14,12 +14,9 @@
       </div>
     </div>
     <div class="w-2/3">
-      <input
-        :value="value"
-        @input="$emit('input', $event.target.value)"
-        :name="parameter.name"
-        class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full md:width-2/4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      >
+      <v-checkbox v-if="type === 'boolean'" :value="!!value" v-model="value"></v-checkbox>
+      <v-select v-else-if="isEnum" :value="value" :options="parameter.schema.enum" v-model="value"></v-select>
+      <v-input v-else :value="value" v-model="value"></v-input>
     </div>
   </div>
 </template>
@@ -28,15 +25,23 @@
 import { Vue, Component, Prop } from "vue-property-decorator";
 import { Parameter } from "@comet-cli/types";
 import { namespace } from "vuex-class";
+import Checkbox from '../forms/Checkbox.vue';
+import Input from '../forms/Input.vue';
+import Select from '../forms/Select.vue';
 
 const Api = namespace("Api");
 
 @Component({
-  name: "trial-parameter"
+  name: "trial-parameter",
+  components: {
+    'v-checkbox': Checkbox,
+    'v-select': Select,
+    'v-input': Input,
+  },
 })
 export default class TrialParameter extends Vue {
   public name: string = "trial-parameter";
-  @Prop(String) public readonly value!: string;
+  @Prop(String) public readonly value!: string | boolean;
   @Prop(Object) public readonly parameter!: Parameter;
 
   get color(): string {
@@ -49,6 +54,19 @@ export default class TrialParameter extends Vue {
         return "text-teal-600";
       default:
         return "text-gray-600";
+    }
+  }
+
+  get isEnum(): boolean {
+    const schema = this.parameter.schema;
+    return (schema !== undefined && schema.enum !== undefined && Array.isArray(schema.enum) && schema.enum.length > 0);
+  }
+
+  get type(): string | undefined {
+    if (this.parameter.schema && this.parameter.schema.type) {
+      if (Array.isArray(this.parameter.schema.type) === false) {
+        return <string>this.parameter.schema.type;
+      }
     }
   }
 }
