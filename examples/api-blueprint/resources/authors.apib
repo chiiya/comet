@@ -36,13 +36,19 @@ Resource representing a list of all authors.
         :[](../../schemas/authors.json)
         ```  
 
-### Retrieve authors [GET /authors{?include,filter%5bname%5d}]
+### Retrieve authors [GET /authors{?include,filter%5bname%5d,filter%5bhidden%5d,filter%5bgender%5d}]
 
 Retrieve a list of all authors. The following relationships can optionally be included in the response: `books`, `country`.
 
 + Parameters
     + include: `books,country` (array[string], optional) - Comma-separated list of relationships to include
     + filter%5bname%5d: `Tony` (string, optional) - Filter by author name
+    + filter%5bhidden%5d: `true` (boolean, optional) - Include hidden authors
+    + filter%5bgender%5d: `male` (enum[string], optional) - Filter by author gender
+        + Members
+            + male
+            + female
+            + other
 + Request
     + Headers
         ```
