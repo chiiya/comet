@@ -3,6 +3,7 @@ import { readFile } from 'fs-extra';
 import { LoggerInterface } from '@comet-cli/types';
 import { ucfirst } from '@comet-cli/helper-utils';
 const { promisify } = require('util');
+import { transcludeFile } from 'hercule';
 const drafter = require('drafter');
 
 export default class Parser {
@@ -12,27 +13,35 @@ export default class Parser {
    * @param logger
    */
   public static async load(path: string, logger: LoggerInterface): Promise<ApiBlueprintSpec> {
-    const source = await readFile(path, 'utf8');
+    const transclude = promisify(transcludeFile);
     const parse = promisify(drafter.parse);
+    let content: string;
+    try {
+      content = await transclude(path);
+    } catch (error) {
+      console.error(error);
+      return process.exit(-1);
+    }
     let result: ApiBlueprintSpec;
     try {
-      result = await parse(source, { type: 'ast', requireBlueprintName: true });
+      result = await parse(content, { type: 'ast', requireBlueprintName: true });
     } catch (error) {
-      this.printError(error.result, source, logger);
+      this.printError(error.result, content, logger);
       return process.exit(-1);
     }
     if (result.error && result.error.code !== 0) {
-      this.printError(result, source, logger);
+      this.printError(result, content, logger);
     }
 
     if (result.warnings && result.warnings.length > 0) {
       logger.warn('Input file parsed. The following warnings were encountered:');
-      this.printWarnings(result.warnings, source, logger);
+      this.printWarnings(result.warnings, content, logger);
     } else {
       logger.succeed('Input file parsed');
     }
     logger.spin('Transforming API Blueprint model');
     return result;
+
   }
 
   /**
