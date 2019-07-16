@@ -10,5 +10,5 @@ output = "exports/schemas"
 
 [plugins.documentation]
 output = "docs/"
-group_by = "trie"
+group_by = "resources"
 flatten = true

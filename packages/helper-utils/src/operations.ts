@@ -1,6 +1,7 @@
 import { ApiModel, Dict, Operation, Resource } from '@comet-cli/types';
 import { getAllResources, getOperationParameters } from './model';
 import { Node, Trie } from './trie';
+import { file } from 'babel-types';
 
 export type EnhancedOperation = Operation & {
   uri: string;
@@ -67,7 +68,7 @@ export const groupOperationsByResources = (model: ApiModel, options: GroupOption
     operations: [],
   };
   for (const group of model.groups) {
-    const items = getResources(group.resources, config);
+    const items = transformResources(group.resources, config);
     folders.groups.push({
       name: group.name,
       description: group.description,
@@ -75,7 +76,7 @@ export const groupOperationsByResources = (model: ApiModel, options: GroupOption
       operations: items.operations,
     });
   }
-  const items = getResources(model.resources, config);
+  const items = transformResources(model.resources, config);
   folders.groups.push(...items.groups);
   folders.operations.push(...items.operations);
   return folders;
@@ -86,29 +87,46 @@ export const groupOperationsByResources = (model: ApiModel, options: GroupOption
  * @param resources
  * @param options
  */
-const getResources = (resources: Resource[], options: GroupOptions): Folders => {
-  const groups: Group[] = [];
+const transformResources = (resources: Resource[], options: GroupOptions): Folders => {
+  const groups: Dict<Group | null> = {};
   const operations: EnhancedOperation[] = [];
+  const paths = resources.map(resource => resource.path);
+  for (const path of paths) {
+    groups[path] = null;
+  }
+
   for (const resource of resources) {
-    console.log(resource.operations.length);
-    if (options.flatten === true && resource.operations.length === 1) {
-      operations.push(getEnhancedOperation(resource, resource.operations[0]));
+    const items: EnhancedOperation[] = [];
+    for (const operation of resource.operations) {
+      items.push(getEnhancedOperation(resource, operation));
+    }
+    const endsWithParameter = /.*{.+}\/?$/.test(resource.path);
+    const pathWithoutParameter = resource.path.replace(/\/{[^}]+}\/?$/, '');
+    if (endsWithParameter && groups[pathWithoutParameter]) {
+      groups[pathWithoutParameter]!.operations.push(...items);
     } else {
-      const items: EnhancedOperation[] = [];
-      for (const operation of resource.operations) {
-        items.push(getEnhancedOperation(resource, operation));
-      }
-      groups.push({
+      groups[resource.path] = {
         name: resource.name || resource.path,
         description: resource.description,
         groups: [],
         operations: items,
-      });
+      };
+    }
+  }
+  // @ts-ignore
+  const reducedGroups: Group[] = Object.values(groups).filter(group => group !== null);
+  const filtered: Group[] = [];
+  for (const [index, group] of reducedGroups.entries()) {
+    // Only one operation
+    if (group.operations.length === 1 && group.groups.length === 0) {
+      operations.push(group.operations[0]);
+    } else {
+      filtered.push(group);
     }
   }
 
   return {
-    groups: groups,
+    groups: filtered,
     operations: operations,
   };
 };
@@ -192,7 +210,7 @@ export const groupOperations = (model: ApiModel, options: GroupOptions = {}): Fo
   if (options.group_by !== undefined) {
     switch (options.group_by) {
       case 'resources':
-        return groupOperationsByResources(model);
+        return groupOperationsByResources(model, options);
       case 'tags':
         return groupOperationsByTags(model);
       case 'trie':
