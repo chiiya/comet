@@ -56,43 +56,59 @@ export const getEnhancedOperation = (resource: Resource, operation: Operation): 
 /**
  * Group operations by resources (and resource groups).
  * @param model
+ * @param options
  */
-export const groupOperationsByResources = (model: ApiModel): Folders => {
+export const groupOperationsByResources = (model: ApiModel, options: GroupOptions = {}): Folders => {
+  const config: GroupOptions = Object.assign({
+    flatten: false,
+  }, options);
   const folders: Folders = {
     groups: [],
     operations: [],
   };
   for (const group of model.groups) {
-    const items: Group[] = [];
-    for (const resource of group.resources) {
-      items.push(getGroupForResource(resource));
-    }
+    const items = getResources(group.resources, config);
     folders.groups.push({
       name: group.name,
       description: group.description,
-      groups: items,
-      operations: [],
+      groups: items.groups,
+      operations: items.operations,
     });
   }
-  for (const resource of model.resources) {
-    folders.groups.push(getGroupForResource(resource));
-  }
+  const items = getResources(model.resources, config);
+  folders.groups.push(...items.groups);
+  folders.operations.push(...items.operations);
   return folders;
 };
 
 /**
  * Get folder group for a given resource.
- * @param resource
+ * @param resources
+ * @param options
  */
-const getGroupForResource = (resource: Resource): Group => {
+const getResources = (resources: Resource[], options: GroupOptions): Folders => {
+  const groups: Group[] = [];
   const operations: EnhancedOperation[] = [];
-  for (const operation of resource.operations) {
-    operations.push(getEnhancedOperation(resource, operation));
+  for (const resource of resources) {
+    console.log(resource.operations.length);
+    if (options.flatten === true && resource.operations.length === 1) {
+      operations.push(getEnhancedOperation(resource, resource.operations[0]));
+    } else {
+      const items: EnhancedOperation[] = [];
+      for (const operation of resource.operations) {
+        items.push(getEnhancedOperation(resource, operation));
+      }
+      groups.push({
+        name: resource.name || resource.path,
+        description: resource.description,
+        groups: [],
+        operations: items,
+      });
+    }
   }
+
   return {
-    name: resource.name || resource.path,
-    description: resource.description,
-    groups: [],
+    groups: groups,
     operations: operations,
   };
 };
