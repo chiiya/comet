@@ -45,7 +45,7 @@ export const getResourceName = (path: string): string => {
   }
   let name = path
     .replace(/^\//, '')
-    .replace(/(\/?{.+}(?:\/$)?)/g, '')
+    .replace(/(\/?{[^\/]+}(?:\/$)?)/g, '')
     .replace('/', '-');
   if (isSingleResourceOperation) {
     name += '-entity';
