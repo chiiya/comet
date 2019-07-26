@@ -68,7 +68,7 @@
     @Prop({ default: 0, type: Number }) public readonly depth!: number;
 
     get displayName() {
-      return getHumanReadableType(this.schema);
+      return (getHumanReadableType(this.schema) || '').toLowerCase();
     }
 
     get enum(): any[] {
