@@ -2,6 +2,9 @@ import { Group, slugify } from '@comet-cli/helper-utils';
 import { ApiModel, Dict, DocGroup, Groups, Operations } from '@comet-cli/types';
 import OperationTransformer from './OperationTransformer';
 const uuidv4 = require('uuid/v4');
+const showdown = require('showdown');
+
+const converter = new showdown.Converter({ tables: true });
 
 export default class GroupTransformer {
   public static execute(
@@ -32,7 +35,7 @@ export default class GroupTransformer {
     return {
       id: uuidv4(),
       name: group.name,
-      description: group.description,
+      description: group.description ? converter.makeHtml(group.description) : undefined,
       link: slug,
       operations: operationIds,
       groups: groupIds,
