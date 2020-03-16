@@ -1,0 +1,1148 @@
+FORMAT: 1A
+HOST: http://local.dermaduell.test/api/
+AUTH_TYPE: key
+AUTH_NAME: DD-Auth
+AUTH_LOCATION: header
+
+# Dermaduell API
+
+The Dermaduell API is a REST API used by the Dermaduell application. Dermaduell itself
+is an application where users can compete in quizzes against each other and gain points.
+Those points can then be redeemed for rewards. The API contains endpoints for all relevant
+resources, such as users, games, categories and questions.
+
+## Authentication
+
+Requests to the API must be authorized via the `DD-Auth` HTTP header containing a valid API 
+token. The token can be obtained by executing a login request using the user's credentials. 
+
+## Rate-Limiting
+
+Requests are limited to 60 requests / minute. HTTP-Headers indicating the total amount
+of requests per minute, as well as the amount of remaining requests, are returned
+for every API response:
+```http
+    X-RateLimit-Limit: 60
+    X-RateLimit-Remaining: 59
+```
+
+## Status Codes
+
+|Code  | Description |
+|----- | -----------|
+|`200` | `OK` |
+|`201` | `Created` New resource has been created successfully |
+|`204` | `No Content` Successful request with no response content |
+|`400` | `Bad Request` Malformed request |
+|`403` | `Forbidden` Invalid or missing authentication details |
+|`409` | `Conflict` Request could not be completed due to conflict with existing data | 
+|`404` | `Not Found` |
+|`405` | `Method Not Allowed` |
+|`422` | `Unprocessable Entity` Validation error |
+|`5xx` | `Server Error` |
+
+# Group Account
+
+The account endpoints can be used for everything regarding authentication, authorization, 
+and account management. This includes feedback functionality, favorites and statistics retrieval.   
+Users can only retrieve and modify their own data.
+
+## Authentication [/login]
+
+Endpoint for authenticating a user and retrieving the API token.
+
++ Model (application/json)
+    + Body
+        ```json
+        {
+            "userId": 1,
+            "nickname": "vfriesen",
+            "picture": "https://www.dermaduell.de/user_images/1.jpg",
+            "email": "cordell65@hotmail.com",
+            "authToken": "03050754139588a25eb3ea85b8647602",
+            "pharmacy": "Creola Beatty",
+            "rank": 235,
+            "intermediateRank": 171,
+            "wonGamesForPremiumPoints": 84,
+            "maxPremiumPointsPerMonth": 200,
+            "incPremiumPointsPerWonStreak": 20
+        }
+        ```    
+    + Schema
+        ```json
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "examples": [
+                1
+              ]
+            },
+            "nickname": {
+              "type": "string",
+              "examples": [
+                "vfriesen"
+              ],
+              "description": "Unique nickname of the user"
+            },
+            "picture": {
+              "type": "string",
+              "description": "URL of the users' avatar",
+              "examples": [
+                "https://www.dermaduell.de/user_images/1.jpg"
+              ]
+            },
+            "email": {
+              "type": "string",
+              "examples": [
+                "marian.wisoky@example.org"
+              ]
+            },
+            "authToken": {
+              "type": "string",
+              "description": "API token used for all requests",
+              "examples": [
+                "03050754139588a25eb3ea85b8647602"
+              ]
+            },
+            "pharmacy": {
+              "type": "string",
+              "description": "Name of the pharmacy the user belongs to",
+              "examples": [
+                "Creola Beatty"
+              ]
+            },
+            "rank": {
+              "type": "integer",
+              "description": "Rank on the global leader board",
+              "examples": [
+                235
+              ]
+            },
+            "intermediateRank": {
+              "type": "integer",
+              "description": "Real rank of the user, ignoring duplicate ranks (i.e. two users with the same amount of games won will only count once instead of twice)",
+              "examples": [
+                171
+              ]
+            },
+            "wonGamesForPremiumPoints": {
+              "type": "integer",
+              "examples": [
+                84
+              ]
+            },
+            "maxPremiumPointsPerMonth": {
+              "type": "integer",
+              "examples": [
+                200
+              ]
+            },
+            "incPremiumPointsPerWonStreak": {
+              "type": "integer",
+              "examples": [
+                20
+              ]
+            }
+          },
+          "required": [
+            "userId",
+            "nickname",
+            "picture",
+            "email",
+            "authToken",
+            "pharmacy",
+            "rank",
+            "intermediateRank",
+            "wonGamesForPremiumPoints",
+            "maxPremiumPointsPerMonth",
+            "incPremiumPointsPerWonStreak"
+          ]
+        }
+        ```
+ 
+### Login user [POST]
+
+Login a user using his credentials and retrieve the API token. The `DD-Credentials` header must contain the 
+base64-encoded username and password of the user, separated by a colon. The header should have the following
+format: `base64(username):base64(password)`
+
++ Request
+    + Headers
+        ```
+        DD-Credentials: <base64-encoded-credentials>
+        Accept: application/json
+        ```
++ Response 200
+    [Authentication][]
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+## Nickname Check [/nickname-available/{nickname}]
+
+Endpoint for checking whether a given nickname is available.
+
++ Parameters
+    + nickname: `dmZyaWVzZW4=` (string, required) - Base64-encoded nickname
+
+### Check nickname availability [HEAD]
+
+Check whether a given (base64-encoded) nickname is available. A 204 (`No Content`) response is 
+returned in case the nickname is still available. Otherwise a 409 (`Conflict`) response is returned.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 204
+Nickname is available.
+    + Body
++ Response 409
+Nickname is **not** available.
+    + Body
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+## Favorites [/users/{id}/favourites]
+
+Resource representing a list of all favorites.
+
++ Parameters
+    + id: `1` (number, required) - ID of the user
++ Model (application/json)
+    + Body
+        ```json
+        [
+            {
+                "userId": 2
+            },
+            {
+                "userId": 4
+            }
+        ]
+        ```    
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "userId"
+                ]
+            }
+        }
+        ```
+ 
+### List favorites [GET]
+
+List all favorites of the given user. As with most other endpoints, users can only request their own
+information.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 200
+    [Favorites][]
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+### Store favorite [POST]
+
+Add a new user to the user's favorites.
+
++ Request (application/json)
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
+    + Body
+        ```json
+        {
+            "userId": 3
+        }
+        ```
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "userId"
+            ]
+        }
+        ``` 
++ Response 201
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+## Favorite [/users/{id}/favourites/{favId}]
+
+Resource representing a single favorite entry.
+
++ Parameters
+    + id: `1` (number, required) - ID of the user
+    + favId: `1` (number, required) - ID of the other user
+
+### Check Status [HEAD]
+
+Check whether a user has another user in their favourites.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 204
+User is a favorite.
+    + Body
++ Response 404
+User is **not** a favorite.
+    + Body
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+### Remove favorite [DELETE]
+
+Delete a favorite entry, by user ID.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 204
+User is a favorite.
+    + Body
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+## Users [/users]
+
+Resource representing a list of all users.
+
+### Search users [GET /users{?s}]
+
++ Parameters
+    + s: `mad` (string, required) - Search string
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 200
+    + Body
+        ```json
+        [
+            {
+                "uid": 120,
+                "dd_nickname": "madge.mclaughlin",
+                "dd_image": ""
+            }
+        ]
+        ```    
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "uid": {
+                        "type": "integer",
+                        "examples": [
+                            115
+                        ]
+                    },
+                    "dd_nickname": {
+                        "type": "string",
+                        "examples": [
+                            "johnston.mathew"
+                        ]
+                    },
+                    "dd_image": {
+                        "type": "string",
+                        "examples": [
+                            "https://www.dermaduell.de/user_images/1.jpg"
+                        ]
+                    }
+                },
+                "required": [
+                    "uid",
+                    "dd_nickname",
+                    "dd_image"
+                ]
+            }
+        }
+        ```
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
+ 
+## Account Management [/users/{id}]
+
+Endpoint for requesting detailed account information, as well as updating
+the current user.
+
++ Parameters
+    + id: `1` (number, required) - ID of the user
+
+### Show user [GET]
+
+Show information about a given user. When requesting information about other users, only 
+the `userId`, `nickname` and `picture` attributes will be included in the response. 
+If the user is requesting his own information, the response will also contain 
+personal and ranking data.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 200
+    + Body
+        ```json
+        {
+            "userId": 1,
+            "nickname": "lorena17",
+            "picture": "",
+            "email": "xyz@example.org",
+            "authToken": "4cde42b9f20e5ca0b123d9be8a9e5510",
+            "pharmacy": "Anjali Simonis",
+            "rank": 175,
+            "intermediateRank": 5,
+            "wonGamesForPremiumPoints": 1,
+            "maxPremiumPointsPerMonth": 200,
+            "incPremiumPointsPerWonStreak": 20
+        }
+        ```    
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "integer",
+                    "examples": [
+                        1
+                    ]
+                },
+                "nickname": {
+                    "type": "string",
+                    "examples": [
+                        "vfriesen"
+                    ]
+                },
+                "picture": {
+                    "type": "string",
+                    "examples": [
+                        "https://www.dermaduell.de/user_images/1.jpg"
+                    ]
+                },
+                "email": {
+                    "type": "string",
+                    "examples": [
+                        "marian.wisoky@example.org"
+                    ]
+                },
+                "authToken": {
+                    "type": "string",
+                    "examples": [
+                        "03050754139588a25eb3ea85b8647602"
+                    ]
+                },
+                "pharmacy": {
+                    "type": "string",
+                    "examples": [
+                        "Creola Beatty"
+                    ]
+                },
+                "rank": {
+                    "type": "integer",
+                    "examples": [
+                        235
+                    ]
+                },
+                "intermediateRank": {
+                    "type": "integer",
+                    "examples": [
+                        171
+                    ]
+                },
+                "wonGamesForPremiumPoints": {
+                    "type": "integer",
+                    "examples": [
+                        84
+                    ]
+                },
+                "maxPremiumPointsPerMonth": {
+                    "type": "integer",
+                    "examples": [
+                        200
+                    ]
+                },
+                "incPremiumPointsPerWonStreak": {
+                    "type": "integer",
+                    "examples": [
+                        20
+                    ]
+                }
+            },
+            "required": [
+                "userId",
+                "nickname",
+                "picture"
+            ]
+        }
+        ```
++ Response 404 (application/json)
+Resource could not be found.
+    + Body
+        ```json
+        []
+        ```
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
+
+### Update user [PUT]
+
+Update the user's information.
+
++ Request (application/json)
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
+    + Body
+        ```json
+        {
+            "nickname": "peter",
+            "picture": "data:image/jpeg;base64,..."
+        }
+        ```
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "examples": [
+                        "vfriesen"
+                    ],
+                    "description": "New nickname"
+                },
+                "picture": {
+                    "type": "string",
+                    "examples": [
+                        "data:image/jpeg;base64,..."
+                    ],
+                    "description": "Base64-encoded image"
+                }
+            },
+            "required": [
+                "nickname"
+            ]
+        }
+        ``` 
++ Response 200
+Successfully updated the user.
+    + Body
++ Response 409 (application/json)
+Nickname already in use.
+    + Body  
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   
+
+## Feedback [/users/{id}/feedback]
+
+Endpoint for submitting feedback.
+
++ Parameters
+    + id: `1` (number, required) - ID of the user
+
+### Store Feedback [POST]
+ 
+Store a new feedback entry.
+ 
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
+    + Body
+        ```json
+        {
+            "mood": "angry",
+            "comment": "Nothing works!",
+            "contactPermissionGranted": 1,
+            "dataPermissionGranted": 1,
+            "appVersion": 1,
+            "browser": "A",
+            "deviceModel": "B",
+            "devicePlatform": "C",
+            "devicePlatformVersion": "D"
+        }
+        ```
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "mood": {
+                    "type": "string",
+                    "examples": [
+                        "angry"
+                    ]
+                },
+                "comment": {
+                    "type": "string",
+                    "examples": [
+                        "Nothing works!"
+                    ]
+                },
+                "contactPermissionGranted": {
+                    "type": "integer",
+                    "examples": [
+                        1
+                    ]
+                },
+                "dataPermissionGranted": {
+                    "type": "integer",
+                    "examples": [
+                        0
+                    ]
+                },
+                "appVersion": {
+                    "type": "integer",
+                    "examples": [
+                        1
+                    ]
+                },
+                "browser": {
+                    "type": "string",
+                    "examples": [
+                        "Firefox 46"
+                    ]
+                },
+                "deviceModel": {
+                    "type": "string",
+                    "examples": [
+                        "Device"
+                    ]
+                },
+                "devicePlatform": {
+                    "type": "string",
+                    "examples": [
+                        "Platform"
+                    ]
+                },
+                "devicePlatformVersion": {
+                    "type": "string",
+                    "examples": [
+                        "Version"
+                    ]
+                }
+            },
+            "required": [
+                "mood",
+                "comment",
+                "contactPermissionGranted",
+                "dataPermissionGranted",
+                "appVersion"
+            ]
+        }
+        ```     
++ Response 201
+Feedback stored successfully.
+    + Body
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```  
+
+## Statistics [/users/{id}/statistics]
+
+Endpoint for requesting statistics.
+
++ Parameters
+    + id: `1` (number, required) - ID of the user
+    
+### Show statistics [GET]
+
+Display stats for the requesting user.
+
++ Request
+    + Headers
+        ```
+        DD-Auth: <token>
+        Accept: application/json
+        ```
++ Response 200
+    + Body
+        ```json
+        {
+            "rank": 175,
+            "intermediateRank": 5,
+            "rankingTopTen": [
+                {
+                    "rank": 1,
+                    "wonGames": 5,
+                    "nickname": "carson.senger",
+                    "uid": 2
+                },
+                {
+                    "rank": 1,
+                    "wonGames": 5,
+                    "nickname": "adrienne.hayes",
+                    "uid": 136
+                },
+                ...
+            ],
+            "plusMinus5Rank": [
+                {
+                    "rank": 4,
+                    "wonGames": 2,
+                    "nickname": "timmy17",
+                    "uid": 240
+                },
+                ...
+            ],
+            "gameOutcomes": {
+                "won": 0,
+                "lost": 0,
+                "draw": 3
+            },
+            "categoriesPlayed": [
+                {
+                    "name": "Pierre Fabre Dermo-Kosmetik",
+                    "count": 0
+                },
+                {
+                    "name": "A-Derma",
+                    "count": 1
+                }
+            ]
+        }
+        ```
+    + Schema
+        ```json
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "rank": {
+                    "type": "integer",
+                    "examples": [
+                        235
+                    ],
+                    "description": "Rank on the global leader board"
+                },
+                "intermediateRank": {
+                    "type": "integer",
+                    "examples": [
+                        171
+                    ],
+                    "description": "Real rank of the user, ignoring duplicate ranks (i.e. two users with the same amount of games won will only count once instead of twice)"
+                },
+                "rankingTopTen": {
+                    "type": "array",
+                    "description": "Global top 10 rankings",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "rank": {
+                                "type": "integer",
+                                "examples": [
+                                    1
+                                ]
+                            },
+                            "wonGames": {
+                                "type": "integer",
+                                "examples": [
+                                    499
+                                ]
+                            },
+                            "nickname": {
+                                "type": "string",
+                                "examples": [
+                                    "peter"
+                                ]
+                            },
+                            "uid": {
+                                "type": "integer",
+                                "examples": [
+                                    1
+                                ]
+                            }
+                        },
+                        "required": [
+                            "rank",
+                            "wonGames",
+                            "nickname",
+                            "uid"
+                        ]
+                    }
+                },
+                "plusMinus5Rank": {
+                    "type": "array",
+                    "description": "Users ranking 5 places below, and 5 places above the user. Ranked from bottom to top, including the user himself",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "rank": {
+                                "type": "integer",
+                                "description": "Rank on the global leader board",
+                                "examples": 234
+                            },
+                            "wonGames": {
+                                "type": "integer",
+                                "description": "Total number of games won",
+                                "examples": [
+                                    4
+                                ]
+                            },
+                            "nickname": {
+                                "type": "string",
+                                "examples": [
+                                    "faustino14"
+                                ]
+                            },
+                            "uid": {
+                                "type": "integer",
+                                "description": "ID of the user",
+                                "examples": 144
+                            }
+                        },
+                        "required": [
+                            "rank",
+                            "wonGames",
+                            "nickname",
+                            "uid"
+                        ]
+                    }
+                },
+                "gameOutcomes": {
+                    "type": "object",
+                    "description": "Data on game outcomes",
+                    "properties": {
+                        "won": {
+                            "type": "integer",
+                            "examples": [
+                                4
+                            ]
+                        },
+                        "lost": {
+                            "type": "integer",
+                            "examples": [
+                                1
+                            ]
+                        },
+                        "draw": {
+                            "type": "integer",
+                            "examples": [
+                                3
+                            ]
+                        }
+                    },
+                    "required": [
+                        "won",
+                        "lost",
+                        "draw"
+                    ]
+                },
+                "categoriesPlayed": {
+                    "type": "array",
+                    "description": "List of all categories that the user has answered questions for",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "examples": [
+                                    "Sonnenschutz"
+                                ]
+                            },
+                            "count": {
+                                "type": "integer",
+                                "description": "Number of rounds played for this category",
+                                "examples": [
+                                    10
+                                ]
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "count"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "rank",
+                "intermediateRank",
+                "rankingTopTen",
+                "plusMinus5Rank",
+                "gameOutcomes",
+                "categoriesPlayed"
+            ]
+        }
+        ```
++ Response 403 (application/json)
+Invalid or missing authentication details.
+    + Body
++ Response 405 (application/json)
+Method not allowed. Wrong HTTP method used to access this resource.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```
++ Response 500 (application/json)
+Internal server error.
+    + Attributes
+        + message (string, required)
+    + Body
+        ```json
+        {
+            "message": ""
+        }
+        ```   

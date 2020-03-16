@@ -5,14 +5,14 @@
         <tab-header title="Parameters" icon="ListIcon" :is-active="activeTab === 'Parameters'" v-on:tab-changed="changeTab"></tab-header>
         <tab-header title="Request" icon="SendIcon" :is-active="activeTab === 'Request'" v-on:tab-changed="changeTab"></tab-header>
         <tab-header title="Response" icon="ServerIcon" :is-active="activeTab === 'Response'" v-on:tab-changed="changeTab"></tab-header>
-        <tab-header title="Try it out" icon="PlayIcon" :is-active="activeTab === 'Try it out'" v-on:tab-changed="changeTab"></tab-header>
+<!--        <tab-header title="Try it out" icon="PlayIcon" :is-active="activeTab === 'Try it out'" v-on:tab-changed="changeTab"></tab-header>-->
       </ul>
     </div>
     <section class="overflow-visible flex flex-col">
       <parameters v-show="activeTab === 'Parameters'" :operation-id="operationId"></parameters>
       <request-tab v-show="activeTab === 'Request'" :operation-id="operationId"></request-tab>
       <response-tab v-show="activeTab === 'Response'" :operation-id="operationId"></response-tab>
-      <trial-tab v-show="activeTab === 'Try it out'" :operation-id="operationId"></trial-tab>
+<!--      <trial-tab v-show="activeTab === 'Try it out'" :operation-id="operationId"></trial-tab>-->
     </section>
   </div>
 </template>

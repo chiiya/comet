@@ -12,3 +12,6 @@ output = "exports/schemas"
 output = "docs/"
 group_by = "resources"
 flatten = true
+  [plugins.documentation.data]
+  title = "Dermaduell API - Documentation"
+  # description = "API Reference for XYZ" - Custom description metadata

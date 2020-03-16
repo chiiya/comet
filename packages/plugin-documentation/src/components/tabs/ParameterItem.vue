@@ -19,6 +19,13 @@
           <span>{{ parameter.description }}</span>
         </div>
       </div>
+      <div class="w-full flex-row mt-1">
+        <div class="w-2/3 ml-auto">
+          <ul v-if="this.enum.length" class="ml-2 mb-0 list-dash">
+            <li class="text-sm pl-3" v-for="value in this.enum"><em>{{ value }}</em></li>
+          </ul>
+        </div>
+      </div>
     </td>
   </tr>
 </template>
@@ -45,6 +52,13 @@
         default:
           return 'text-gray-600';
       }
+    }
+
+    get enum(): any[] {
+      if (this.parameter.schema && this.parameter.schema.enum) {
+        return this.parameter.schema.enum;
+      }
+      return [];
     }
   }
 </script>

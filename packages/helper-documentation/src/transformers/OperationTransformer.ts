@@ -5,9 +5,9 @@ import {
   getOperationName,
   getResolvedServerUrl,
   resolveExampleUri,
+  joinUrls,
 } from '@comet-cli/helper-utils';
 import { ApiModel, Bodies, DocHeader, DocOperation, DocResponses, Example } from '@comet-cli/types';
-const { URL } = require('url');
 const httpSnippet = require('httpsnippet');
 const uuidv4 = require('uuid/v4');
 const showdown = require('showdown');
@@ -111,12 +111,12 @@ export default class OperationTransformer {
         }
       }
     }
-    const url = new URL(resolveExampleUri(operation.uri, operation.parameters), server);
+    const url = joinUrls([server, resolveExampleUri(operation.uri, operation.parameters)]);
     return {
       headers,
       postData: postData && postData.text ? postData : undefined,
       method: operation.method.toUpperCase(),
-      url: url.href,
+      url: url,
     };
   }
 

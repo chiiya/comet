@@ -31,6 +31,8 @@ export default class DocumentationPlugin implements PluginInterface {
       config: config,
       title: this.getTitle(config, model),
       meta: metaData,
+      styleTag: this.getStyleTag(config),
+      jsTag: this.getJsTag(config),
     };
     const html = await renderer.renderToString(context);
 
@@ -74,6 +76,26 @@ export default class DocumentationPlugin implements PluginInterface {
       return model.info.name;
     }
     return 'API Reference';
+  }
+
+  protected getStyleTag(config: DocumentationPluginConfig): string {
+    if (config.data && config.data.asset_src) {
+      const src = config.data.asset_src;
+      const resolved = src !== '' && !src.endsWith('/') ? `${src}/` : src;
+      return `<link rel="stylesheet" href="${resolved}style.css">`;
+    }
+
+    return '<link rel="stylesheet" href="assets/style.css">';
+  }
+
+  protected getJsTag(config: DocumentationPluginConfig): string {
+    if (config.data && config.data.asset_src) {
+      const src = config.data.asset_src;
+      const resolved = src !== '' && !src.endsWith('/') ? `${src}/` : src;
+      return `<script src="${resolved}bundle.js"></script>`;
+    }
+
+    return '<script src="assets/bundle.js"></script>';
   }
 
   protected async getTemplate(config: DocumentationPluginConfig): Promise<string> {

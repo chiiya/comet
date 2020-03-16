@@ -46,11 +46,64 @@ export const getResourceName = (path: string): string => {
   let name = path
     .replace(/^\//, '')
     .replace(/(\/?{[^\/]+}(?:\/$)?)/g, '')
-    .replace('/', '-');
+    .replace(/\//g, '-');
   if (isSingleResourceOperation) {
     name += '-entity';
   }
   return name;
+};
+
+/**
+ * Join url partials
+ * Based on https://github.com/jfromaniello/url-join
+ * @param partials
+ */
+export const joinUrls = (partials: string[]): string => {
+  const result: string[] = [];
+
+  // If the first part is a plain protocol, we combine it with the next part.
+  if (partials[0].match(/^[^/:]+:\/*$/) && partials.length > 1) {
+    const first = partials.shift();
+    partials[0] = first + partials[0];
+  }
+
+  // There must be two or three slashes in the file protocol, two slashes in anything else.
+  if (partials[0].match(/^file:\/\/\//)) {
+    partials[0] = partials[0].replace(/^([^/:]+):\/*/, '$1:///');
+  } else {
+    partials[0] = partials[0].replace(/^([^/:]+):\/*/, '$1://');
+  }
+
+  for (let i = 0; i < partials.length; i += 1) {
+    let partial = partials[i];
+    if (partial === '') {
+      continue;
+    }
+    if (i > 0) {
+      // Removing the starting slashes for each component but the first.
+      partial = partial.replace(/^[\/]+/, '');
+    }
+
+    if (i < partials.length - 1) {
+      // Removing the ending slashes for each component but the last.
+      partial = partial.replace(/[\/]+$/, '');
+    } else {
+      // For the last component we will combine multiple slashes to a single one.
+      partial = partial.replace(/[\/]+$/, '/');
+    }
+
+    result.push(partial);
+  }
+
+  let url = result.join('/');
+  // Each input component is now separated by a single slash except the possible first plain protocol part.
+  // remove trailing slash before parameters or hash
+  url = url.replace(/\/(\?|&|#[^!])/g, '$1');
+  // replace ? in parameters with &
+  const parts = url.split('?');
+  url = parts.shift() + (parts.length > 0 ? '?' : '') + parts.join('&');
+
+  return url;
 };
 
 /**

@@ -15,9 +15,11 @@ module.exports = {
     },
     copy: {
       targets: [
-        'src/stubs'
+        {
+          src: 'src/stubs',
+          dest: 'dist',
+        }
       ],
-      outputFolder: 'dist'
     }
   }
 };
