@@ -42,7 +42,7 @@ export default class MakeSchemas extends BaseCommand {
     this.logger.comet('Generating JSON schema files...');
     // Parse passed arguments
     const { args, flags } = this.parse(MakeSchemas);
-    const file = await this.loadFile(args);
+    const file = await this.loadFile(<{ input: string }>args);
 
     if (flags.output) {
       this.configRepository.set(`commands.${this.configKey}.output`, flags.output);

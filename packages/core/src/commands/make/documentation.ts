@@ -43,7 +43,7 @@ export default class MakeDocumentation extends BaseCommand {
     this.logger.comet('Generating API documentation...');
     // Parse passed arguments
     const { args, flags } = this.parse(MakeDocumentation);
-    const file = await this.loadFile(args);
+    const file = await this.loadFile(<{ input: string}>args);
 
     if (flags.output) {
       this.configRepository.set(`plugins.${this.configKey}.output`, flags.output);

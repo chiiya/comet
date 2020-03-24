@@ -16,8 +16,7 @@ module.exports = {
     copy: {
       targets: [
         {
-          src: 'src/stubs',
-          dest: 'dist',
+          src: 'src/stubs/**', dest: 'dist/stubs'
         }
       ],
     }

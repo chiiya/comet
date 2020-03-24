@@ -42,7 +42,7 @@ export default class MakePostman extends BaseCommand {
     this.logger.comet('Generating Postman Collection...');
     // Parse passed arguments
     const { args, flags } = this.parse(MakePostman);
-    const file = await this.loadFile(args);
+    const file = await this.loadFile(<{ input: string}>args);
 
     if (flags.output) {
       this.configRepository.set(`commands.${this.configKey}.output`, flags.output);
