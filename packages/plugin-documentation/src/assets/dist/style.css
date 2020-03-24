@@ -205,15 +205,6 @@ button:-moz-focusring,
  *    `fieldset` elements in all browsers.
  */
 
-legend {
-  box-sizing: border-box; /* 1 */
-  color: inherit; /* 2 */
-  display: table; /* 1 */
-  max-width: 100%; /* 1 */
-  padding: 0; /* 3 */
-  white-space: normal; /* 1 */
-}
-
 /**
  * Add the correct vertical alignment in Chrome, Firefox, and Opera.
  */
@@ -311,23 +302,6 @@ template {
  */
 
 /**
- * 1. Prevent padding and border from affecting element width
- * https://goo.gl/pYtbK7
- * 2. Change the default font family in all browsers (opinionated)
- */
-
-html {
-  box-sizing: border-box; /* 1 */
-  font-family: sans-serif; /* 2 */
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-/**
  * Removes the default spacing and border for appropriate elements.
  */
 
@@ -335,12 +309,14 @@ html {
 h1,
 h2,
 h4,
+hr,
 pre {
   margin: 0;
 }
 
 button {
-  background: transparent;
+  background-color: transparent;
+  background-image: none;
   padding: 0;
 }
 
@@ -366,38 +342,58 @@ ul {
  */
 
 /**
- * 1. Use the system font stack as a sane default.
+ * 1. Use the user's configured `sans` font-family (with Tailwind's default
+ *    sans-serif font stack as a fallback) as a sane default.
  * 2. Use Tailwind's default "normal" line-height so the user isn't forced
- * to override it to ensure consistency even when using the default theme.
+ *    to override it to ensure consistency even when using the default theme.
  */
 
 html {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 1 */
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 1 */
   line-height: 1.5; /* 2 */
 }
 
 /**
- * Allow adding a border to an element by just adding a border-width.
+ * 1. Prevent padding and border from affecting element width.
  *
- * By default, the way the browser specifies that an element should have no
- * border is by setting it's border-style to `none` in the user-agent
- * stylesheet.
+ *    We used to set this in the html element and inherit from
+ *    the parent element for everything else. This caused issues
+ *    in shadow-dom-enhanced elements like <details> where the content
+ *    is wrapped by a div with box-sizing set to `content-box`.
  *
- * In order to easily add borders to elements by just setting the `border-width`
- * property, we change the default border-style for all elements to `solid`, and
- * use border-width to hide them instead. This way our `border` utilities only
- * need to set the `border-width` property instead of the entire `border`
- * shorthand, making our border utilities much more straightforward to compose.
+ *    https://github.com/mozdevs/cssremedy/issues/4
  *
- * https://github.com/tailwindcss/tailwindcss/pull/116
+ *
+ * 2. Allow adding a border to an element by just adding a border-width.
+ *
+ *    By default, the way the browser specifies that an element should have no
+ *    border is by setting it's border-style to `none` in the user-agent
+ *    stylesheet.
+ *
+ *    In order to easily add borders to elements by just setting the `border-width`
+ *    property, we change the default border-style for all elements to `solid`, and
+ *    use border-width to hide them instead. This way our `border` utilities only
+ *    need to set the `border-width` property instead of the entire `border`
+ *    shorthand, making our border utilities much more straightforward to compose.
+ *
+ *    https://github.com/tailwindcss/tailwindcss/pull/116
  */
 
 *,
-*::before,
-*::after {
-  border-width: 0;
-  border-style: solid;
-  border-color: #e2e8f0;
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e2e8f0; /* 2 */
+}
+
+/*
+ * Ensure horizontal rules are visible by default
+ */
+
+hr {
+  border-top-width: 1px;
 }
 
 /**
@@ -414,34 +410,25 @@ textarea {
   resize: vertical;
 }
 
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: #a0aec0;
 }
 
-input::-moz-placeholder,
-textarea::-moz-placeholder {
-  color: inherit;
-  opacity: 0.5;
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color: #a0aec0;
 }
 
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+  color: #a0aec0;
 }
 
-input::-ms-input-placeholder,
-textarea::-ms-input-placeholder {
-  color: inherit;
-  opacity: 0.5;
+input::-ms-input-placeholder, textarea::-ms-input-placeholder {
+  color: #a0aec0;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: inherit;
-  opacity: 0.5;
+  color: #a0aec0;
 }
 
 button,
@@ -509,7 +496,6 @@ code {
 
 
 svg,
-canvas,
 object {
   display: block;
   vertical-align: middle;
@@ -1410,15 +1396,15 @@ object {
 }
 
 .w-1\/3 {
-  width: 33.33333%;
+  width: 33.333333%;
 }
 
 .w-2\/3 {
-  width: 66.66667%;
+  width: 66.666667%;
 }
 
 .w-5\/12 {
-  width: 41.66667%;
+  width: 41.666667%;
 }
 
 .w-6\/12 {
@@ -1426,7 +1412,7 @@ object {
 }
 
 .w-7\/12 {
-  width: 58.33333%;
+  width: 58.333333%;
 }
 
 .w-full {
