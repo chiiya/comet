@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/helper-json-schemas",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Helper package for convet comet schema definitions to valid JSON Schema definitions",
   "keywords": [
     "comet",
@@ -34,7 +34,7 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "@comet-cli/types": "^0.1.1"
+    "@comet-cli/types": "^0.2.0"
   },
   "devDependencies": {
     "bili": "^4.8.0",

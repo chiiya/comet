@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/plugin-tests-laravel",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Comet factory to generate test cases for the Laravel framework",
   "keywords": [
     "comet",
@@ -35,11 +35,11 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "@comet-cli/helper-integration-tests": "^0.1.5",
-    "@comet-cli/helper-json-schemas": "^0.1.5",
-    "@comet-cli/helper-utils": "^0.1.1",
-    "@comet-cli/plugin-json-schemas": "^0.1.5",
-    "@comet-cli/types": "^0.1.1",
+    "@comet-cli/helper-integration-tests": "^0.2.0",
+    "@comet-cli/helper-json-schemas": "^0.2.0",
+    "@comet-cli/helper-utils": "^0.2.0",
+    "@comet-cli/plugin-json-schemas": "^0.2.0",
+    "@comet-cli/types": "^0.2.0",
     "fs-extra": "^8.1.0",
     "handlebars": "^4.1.2",
     "xml-js": "^1.6.9"

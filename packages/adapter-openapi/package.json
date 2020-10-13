@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/adapter-openapi",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Adapter for the OpenAPI description language",
   "keywords": [
     "comet",

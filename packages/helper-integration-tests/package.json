@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/helper-integration-tests",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Helper package for creating a testsuite model",
   "keywords": [
     "comet",
@@ -33,9 +33,9 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "@comet-cli/types": "^0.1.1",
-    "@comet-cli/plugin-json-schemas": "^0.1.5",
-    "@comet-cli/helper-utils": "^0.1.1"
+    "@comet-cli/helper-utils": "^0.2.0",
+    "@comet-cli/plugin-json-schemas": "^0.2.0",
+    "@comet-cli/types": "^0.2.0"
   },
   "devDependencies": {
     "bili": "^4.8.0",

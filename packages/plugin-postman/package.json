@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/plugin-postman",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Plugin for creating Postman Collections",
   "keywords": [
     "comet",
@@ -38,14 +38,14 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "devDependencies": {
-    "@comet-cli/types": "^0.1.1",
+    "@comet-cli/types": "^0.2.0",
     "bili": "^4.8.0",
     "rollup-plugin-typescript2": "^0.24.0",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@comet-cli/helper-utils": "^0.1.1",
+    "@comet-cli/helper-utils": "^0.2.0",
     "fs-extra": "^8.0.1",
     "uuid": "^3.3.2"
   }

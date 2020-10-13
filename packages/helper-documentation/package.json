@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/helper-documentation",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Helper package for creating documentation model",
   "keywords": [
     "comet",
@@ -34,12 +34,12 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "@comet-cli/helper-utils": "^0.1.1",
+    "@comet-cli/helper-utils": "^0.2.0",
     "httpsnippet": "^1.19.1",
     "showdown": "^1.9.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@comet-cli/types": "^0.1.1"
+    "@comet-cli/types": "^0.2.0"
   }
 }
