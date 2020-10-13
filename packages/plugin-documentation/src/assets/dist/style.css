@@ -317,7 +317,6 @@ pre {
 button {
   background-color: transparent;
   background-image: none;
-  padding: 0;
 }
 
 /**
@@ -410,19 +409,11 @@ textarea {
   resize: vertical;
 }
 
-input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
-  color: #a0aec0;
-}
-
 input::-moz-placeholder, textarea::-moz-placeholder {
   color: #a0aec0;
 }
 
 input:-ms-input-placeholder, textarea:-ms-input-placeholder {
-  color: #a0aec0;
-}
-
-input::-ms-input-placeholder, textarea::-ms-input-placeholder {
   color: #a0aec0;
 }
 
@@ -528,22 +519,12 @@ object {
   line-height: 1.5;
 }
 
-.form-textarea::-webkit-input-placeholder {
-  color: #a0aec0;
-  opacity: 1;
-}
-
 .form-textarea::-moz-placeholder {
   color: #a0aec0;
   opacity: 1;
 }
 
 .form-textarea:-ms-input-placeholder {
-  color: #a0aec0;
-  opacity: 1;
-}
-
-.form-textarea::-ms-input-placeholder {
   color: #a0aec0;
   opacity: 1;
 }
@@ -577,71 +558,105 @@ object {
 }
 
 .bg-white {
+  --bg-opacity: 1;
   background-color: #fff;
+  background-color: rgba(255, 255, 255, var(--bg-opacity));
 }
 
 .bg-gray-100 {
+  --bg-opacity: 1;
   background-color: #f8fafc;
+  background-color: rgba(248, 250, 252, var(--bg-opacity));
 }
 
 .bg-gray-200 {
+  --bg-opacity: 1;
   background-color: #edf2f7;
+  background-color: rgba(237, 242, 247, var(--bg-opacity));
 }
 
 .bg-gray-300 {
+  --bg-opacity: 1;
   background-color: #e2e8f0;
+  background-color: rgba(226, 232, 240, var(--bg-opacity));
 }
 
 .bg-gray-500 {
+  --bg-opacity: 1;
   background-color: #a0aec0;
+  background-color: rgba(160, 174, 192, var(--bg-opacity));
 }
 
 .bg-gray-850 {
+  --bg-opacity: 1;
   background-color: #1e2936;
+  background-color: rgba(30, 41, 54, var(--bg-opacity));
 }
 
 .bg-gray-950 {
+  --bg-opacity: 1;
   background-color: #2a3644;
+  background-color: rgba(42, 54, 68, var(--bg-opacity));
 }
 
 .bg-red-500 {
+  --bg-opacity: 1;
   background-color: #f56565;
+  background-color: rgba(245, 101, 101, var(--bg-opacity));
 }
 
 .bg-orange-500 {
+  --bg-opacity: 1;
   background-color: #ed8936;
+  background-color: rgba(237, 137, 54, var(--bg-opacity));
 }
 
 .bg-green-500 {
+  --bg-opacity: 1;
   background-color: #48bb78;
+  background-color: rgba(72, 187, 120, var(--bg-opacity));
 }
 
 .bg-blue-500 {
+  --bg-opacity: 1;
   background-color: #4299e1;
+  background-color: rgba(66, 153, 225, var(--bg-opacity));
 }
 
 .bg-blue-600 {
+  --bg-opacity: 1;
   background-color: #3273dc;
+  background-color: rgba(50, 115, 220, var(--bg-opacity));
 }
 
 .bg-blue-700 {
+  --bg-opacity: 1;
   background-color: #2b6cb0;
+  background-color: rgba(43, 108, 176, var(--bg-opacity));
 }
 
 .bg-blue-900 {
+  --bg-opacity: 1;
   background-color: #2a4365;
+  background-color: rgba(42, 67, 101, var(--bg-opacity));
 }
 
 .hover\:bg-gray-100:hover {
+  --bg-opacity: 1;
   background-color: #f8fafc;
+  background-color: rgba(248, 250, 252, var(--bg-opacity));
 }
 
 .hover\:bg-blue-700:hover {
+  --bg-opacity: 1;
   background-color: #2b6cb0;
+  background-color: rgba(43, 108, 176, var(--bg-opacity));
 }
 
 .hover\:bg-blue-800:hover {
+  --bg-opacity: 1;
   background-color: #2c5282;
+  background-color: rgba(44, 82, 130, var(--bg-opacity));
 }
 
 .border-collapse {
@@ -653,19 +668,27 @@ object {
 }
 
 .border-gray-200 {
+  --border-opacity: 1;
   border-color: #edf2f7;
+  border-color: rgba(237, 242, 247, var(--border-opacity));
 }
 
 .border-gray-300 {
+  --border-opacity: 1;
   border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, var(--border-opacity));
 }
 
 .border-blue-600 {
+  --border-opacity: 1;
   border-color: #3273dc;
+  border-color: rgba(50, 115, 220, var(--border-opacity));
 }
 
 .focus\:border-gray-500:focus {
+  --border-opacity: 1;
   border-color: #a0aec0;
+  border-color: rgba(160, 174, 192, var(--border-opacity));
 }
 
 .rounded {
@@ -826,6 +849,14 @@ object {
 
 .h-full {
   height: 100%;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
 }
 
 .leading-tight {
@@ -1251,91 +1282,123 @@ object {
 }
 
 .text-white {
+  --text-opacity: 1;
   color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
 }
 
 .text-gray-100 {
+  --text-opacity: 1;
   color: #f8fafc;
+  color: rgba(248, 250, 252, var(--text-opacity));
 }
 
 .text-gray-200 {
+  --text-opacity: 1;
   color: #edf2f7;
+  color: rgba(237, 242, 247, var(--text-opacity));
 }
 
 .text-gray-400 {
+  --text-opacity: 1;
   color: #cbd5e0;
+  color: rgba(203, 213, 224, var(--text-opacity));
 }
 
 .text-gray-500 {
+  --text-opacity: 1;
   color: #a0aec0;
+  color: rgba(160, 174, 192, var(--text-opacity));
 }
 
 .text-gray-600 {
+  --text-opacity: 1;
   color: #718096;
+  color: rgba(113, 128, 150, var(--text-opacity));
 }
 
 .text-gray-700 {
+  --text-opacity: 1;
   color: #4a5568;
+  color: rgba(74, 85, 104, var(--text-opacity));
 }
 
 .text-gray-750 {
+  --text-opacity: 1;
   color: #738a94;
+  color: rgba(115, 138, 148, var(--text-opacity));
 }
 
 .text-red-500 {
+  --text-opacity: 1;
   color: #f56565;
+  color: rgba(245, 101, 101, var(--text-opacity));
 }
 
 .text-red-600 {
+  --text-opacity: 1;
   color: #e53e3e;
+  color: rgba(229, 62, 62, var(--text-opacity));
 }
 
 .text-orange-500 {
+  --text-opacity: 1;
   color: #ed8936;
+  color: rgba(237, 137, 54, var(--text-opacity));
 }
 
 .text-green-500 {
+  --text-opacity: 1;
   color: #48bb78;
+  color: rgba(72, 187, 120, var(--text-opacity));
 }
 
 .text-teal-600 {
+  --text-opacity: 1;
   color: #319795;
+  color: rgba(49, 151, 149, var(--text-opacity));
 }
 
 .text-blue-500 {
+  --text-opacity: 1;
   color: #4299e1;
+  color: rgba(66, 153, 225, var(--text-opacity));
 }
 
 .text-blue-600 {
+  --text-opacity: 1;
   color: #3273dc;
+  color: rgba(50, 115, 220, var(--text-opacity));
 }
 
 .text-purple-500 {
+  --text-opacity: 1;
   color: #9f7aea;
+  color: rgba(159, 122, 234, var(--text-opacity));
 }
 
 .text-purple-600 {
+  --text-opacity: 1;
   color: #805ad5;
+  color: rgba(128, 90, 213, var(--text-opacity));
 }
 
 .hover\:text-gray-100:hover {
+  --text-opacity: 1;
   color: #f8fafc;
+  color: rgba(248, 250, 252, var(--text-opacity));
 }
 
 .hover\:text-gray-700:hover {
+  --text-opacity: 1;
   color: #4a5568;
+  color: rgba(74, 85, 104, var(--text-opacity));
 }
 
 .hover\:text-blue-400:hover {
+  --text-opacity: 1;
   color: #63b3ed;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
+  color: rgba(99, 179, 237, var(--text-opacity));
 }
 
 .italic {
@@ -1423,6 +1486,72 @@ object {
   width: 100%;
 }
 
+@-webkit-keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+@-webkit-keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
 /**
  * Here you would add any custom utilities you need that don't come out of the
  * box with Tailwind.
@@ -1440,7 +1569,9 @@ h1,
 h2,
 h4 {
   font-weight: 700;
+  --text-opacity: 1;
   color: #003c57;
+  color: rgba(0, 60, 87, var(--text-opacity));
   margin-bottom: 0.5rem;
   margin-top: 0;
 }
@@ -1462,20 +1593,28 @@ h4 {
 }
 
 a {
+  --text-opacity: 1;
   color: #63b3ed;
+  color: rgba(99, 179, 237, var(--text-opacity));
   cursor: pointer;
   transition: color 150ms ease-in;
 }
 
 a:hover,
   a:focus {
+    --text-opacity: 1;
     color: #3273dc;
+    color: rgba(50, 115, 220, var(--text-opacity));
   }
 
 pre {
+  --bg-opacity: 1;
   background-color: #f8fafc;
+  background-color: rgba(248, 250, 252, var(--bg-opacity));
   border-style: solid;
+  --border-opacity: 1;
   border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, var(--border-opacity));
   border-width: 1px;
   overflow-y: hidden;
 }
@@ -1488,13 +1627,19 @@ pre>code {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
     white-space: pre-wrap;
+    --text-opacity: 1;
     color: #4a5568;
+    color: rgba(74, 85, 104, var(--text-opacity));
     line-height: inherit;
   }
 
 code {
+  --bg-opacity: 1;
   background-color: #f8fafc;
+  background-color: rgba(248, 250, 252, var(--bg-opacity));
+  --text-opacity: 1;
   color: #e53e3e;
+  color: rgba(229, 62, 62, var(--text-opacity));
   /*@apply text-sm;*/
   line-height: 1.25;
   padding-top: 0.25rem;
@@ -1792,7 +1937,9 @@ td,
 th {
   border-bottom-width: 1px;
   border-style: solid;
+  --border-opacity: 1;
   border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, var(--border-opacity));
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 0.75rem;
@@ -1826,7 +1973,9 @@ th {
   }
 
 .sidebar .item-group.is-active > a {
+      --text-opacity: 1;
       color: #4299e1;
+      color: rgba(66, 153, 225, var(--text-opacity));
     }
 
 .sidebar .item-group.is-active > ol {
@@ -1835,7 +1984,9 @@ th {
 
 .sidebar .item-operation.is-active {
     border-radius: 0.25rem;
+    --bg-opacity: 1;
     background-color: #edf2f7;
+    background-color: rgba(237, 242, 247, var(--bg-opacity));
   }
 
 .sidebar .item-operation.is-active > a {
