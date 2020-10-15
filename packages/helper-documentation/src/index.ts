@@ -27,7 +27,6 @@ export default class Transformer {
     const slugs: Dict<number> = {};
 
     const folders: Folders = groupOperations(model, { group_by: config.group_by, flatten: config.flatten });
-    writeFileSync('trie.json', JSON.stringify(folders, null, 2));
 
     for (const operation of folders.operations) {
       const transformedOperation = OperationTransformer.execute(model, operation);

@@ -17,7 +17,6 @@ export default class RamlAdapter implements AdapterInterface {
     // Parse input file
     try {
       const result = await Parser.load(path, logger);
-      await writeFile('./result-parsed.json', JSON.stringify(result.toJSON(), null, 2));
       const specification = new Specification(result);
       const authentication = AuthenticationTransformer.execute(specification);
       const securedBy = specification.api.securedBy() || [];

@@ -23,7 +23,6 @@ export default class ApiBlueprintAdapter implements AdapterInterface {
     try {
       // Parse input file
       const result = await Parser.load(path, logger);
-      await writeFile('./result-parsed.json', JSON.stringify(result, null, 2));
       const specification = new Specification(result);
       const auth = AuthenticationTransformer.execute(specification);
       const securedBy: SecurityRequirement[] = [];
