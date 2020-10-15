@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Core comet cli application",
   "keywords": [
     "comet",
@@ -60,7 +60,7 @@
     "@comet-cli/adapter-raml": "^0.2.0",
     "@comet-cli/helper-identify": "^0.2.0",
     "@comet-cli/helper-utils": "^0.2.0",
-    "@comet-cli/plugin-documentation": "^0.2.1",
+    "@comet-cli/plugin-documentation": "^0.2.2",
     "@comet-cli/plugin-json-schemas": "^0.2.0",
     "@comet-cli/plugin-postman": "^0.2.0",
     "@comet-cli/plugin-tests-laravel": "^0.2.0",
