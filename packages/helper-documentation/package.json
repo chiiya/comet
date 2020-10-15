@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/helper-documentation",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "description": "Helper package for creating documentation model",
   "keywords": [
     "comet",

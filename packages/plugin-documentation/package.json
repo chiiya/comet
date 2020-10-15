@@ -1,6 +1,6 @@
 {
   "name": "@comet-cli/plugin-documentation",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Plugin for generating API documentation",
   "keywords": [
     "comet",
@@ -44,7 +44,7 @@
     "url": "https://github.com/chiiya/comet/issues"
   },
   "dependencies": {
-    "@comet-cli/helper-documentation": "^0.2.0",
+    "@comet-cli/helper-documentation": "^0.2.4",
     "@comet-cli/helper-utils": "^0.2.0",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "@tailwindcss/custom-forms": "^0.2.0",
